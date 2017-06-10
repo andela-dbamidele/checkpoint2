@@ -1,0 +1,43 @@
+{
+  "name": "dokument",
+  "version": "1.0.0",
+  "description": "dockumet is an app that allows to you to save your documents securely on the clouds and allows you to share with users",
+  "main": "server/index.js",
+  "scripts": {
+    "dev": "nodemon --watch server --exec babel-node -- server/index.js",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andela-dbamidele/checkpoint2.git"
+  },
+  "keywords": [
+    "dokuments",
+    "cloud",
+    "daniel",
+    "bamidele"
+  ],
+  "author": "Bamidele Daniel",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andela-dbamidele/checkpoint2/issues"
+  },
+  "homepage": "https://github.com/andela-dbamidele/checkpoint2#readme",
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-loader": "^7.0.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "nodemon": "^1.11.0",
+    "react-hot-loader": "^1.3.1"
+  },
+  "dependencies": {
+    "express": "^4.15.3",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "webpack": "^2.6.1",
+    "webpack-dev-middleware": "^1.10.2",
+    "webpack-hot-middleware": "^2.18.0"
+  }
+}
