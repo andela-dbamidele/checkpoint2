@@ -1,0 +1,19 @@
+{
+  "development": {
+    "username": "andeladeveloper",
+    "password": null,
+    "database": "dokuments",
+    "host": "localhost",
+    "dialect": "postgres"
+  },
+  "test": {
+    "use_env_variable": "DATABASE_URL"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "dokuments",
+    "host": "postgres://xoltdije:3fsBNDPzU2Jw7Dy_vh5u9FydxUnwsrAG@pellefant.db.elephantsql.com:5432/xoltdije",
+    "dialect": "postgres"
+  }
+}
