@@ -4,7 +4,7 @@ import bodyParser from 'body-parser';
 import webpack from 'webpack';
 import webpackMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
-import webpackConfig from '../webpack.config.dev';
+import webpackConfig from '../webpack.config';
 import auth from './routes/auth';
 import roles from './routes/roles';
 import users from './routes/users';
@@ -12,6 +12,9 @@ import search from './routes/search';
 import documents from './routes/documents';
 
 const app = express();
+const publicPath = express.static(path.join(__dirname, '../client/assets'));
+
+app.use('/', publicPath);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
