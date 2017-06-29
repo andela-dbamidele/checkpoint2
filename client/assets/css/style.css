@@ -6864,8 +6864,29 @@ nav {
   padding: 20px 5px; }
   .login-page-wrapper .content .input-field button {
     float: right; }
+  .login-page-wrapper .content .input-field input {
+    margin-bottom: 5px !important; }
+  .login-page-wrapper .content .input-field p {
+    margin-left: 40px;
+    font-size: 11px;
+    color: red;
+    margin-bottom: 10px !important; }
   .login-page-wrapper .content h3 {
     margin-left: 20px; }
+  .login-page-wrapper .content .errors {
+    background-color: #e57373;
+    color: white;
+    min-height: 50px;
+    margin-left: 20px;
+    margin-top: 10px;
+    padding: 10px;
+    text-align: center; }
+
+.p-t-20 {
+  padding-top: 20px; }
+
+.p-t-50 {
+  padding-top: 50px; }
 
 .flex-box {
   display: flex;
@@ -6876,6 +6897,8 @@ nav {
 @media only screen and (max-width: 600px) {
   .flex-box {
     height: 300px !important; }
+  .row {
+    margin-bottom: 0 !important; }
   .column .content-wrapper {
     height: 350px !important; }
   .row {

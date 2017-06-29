@@ -1,7 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import LoginForm from './login/LoginForm';
 import SignupForm from './login/SignupForm';
+import signUpAction from '../../actions/signUpAction';
+import loginAction from '../../actions/loginAction';
 
 /**
  * Creates Login page
@@ -21,6 +25,12 @@ class LoginPage extends React.Component {
     };
     this.loginAction = this.props.loginAction;
     this.signUpAction = this.props.signUpAction;
+  }
+
+  componentDidMount() {
+    if (this.props.auth.isAuthenticated) {
+      this.props.history.push('/documents');
+    }
   }
 
   /**
@@ -51,7 +61,20 @@ class LoginPage extends React.Component {
 
 LoginPage.propTypes = {
   loginAction: PropTypes.func.isRequired,
-  signUpAction: PropTypes.func.isRequired
+  signUpAction: PropTypes.func.isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
+  auth: PropTypes.shape({
+    isAuthenticated: PropTypes.bool.isRequired
+  }).isRequired
 };
 
-export default LoginPage;
+const mapPropsToState = state => (
+  {
+    auth: state.auth
+  }
+);
+
+export default connect(mapPropsToState,
+{ signUpAction, loginAction })(withRouter(LoginPage));

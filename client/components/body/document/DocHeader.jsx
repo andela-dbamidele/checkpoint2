@@ -1,11 +1,20 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
-export default class DocHeader extends React.Component {
+class DocHeader extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       access: 'Public'
     };
+  }
+
+  componentDidMount() {
+    if (!this.props.auth.isAuthenticated) {
+      this.props.history.push('/login');
+    }
   }
 
   render() {
@@ -29,3 +38,20 @@ export default class DocHeader extends React.Component {
     );
   }
 }
+
+DocHeader.propTypes = {
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
+  auth: PropTypes.shape({
+    isAuthenticated: PropTypes.bool.isRequired
+  }).isRequired
+};
+
+const mapPropsToState = state => (
+  {
+    auth: state.auth
+  }
+);
+
+export default connect(mapPropsToState)(withRouter(DocHeader));

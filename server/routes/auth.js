@@ -1,5 +1,5 @@
 import express from 'express';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt-nodejs';
 import jwt from 'jsonwebtoken';
 import config from './config/config';
 import validateLogin from '../shared/validators/login';
@@ -23,7 +23,8 @@ router.post('/login', (req, res) => {
   }).then((user) => {
     if (!user) {
       return res.status(400).send({
-        status: 400
+        status: 400,
+        message: 'Invalid credentials'
       });
     }
     // validates the user's password if user is found
@@ -31,6 +32,7 @@ router.post('/login', (req, res) => {
       const token = jwt.sign({
         id: user.dataValues.id,
         username: user.dataValues.username,
+        fullname: user.dataValues.fullname
       }, config.jwtSecret);
       // returns token after successfull verification
       res.status(200).send({
@@ -49,6 +51,8 @@ router.post('/login', (req, res) => {
   .catch(error => res.status(400).send(error));
 });
 
-router.post('/logout');
+router.post('/logout', (req, res) => (
+  res.status(200).send({ status: 200 })
+));
 
 export default router;

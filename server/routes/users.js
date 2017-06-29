@@ -1,5 +1,7 @@
 import express from 'express';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt-nodejs';
+import jwt from 'jsonwebtoken';
+import config from './config/config';
 import validateInput from '../shared/validators/usersData';
 import { isDigit } from '../../server/shared/helpers';
 import authenticateUser from './middlewares/authenticateUsers';
@@ -9,7 +11,7 @@ const Document = require('../models').Document;
 
 const router = express.Router();
 
-router.post('/', authenticateUser, (req, res) => {
+router.post('/', (req, res) => {
   const { errors, isValid } = validateInput(req.body);
   if (!isValid) {
     return res.status(400).send(errors);
@@ -33,7 +35,14 @@ router.post('/', authenticateUser, (req, res) => {
       email: req.body.email,
       roleId: req.body.roleId
     })
-    .then(savedUser => res.status(201).send(savedUser))
+    .then((savedUser) => {
+      const token = jwt.sign({
+        id: savedUser.id,
+        username: savedUser.username,
+        fullname: savedUser.fullname
+      }, config.jwtSecret);
+      res.status(201).send({ savedUser, token });
+    })
     .catch(error => res.status(400).send(error));
   });
 });

@@ -1,17 +1,18 @@
 import React from 'react';
-import tinymce from 'tinymce';
-import TinyMCE from 'react-tinymce';
 import Parser from 'html-react-parser';
+// import TinyMCE from 'react-tinymce';
 import swal from 'sweetalert2';
+// import CKeditor from 'ckeditor';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import SingleDoc from './SingleDoc';
 
 /**
  * Creates DocListing component
- * @export
  * @class DocListing
  * @extends {React.Component}
  */
-export default class DocListing extends React.Component {
+class DocListing extends React.Component {
   /**
    * Creates an instance of DocListing.
    * @param {object} props -
@@ -24,6 +25,7 @@ export default class DocListing extends React.Component {
       docTitle: '',
       docContent: '',
       docAccess: 0,
+      editor: null
     };
     this.openModal = this.openModal.bind(this);
     this.handleEditorChange = this.handleEditorChange.bind(this);
@@ -31,6 +33,13 @@ export default class DocListing extends React.Component {
     this.saveDocument = this.saveDocument.bind(this);
     this.cancelDocument = this.cancelDocument.bind(this);
   }
+
+  componentDidMount() {
+    if (this.props.auth.isAuthenticated) {
+      CKEDITOR.replace('ckeditor');
+    }
+  }
+
 
   /**
    * Handles change event to the form component
@@ -190,23 +199,7 @@ export default class DocListing extends React.Component {
               </div>
               <div className="clear" />
             </div>
-            <TinyMCE
-              content={this.state.docContent}
-              config={{
-                plugins: 'autolink link image lists' +
-                ' print preview textcolor table emoticons codesample',
-                toolbar: 'undo redo | bold italic | ' +
-                'fontsizeselect fontselect | ' +
-                'alignleft aligncenter alignright | forecolor backcolor' +
-                '| table | numlist bullist | emoticons | codesample',
-                table_toolbar: 'tableprops tabledelete ' +
-                '| tableinsertrowbefore ' +
-                'tableinsertrowafter tabledeleterow | tableinsertcolbefore ' +
-                'tableinsertcolafter tabledeletecol',
-                fontsize_formats: '8pt 10pt 12pt 14pt 18pt 24pt 36pt'
-              }}
-              onChange={this.handleEditorChange}
-            />
+            <textarea name="" id="ckeditor" cols="" rows="10" className="browser-defaults" />
           </div>
           <div className="modal-footer">
             <span
@@ -229,3 +222,17 @@ export default class DocListing extends React.Component {
     );
   }
 }
+
+DocListing.propTypes = {
+  auth: PropTypes.shape({
+    isAuthenticated: PropTypes.bool.isRequired
+  }).isRequired
+};
+
+const mapPropsToState = state => (
+  {
+    auth: state.auth
+  }
+);
+
+export default connect(mapPropsToState)(DocListing);
