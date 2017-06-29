@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import validateInput from '../../../../server/shared/validators/usersData';
 
 /**
  * Creates sign up form component
@@ -20,9 +21,11 @@ class SignupForm extends React.Component {
       email: '',
       password: '',
       passwordConfirmation: '',
+      errors: {}
     };
     this.onChange = this.onChange.bind(this);
     this.submitForm = this.submitForm.bind(this);
+    this.validateData = this.validateData.bind(this);
   }
 
   /**
@@ -39,6 +42,22 @@ class SignupForm extends React.Component {
   }
 
   /**
+   * Validates useer's data before making
+   * post request
+   * @method validateData
+   * @returns {boolean} -
+   * @memberOf SignupForm
+   */
+  validateData() {
+    const { errors, isValid } = validateInput(this.state);
+    if (!isValid) {
+      this.setState({ errors, });
+    }
+
+    return isValid;
+  }
+
+  /**
    * Submit the form
    * @method submitForm
    * @param {object} e
@@ -47,8 +66,21 @@ class SignupForm extends React.Component {
    */
   submitForm(e) {
     e.preventDefault();
+    this.setState({
+      errors: {}
+    });
     const { signUpAction } = this.props;
-    signUpAction(this.state);
+    if (this.validateData()) {
+      signUpAction(this.state).then(
+      () => {
+        this.props.history.push('/documents');
+      },
+      ({ response }) => {
+        this.setState({
+          errors: response.data,
+        });
+      });
+    }
   }
 
   /**
@@ -58,9 +90,15 @@ class SignupForm extends React.Component {
    * @memberOf SignupForm
    */
   render() {
+    const { errors } = this.state;
     return (
-      <div className="row">
+      <div className="row p-t-50">
         <h3>Register</h3>
+        { errors.message &&
+          <div className="errors">
+            <h5>{errors.message}</h5>
+          </div>
+        }
         <form className="col s12">
           <div className="row">
             <div className="input-field col s12">
@@ -74,6 +112,7 @@ class SignupForm extends React.Component {
                 required
               />
               <label htmlFor="icon_prefix">Full Name</label>
+              { errors.fullname && <p>{errors.fullname}</p> }
             </div>
 
             <div className="input-field col s12">
@@ -87,6 +126,7 @@ class SignupForm extends React.Component {
                 required
               />
               <label htmlFor="icon_prefix">Username</label>
+              { errors.username && <p>{errors.username}</p> }
             </div>
 
             <div className="input-field col s12">
@@ -100,6 +140,7 @@ class SignupForm extends React.Component {
                 required
               />
               <label htmlFor="icon_prefix">Email</label>
+              { errors.email && <p>{errors.email}</p> }
             </div>
 
             <div className="input-field col s12">
@@ -113,6 +154,7 @@ class SignupForm extends React.Component {
                 required
               />
               <label htmlFor="icon_prefix">Password</label>
+              { errors.password && <p>{errors.password}</p> }
             </div>
 
             <div className="input-field col s12">
@@ -126,6 +168,8 @@ class SignupForm extends React.Component {
                 required
               />
               <label htmlFor="icon_prefix">Confirm Password</label>
+              { errors.passwordConfirmation &&
+                <p>{errors.passwordConfirmation}</p> }
             </div>
 
             <div className="input-field">
@@ -148,5 +192,6 @@ class SignupForm extends React.Component {
 SignupForm.propTypes = {
   signUpAction: PropTypes.func.isRequired
 };
+
 
 export default SignupForm;

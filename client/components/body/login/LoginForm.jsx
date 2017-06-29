@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import { withRouter } from 'react-router-dom';
 /**
  * Creates Login form component
  * @class LoginForm
@@ -16,7 +16,8 @@ class LoginForm extends React.Component {
     super(props);
     this.state = {
       identifier: '',
-      password: ''
+      password: '',
+      errors: {}
     };
     this.onChange = this.onChange.bind(this);
     this.submitForm = this.submitForm.bind(this);
@@ -44,8 +45,20 @@ class LoginForm extends React.Component {
    */
   submitForm(e) {
     e.preventDefault();
+    this.setState({
+      errors: {}
+    });
     const { loginAction } = this.props;
-    loginAction(this.state);
+    loginAction(this.state).then(() => {
+      this.props.history.push('/documents');
+    })
+    .catch(({ response }) => {
+      this.setState({
+        errors: {
+          message: response.data.message
+        }
+      });
+    });
   }
 
   /**
@@ -55,9 +68,15 @@ class LoginForm extends React.Component {
    * @memberOf LoginForm
    */
   render() {
+    const { errors } = this.state;
     return (
-      <div className="row">
+      <div className="row p-t-50">
         <h3>Login</h3>
+        { errors.message &&
+          <div className="errors">
+            <h5>{errors.message}</h5>
+          </div>
+        }
         <form className="col s12">
           <div className="row">
             <div className="input-field col s12">
@@ -102,7 +121,11 @@ class LoginForm extends React.Component {
 }
 
 LoginForm.propTypes = {
-  loginAction: PropTypes.func.isRequired
+  loginAction: PropTypes.func.isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
-export default LoginForm;
+
+export default withRouter(LoginForm);

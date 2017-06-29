@@ -19,6 +19,7 @@ module.exports = {
     fs: 'empty',
     net: 'empty',
     tls: 'empty',
+    dns: 'empty'
   },
   plugins: [
     new webpack.NoEmitOnErrorsPlugin(),
@@ -38,7 +39,9 @@ module.exports = {
     loaders: [
       {
         test: /.jsx?$/,
-        include: path.join(__dirname, 'client'),
+        include: [path.join(__dirname, 'client'),
+          path.join(__dirname, 'server/shared')
+        ],
         exclude: /(node_modules|bower_components)/,
         loaders: ['react-hot-loader', 'babel-loader']
       },

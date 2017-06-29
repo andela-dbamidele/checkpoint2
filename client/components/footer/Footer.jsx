@@ -9,9 +9,7 @@ const Footer = () => {
           <p> &copy;{date} Dokuments &trade;. All Rights Reserved</p>
         </div>
 
-        <div className="col s12 m6 l6 xl6">
-          <p> &nbsp; </p>
-        </div>
+        <div className="col s12 m6 l6 xl6" />
       </div>
     </div>
   );
