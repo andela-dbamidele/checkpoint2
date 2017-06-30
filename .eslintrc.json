@@ -8,7 +8,8 @@
     "$": true,
     "console": true,
     "document": true,
-    "location": true
+    "location": true,
+    "CKEDITOR": true
   },
     "rules": {
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],

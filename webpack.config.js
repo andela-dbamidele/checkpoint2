@@ -4,15 +4,20 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
   context: __dirname,
-  devtool: 'inline-sourcemap',
+  devtool: 'inline-source-map',
   entry: [
+    'eventsource-polyfill',
     'webpack-hot-middleware/client',
-    path.join(__dirname, 'client/index.jsx')
+    path.join(__dirname, 'client/index')
   ],
+  target: 'web',
   output: {
-    path: `${__dirname}/client/assets/js`,
+    path: path.join(__dirname, '/client/assets/js'),
     filename: 'bundle.js',
-    publicPath: '/'
+    publicPath: path.join(__dirname, '/client/assets')
+  },
+  devServer: {
+    contentBase: `${__dirname}/server`
   },
   node: {
     console: true,
@@ -22,18 +27,15 @@ module.exports = {
     dns: 'empty'
   },
   plugins: [
-    new webpack.NoEmitOnErrorsPlugin(),
-    new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.LoaderOptionsPlugin({
+      debug: true
+    }),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.optimize.UglifyJsPlugin({ mangle: false, sourcemap: false }),
-    new ExtractTextPlugin('../css/style.css'),
-    // new webpack.ProvidePlugin({
-    //   $: 'jquery',
-    //   jQuery: 'jquery',
-    //   'window.$': 'jquery',
-    //   'window.jQuery': 'jquery',
-    //   Hammer: 'hammerjs/hammer',
-    // }),
+    new webpack.NoEmitOnErrorsPlugin(),
+    new ExtractTextPlugin({
+      filename: './css/style.css',
+      allChunks: true
+    }),
   ],
   module: {
     loaders: [

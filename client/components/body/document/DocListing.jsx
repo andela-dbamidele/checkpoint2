@@ -4,7 +4,9 @@ import Parser from 'html-react-parser';
 import swal from 'sweetalert2';
 // import CKeditor from 'ckeditor';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { createDocument, getDocuments } from '../../../actions/documentsAction';
 import SingleDoc from './SingleDoc';
 
 /**
@@ -21,23 +23,51 @@ class DocListing extends React.Component {
    */
   constructor(props) {
     super(props);
+    const { documents } = this.props;
     this.state = {
-      docTitle: '',
-      docContent: '',
-      docAccess: 0,
-      editor: null
+      title: '',
+      content: '',
+      access: 0,
+      errors: {},
+      documents,
     };
     this.openModal = this.openModal.bind(this);
     this.handleEditorChange = this.handleEditorChange.bind(this);
     this.onChange = this.onChange.bind(this);
     this.saveDocument = this.saveDocument.bind(this);
     this.cancelDocument = this.cancelDocument.bind(this);
+    this.setDocumentToState = this.setDocumentToState.bind(this);
   }
 
+  /**
+   * Runs when the component is fully loaded
+   * @method componentDidMount
+   * @return {void}
+   * @memberOf DocListing
+   */
   componentDidMount() {
     if (this.props.auth.isAuthenticated) {
-      CKEDITOR.replace('ckeditor');
+      CKEDITOR.config.height = 400;
+      CKEDITOR.replace('editor').on('change', (evt) => {
+        // getData() returns CKEditor's HTML content.
+        this.handleEditorChange(evt.editor.getData());
+      });
+      this.props.getDocuments()
+      .then(() => {
+        //
+      });
     }
+  }
+
+  /**
+   * Runs when new props are passed in
+   * @method componentWillReceiveProps
+   * @param {any} nextProps
+   * @return {void}
+   * @memberOf DocListing
+   */
+  componentWillReceiveProps(nextProps) {
+    this.setDocumentToState(nextProps.documents);
   }
 
 
@@ -55,15 +85,28 @@ class DocListing extends React.Component {
   }
 
   /**
+   * Sets documents to state
+   * @method setDocumentToState
+   * @param {array} doc -
+   * @return {void}
+   * @memberOf DocListing
+   */
+  setDocumentToState(doc) {
+    this.setState({
+      documents: doc,
+    });
+  }
+
+  /**
    * Set content of the editor to the state
    * @method handleEditorChange
-   * @param {event} e -
+   * @param {string} content -
    * @return {void} - set new state
    * @memberOf DocListing
    */
-  handleEditorChange(e) {
+  handleEditorChange(content) {
     this.setState({
-      docContent: e.target.getContent(),
+      content,
     });
   }
 
@@ -88,7 +131,29 @@ class DocListing extends React.Component {
    * @memberOf DocListing
    */
   saveDocument() {
-    //
+    const document = {};
+    const { user } = this.props.auth;
+    document.title = this.state.title;
+    document.content = this.state.content;
+    document.access = this.state.access;
+    document.author = user.fullname;
+    document.userId = user.id;
+    document.roleId = user.roleId;
+    this.props.createDocument(document)
+    .then(() => {
+      swal(
+        'Success',
+        'Document saved successfully!',
+        'success'
+      ).then(() => {
+        $('body #modal1').modal('close');
+      });
+    },
+    ({ response }) => {
+      this.setState({
+        errors: response.data,
+      });
+    });
   }
 
   /**
@@ -98,8 +163,8 @@ class DocListing extends React.Component {
    * @memberOf DocListing
    */
   cancelDocument() {
-    if (this.state.docTitle !== '' ||
-      this.state.docContent !== ''
+    if (this.state.title !== '' ||
+      this.state.content !== ''
     ) {
       swal({
         title: 'Are you sure?',
@@ -116,11 +181,11 @@ class DocListing extends React.Component {
       }).then(() => {
         $('body #modal1').modal('close');
         this.setState({
-          docTitle: '',
-          docContent: '',
-          docAccess: 0,
+          title: '',
+          content: '',
+          access: 0,
+          errors: {}
         });
-        tinymce.activeEditor.setContent('');
       });
     } else {
       $('body #modal1').modal('close');
@@ -134,13 +199,8 @@ class DocListing extends React.Component {
    * @memberOf DocListing
    */
   render() {
-    const dummy = [
-      { id: 1, title: 'Hello', date: '21 July', access: '0' },
-      { id: 2, title: 'World', date: '21 July', access: '1' },
-      { id: 3, title: 'Hello World', date: '21 July', access: '1' },
-      { id: 4, title: 'Big Day', date: '21 July', access: '1' }
-    ];
-    const Display = dummy.map(doc => (
+    const { errors, documents } = this.state;
+    const Display = documents.map(doc => (
       <SingleDoc
         id={doc.id}
         title={doc.title}
@@ -171,13 +231,19 @@ class DocListing extends React.Component {
         ' data-qux="42">look at me now</section>') }
         <div id="modal1" className="modal modal-fixed-footer">
           <div className="modal-content">
+            {
+              errors.message &&
+              <div className="errors">
+                <h5>{ errors.message }</h5>
+              </div>
+            }
             <div className="title">
               <div className="row">
                 <div className="col s12 m7 l8 xl8">
                   <input
                     type="text"
-                    value={this.state.docTitle}
-                    name="docTitle"
+                    value={this.state.title}
+                    name="title"
                     onChange={this.onChange}
                     placeholder="Enter Document Title"
                   />
@@ -185,11 +251,11 @@ class DocListing extends React.Component {
                 <div className="col s12 m5 l4 xl4">
                   <select
                     className="browser-default"
-                    name="docAccess"
-                    id="docAccess"
+                    name="access"
+                    id="access"
                     onChange={this.onChange}
                   >
-                    <option value="" disabled>Select Document Access</option>
+                    <option disabled>Select Document Access</option>
                     <option value="0">Public</option>
                     <option value="1">Private</option>
                     <option value="2">Role Based</option>
@@ -199,7 +265,13 @@ class DocListing extends React.Component {
               </div>
               <div className="clear" />
             </div>
-            <textarea name="" id="ckeditor" cols="" rows="10" className="browser-defaults" />
+            <textarea
+              name="editor"
+              id="editor"
+              cols=""
+              rows="10"
+              className="browser-defaults"
+            />
           </div>
           <div className="modal-footer">
             <span
@@ -211,7 +283,7 @@ class DocListing extends React.Component {
             <span
               id="saveDocument"
               className="modal-action waves-effect waves-green btn-flat"
-              onClick={() => this.saveDocument()}
+              onClick={this.saveDocument}
             >Save
             </span>
           </div>
@@ -225,14 +297,36 @@ class DocListing extends React.Component {
 
 DocListing.propTypes = {
   auth: PropTypes.shape({
-    isAuthenticated: PropTypes.bool.isRequired
-  }).isRequired
+    isAuthenticated: PropTypes.bool.isRequired,
+    user: PropTypes.shape({
+      id: PropTypes.number,
+      fullname: PropTypes.string,
+      username: PropTypes.string,
+      roleId: PropTypes.number,
+    }),
+  }).isRequired,
+  createDocument: PropTypes.func.isRequired,
+  getDocuments: PropTypes.func.isRequired,
+  documents: PropTypes.arrayOf(PropTypes.object).isRequired
+};
+
+DocListing.defaultProps = {
+  auth: PropTypes.shape({
+    user: PropTypes.shape({
+      id: null,
+      fullname: null,
+      username: null,
+      roleId: null,
+    }),
+  }),
 };
 
 const mapPropsToState = state => (
   {
-    auth: state.auth
+    auth: state.auth,
+    documents: state.documents
   }
 );
 
-export default connect(mapPropsToState)(DocListing);
+export default connect(mapPropsToState,
+{ createDocument, getDocuments })(withRouter(DocListing));
