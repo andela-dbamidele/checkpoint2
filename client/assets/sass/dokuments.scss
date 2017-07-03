@@ -218,18 +218,15 @@ nav {
       margin-bottom: 0px;
       padding: 10px;
     }
-    iframe {
-      min-height: 500px !important;
-      
-      html {
-        max-width: 500px !important;
-      }
-    }
 
     select {
       margin-top: 20px;
     }
   }
+}
+
+ #cke_1_contents {
+  min-height: 400px !important;
 }
 
 .single-document-wrapper {

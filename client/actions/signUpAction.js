@@ -12,3 +12,4 @@ const signUpAction = userData => (
 );
 
 export default signUpAction;
+

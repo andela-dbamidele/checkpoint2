@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { withRouter, Link } from 'react-router-dom';
 import logoutAction from '../../actions/logoutAction';
+import { deleteDocuments } from '../../actions/documentsAction';
 
 
 /**
@@ -26,6 +27,7 @@ class Header extends React.Component {
     // this.isLoggedIn = this.isLoggedIn.bind(this);
     this.logUserOut = this.logUserOut.bind(this);
     this.logoutAction = this.props.logoutAction;
+    this.deleteDocuments = this.props.deleteDocuments;
   }
 
   /**
@@ -66,10 +68,7 @@ class Header extends React.Component {
   logUserOut(e) {
     e.preventDefault();
     this.logoutAction().then(() => {
-      // this.setState = {
-      //   isAuthenticated: false,
-      //   user: {}
-      // };
+      this.deleteDocuments();
       this.props.history.push('/');
     });
   }
@@ -131,6 +130,8 @@ Header.propTypes = {
     push: PropTypes.func.isRequired
   }).isRequired,
   logoutAction: PropTypes.func.isRequired,
+  deleteDocuments: PropTypes.func.isRequired,
 };
 
-export default connect(mapStateToProps, { logoutAction })(withRouter(Header));
+export default connect(mapStateToProps,
+{ logoutAction, deleteDocuments })(withRouter(Header));

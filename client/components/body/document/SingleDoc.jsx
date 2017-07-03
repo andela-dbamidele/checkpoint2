@@ -35,12 +35,11 @@ SingleDoc.propTypes = {
   id: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   date: PropTypes.string,
-  access: PropTypes.string,
+  access: PropTypes.number.isRequired,
 };
 
 SingleDoc.defaultProps = {
   date: '',
-  access: '0'
 };
 
 export default SingleDoc;

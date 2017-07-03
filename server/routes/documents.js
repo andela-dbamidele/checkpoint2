@@ -1,5 +1,4 @@
 import express from 'express';
-import _ from 'lodash';
 import validateDocumentData from '../shared/validators/documentPostData';
 import { isDigit, validateAccess } from '../../server/shared/helpers';
 import authenticateUser from './middlewares/authenticateUsers';
@@ -52,7 +51,8 @@ router.post('/', authenticateUser, (req, res) => {
 // returns error on error
 router.get('/', authenticateUser, (req, res) => {
   let queryParams;
-
+  const userRoleId = req.authenticatedUser.roleId;
+  const userId = req.authenticatedUser.id;
   // check for `limit` and `offset` params in the query
   if (req.query.limit !== undefined && req.query.offset !== undefined) {
     const limit = parseInt(req.query.limit, 0);
@@ -69,12 +69,43 @@ router.get('/', authenticateUser, (req, res) => {
     queryParams = {
       offset,
       limit,
+      where: {
+        $or: [
+          {
+            access: 0,
+          },
+          {
+            access: 1,
+            userId
+          },
+          {
+            access: 2,
+            roleId: userRoleId
+          }
+        ]
+      },
+      order: [['createdAt', 'DESC']]
     };
   } else {
-    queryParams = {};
+    queryParams = {
+      where: {
+        $or: [
+          {
+            access: 0,
+          },
+          {
+            access: 1,
+            userId
+          },
+          {
+            access: 2,
+            roleId: userRoleId
+          }
+        ]
+      },
+      order: [['createdAt', 'DESC']]
+    };
   }
-  const userRoleId = req.authenticatedUser.roleId;
-  const userId = req.authenticatedUser.id;
   // query the database for documents
   Document.findAll(queryParams)
   .then((doc) => {
@@ -85,17 +116,9 @@ router.get('/', authenticateUser, (req, res) => {
       });
     }
 
-    // sends all the documents if the user is an Admin
-    if (userRoleId === 1) {
-      return res.status(200).send(doc);
-    }
-    const publicDoc = _.filter(doc, { access: 0 });
-    const roleDoc = _.filter(doc, { access: 2, roleId: userRoleId });
-    const privateDoc = _.filter(doc, { access: 1, userId });
-
     // sends the public document and other documents
     // that the user have access to
-    return res.status(200).send(_.union(publicDoc, roleDoc, privateDoc));
+    return res.status(200).send(doc);
   })
   .catch(error => res.status(400).send(error));
 });

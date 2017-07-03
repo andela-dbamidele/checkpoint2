@@ -32,7 +32,8 @@ router.post('/login', (req, res) => {
       const token = jwt.sign({
         id: user.dataValues.id,
         username: user.dataValues.username,
-        fullname: user.dataValues.fullname
+        fullname: user.dataValues.fullname,
+        roleId: user.dataValues.roleId
       }, config.jwtSecret);
       // returns token after successfull verification
       res.status(200).send({

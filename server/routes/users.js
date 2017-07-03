@@ -16,7 +16,7 @@ router.post('/', (req, res) => {
   if (!isValid) {
     return res.status(400).send(errors);
   }
-  const password = bcrypt.hashSync(req.body.password, 10);
+  const password = bcrypt.hashSync(req.body.password);
   User.findOne({
     where: {
       $or: [{ username: req.body.username },
@@ -39,7 +39,8 @@ router.post('/', (req, res) => {
       const token = jwt.sign({
         id: savedUser.id,
         username: savedUser.username,
-        fullname: savedUser.fullname
+        fullname: savedUser.fullname,
+        roleId: savedUser.roleId
       }, config.jwtSecret);
       res.status(201).send({ savedUser, token });
     })

@@ -27,6 +27,13 @@ class LoginPage extends React.Component {
     this.signUpAction = this.props.signUpAction;
   }
 
+  /**
+   * Check if the user is authenticated
+   * when component is loaded
+   * @method componentDidMount
+   * @return {void}
+   * @memberOf LoginPage
+   */
   componentDidMount() {
     if (this.props.auth.isAuthenticated) {
       this.props.history.push('/documents');
