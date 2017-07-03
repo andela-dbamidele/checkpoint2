@@ -33,6 +33,7 @@ class DocHeader extends React.Component {
     if (!this.props.auth.isAuthenticated) {
       this.props.history.push('/login');
     }
+    $('.button-collapse').sideNav();
   }
 
   /**

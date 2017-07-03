@@ -6836,12 +6836,11 @@ nav {
     .modal .modal-content input {
       margin-bottom: 0px;
       padding: 10px; }
-    .modal .modal-content iframe {
-      min-height: 500px !important; }
-      .modal .modal-content iframe html {
-        max-width: 500px !important; }
     .modal .modal-content select {
       margin-top: 20px; }
+
+#cke_1_contents {
+  min-height: 400px !important; }
 
 .single-document-wrapper {
   background-color: #EEEEEE;

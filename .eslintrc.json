@@ -12,6 +12,7 @@
     "CKEDITOR": true
   },
     "rules": {
+    "class-methods-use-this": ["error", { "exceptMethods": ["openModal"] }],
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "react/jsx-boolean-value": "off",
     "react/no-array-index-key": "off",

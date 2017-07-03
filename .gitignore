@@ -3,3 +3,5 @@ node_modules
 coverage/
 .nyc_output
 .vscode
+client/assets/js
+!client/assets/js/bundle.js
