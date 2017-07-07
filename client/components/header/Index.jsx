@@ -88,7 +88,12 @@ class Header extends React.Component {
         <nav>
           <div className="nav-wrapper">
             <span>
-              <Link to="/" className="brand-logo">Dokuments&trade;</Link>
+              <Link
+                to={loggedIn ? '/documents' : '/'}
+                className="brand-logo"
+              >
+                Dokuments&trade;
+              </Link>
             </span>
             <ul id="nav-mobile" className="right hide-on-med-and-down">
               {

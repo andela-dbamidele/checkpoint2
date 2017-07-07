@@ -105,6 +105,7 @@ describe('API Routes', () => {
           username: 'boluwatifemi',
           fullname: 'Bingo',
           password: '123456',
+          passwordConfirmation: '123456',
           email: 'greatbolutife@gmail.com',
           roleId: 1
         }).then((err) => {
@@ -143,6 +144,7 @@ describe('API Routes', () => {
           username: 'boluwatifemi',
           fullname: 'Bingo',
           password: '123456',
+          passwordConfirmation: '123456',
           email: 'greatbolutife@gmail.com',
           roleId: 1
         };
@@ -153,6 +155,7 @@ describe('API Routes', () => {
         .send(user)
         .end((err, res) => {
           if (!err) {
+            console.log(res.body);
             expect(res.status).to.equal(400);
             expect(res.body.message).to
             .equal('Username and email must be unique');
@@ -166,6 +169,7 @@ describe('API Routes', () => {
           username: 'db',
           fullname: 'Bamidele Daniel',
           password: '123456',
+          passwordConfirmation: '123456',
           email: 'greatbol@gmail.com',
           roleId: 1
         };
@@ -176,12 +180,12 @@ describe('API Routes', () => {
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(201);
-            expect(res.body).to.have.property('id');
-            expect(res.body.username).to.equal('db');
-            expect(res.body.fullname).to.equal('Bamidele Daniel');
-            expect(res.body.email).to.equal('greatbol@gmail.com');
-            expect(res.body).to.have.property('createdAt');
-            expect(res.body).to.have.property('updatedAt');
+            expect(res.body).to.have.property('savedUser');
+            expect(res.body.savedUser.username).to.equal('db');
+            expect(res.body.savedUser.fullname).to.equal('Bamidele Daniel');
+            expect(res.body.savedUser.email).to.equal('greatbol@gmail.com');
+            expect(res.body.savedUser).to.have.property('createdAt');
+            expect(res.body.savedUser).to.have.property('updatedAt');
           }
           done();
         });

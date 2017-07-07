@@ -1,4 +1,7 @@
-import { ADD_TO_DOCUMENTS, SET_DOCUMENTS_TO_STATE } from '../actions/type';
+import {
+  ADD_TO_DOCUMENTS,
+  SET_DOCUMENTS_TO_STATE,
+} from '../actions/type';
 
 const initialState = [];
 
