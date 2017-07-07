@@ -37,6 +37,7 @@ nav {
   color: #878B8D !important;
   background-color: #fff !important;
   text-transform: uppercase;
+  font-size: 11px !important;
   
   ul {
     a {
@@ -211,6 +212,10 @@ nav {
   max-height: 600px !important;
   height: 600px !important;
   max-width: 826px !important;
+  span, i, button {
+    font-size: 11px !important;
+    max-width: 60px !important;
+  }
   .modal-content {
     padding: 0px !important;
 
@@ -222,10 +227,14 @@ nav {
     select {
       margin-top: 20px;
     }
+
+    iframe {
+      min-height: 400px !important;
+    }
   }
 }
 
- #cke_1_contents {
+.mce-content-body {
   min-height: 400px !important;
 }
 
@@ -235,9 +244,47 @@ nav {
   display: block;
   position: relative;
   padding: 40px 5px;
+  .editorTools {
+    position: fixed;
+    width: 50px;
+    top: 160px;
+    left: 0px;
+    background-color: #fff;
+    padding: 5px;
+    text-align: center;
+    z-index: 99999999;
+    span {
+      display: block;
+      padding: 5px;
+      cursor: pointer;
+    }
+  }
   .content-wrap {
     max-width: 826px;
     margin: 0 auto;
+    .title {
+      background-color: #fff;
+      padding: 10px;
+      margin-bottom: 5px;
+
+      h3 {
+        font-size: 20px;
+      }
+
+      i {
+        font-size: 13px !important;
+        margin-right: 5px;
+      }
+
+      p {
+        margin: 0;
+      }
+    }
+
+    span, i, button {
+      font-size: 11px;
+      max-width: 60px;
+    }
     .content {
       min-height: 500px;
       background-color: #fff;

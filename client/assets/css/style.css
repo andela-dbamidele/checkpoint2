@@ -6709,7 +6709,8 @@ p {
 nav {
   color: #878B8D !important;
   background-color: #fff !important;
-  text-transform: uppercase; }
+  text-transform: uppercase;
+  font-size: 11px !important; }
   nav ul a {
     color: #878B8D;
     font-size: 12px !important; }
@@ -6831,6 +6832,9 @@ nav {
   max-height: 600px !important;
   height: 600px !important;
   max-width: 826px !important; }
+  .modal span, .modal i, .modal button {
+    font-size: 11px !important;
+    max-width: 60px !important; }
   .modal .modal-content {
     padding: 0px !important; }
     .modal .modal-content input {
@@ -6838,8 +6842,10 @@ nav {
       padding: 10px; }
     .modal .modal-content select {
       margin-top: 20px; }
+    .modal .modal-content iframe {
+      min-height: 400px !important; }
 
-#cke_1_contents {
+.mce-content-body {
   min-height: 400px !important; }
 
 .single-document-wrapper {
@@ -6848,9 +6854,36 @@ nav {
   display: block;
   position: relative;
   padding: 40px 5px; }
+  .single-document-wrapper .editorTools {
+    position: fixed;
+    width: 50px;
+    top: 160px;
+    left: 0px;
+    background-color: #fff;
+    padding: 5px;
+    text-align: center;
+    z-index: 99999999; }
+    .single-document-wrapper .editorTools span {
+      display: block;
+      padding: 5px;
+      cursor: pointer; }
   .single-document-wrapper .content-wrap {
     max-width: 826px;
     margin: 0 auto; }
+    .single-document-wrapper .content-wrap .title {
+      background-color: #fff;
+      padding: 10px;
+      margin-bottom: 5px; }
+      .single-document-wrapper .content-wrap .title h3 {
+        font-size: 20px; }
+      .single-document-wrapper .content-wrap .title i {
+        font-size: 13px !important;
+        margin-right: 5px; }
+      .single-document-wrapper .content-wrap .title p {
+        margin: 0; }
+    .single-document-wrapper .content-wrap span, .single-document-wrapper .content-wrap i, .single-document-wrapper .content-wrap button {
+      font-size: 11px;
+      max-width: 60px; }
     .single-document-wrapper .content-wrap .content {
       min-height: 500px;
       background-color: #fff;

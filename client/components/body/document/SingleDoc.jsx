@@ -4,13 +4,11 @@ import { Link } from 'react-router-dom';
 
 const SingleDoc = (props) => {
   const { id, title, date, access } = props;
-  const displayIcon = access === 0 ? (
-    <i
-      className="material-icons"
-    >supervisor_account</i>
-  ) : (
-    <i className="material-icons">lock</i>
-  );
+  const accessIcons = [
+    'public',
+    'lock',
+    'supervisor_account'
+  ];
   return (
     <div className="col s12 m4 l3 xl3">
       <Link to={`/documents/read/${id}/`}>
@@ -19,9 +17,9 @@ const SingleDoc = (props) => {
             <img src="/imgs/docs.png" alt="" />
           </div>
           <div className="card-action">
-            <p>{title}</p>
+            <p className="truncate">{title}</p>
             <p>
-              { displayIcon }
+              <i className="material-icons">{ accessIcons[access] }</i>
               <span>&nbsp;Created on {date}&nbsp;</span>
             </p>
           </div>

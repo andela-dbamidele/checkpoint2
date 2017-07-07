@@ -168,8 +168,8 @@ router.put('/:id', authenticateUser, (req, res) => {
       message: 'Document id must be digit'
     });
   }
-  const userId = 1; // change this
-  const userRoleId = 5; // change this
+  const userId = req.authenticatedUser.id;
+  const userRoleId = req.authenticatedUser.roleId;
   Document.findById(req.params.id)
   .then((doc) => {
     if (!doc) {

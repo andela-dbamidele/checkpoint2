@@ -1,13 +1,14 @@
 import React from 'react';
-import Parser from 'html-react-parser';
 // import TinyMCE from 'react-tinymce';
 import swal from 'sweetalert2';
 // import CKeditor from 'ckeditor';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import _, { isEmpty } from 'lodash';
 import { createDocument, getDocuments } from '../../../actions/documentsAction';
 import SingleDoc from './SingleDoc';
+import TinyMceComponent from './TinyMceComponent';
 
 /**
  * Creates DocListing component
@@ -27,7 +28,7 @@ class DocListing extends React.Component {
     this.state = {
       title: '',
       content: '',
-      access: 0,
+      access: 1,
       errors: {},
       documents,
     };
@@ -36,7 +37,7 @@ class DocListing extends React.Component {
     this.onChange = this.onChange.bind(this);
     this.saveDocument = this.saveDocument.bind(this);
     this.cancelDocument = this.cancelDocument.bind(this);
-    this.setDocumentToState = this.setDocumentToState.bind(this);
+    // this.setDocumentToState = this.setDocumentToState.bind(this);
   }
 
   /**
@@ -47,15 +48,7 @@ class DocListing extends React.Component {
    */
   componentDidMount() {
     if (this.props.auth.isAuthenticated) {
-      CKEDITOR.config.height = 400;
-      CKEDITOR.replace('editor').on('change', (evt) => {
-        // getData() returns CKEditor's HTML content.
-        this.handleEditorChange(evt.editor.getData());
-      });
-      this.props.getDocuments()
-      .then(() => {
-        //
-      });
+      this.props.getDocuments();
     }
   }
 
@@ -67,7 +60,10 @@ class DocListing extends React.Component {
    * @memberOf DocListing
    */
   componentWillReceiveProps(nextProps) {
-    this.setDocumentToState(nextProps.documents);
+    this.setState({
+      documents: nextProps.documents,
+      errors: nextProps.errors
+    });
   }
 
 
@@ -140,19 +136,28 @@ class DocListing extends React.Component {
     document.userId = user.id;
     document.roleId = user.roleId;
     this.props.createDocument(document)
-    .then(() => {
-      swal(
-        'Success',
-        'Document saved successfully!',
-        'success'
-      ).then(() => {
-        $('body #modal1').modal('close');
-      });
-    },
-    ({ response }) => {
-      this.setState({
-        errors: response.data,
-      });
+    .then((response) => {
+      if (isEmpty(response)) {
+        swal(
+          'Success',
+          'Document saved successfully!',
+          'success'
+        ).then(() => {
+          $('body #modal1').modal('close');
+        });
+      } else {
+        let errors = '';
+        _.forEach(this.state.errors.document, (value, key) => {
+          errors += `<li key={${key}}>${value}</li>`;
+        });
+        swal({
+          type: 'error',
+          html: `${errors}`,
+          showCloseButton: true,
+          confirmButtonText:
+            'Ok',
+        });
+      }
     });
   }
 
@@ -180,6 +185,7 @@ class DocListing extends React.Component {
         buttonsStyling: false
       }).then(() => {
         $('body #modal1').modal('close');
+        tinymce.activeEditor.setContent('');
         this.setState({
           title: '',
           content: '',
@@ -219,7 +225,7 @@ class DocListing extends React.Component {
                 <img src="/imgs/add2.png" alt="" />
               </div>
               <div className="card-action">
-                <p>Create New Document</p>
+                <p className="truncate">Create New Document</p>
                 <p>&nbsp;</p>
               </div>
             </div>
@@ -227,8 +233,6 @@ class DocListing extends React.Component {
           {Display}
           <div className="clear" />
         </div>
-        { Parser('<section id="foo" class="bar baz"' +
-        ' data-qux="42">look at me now</section>') }
         <div id="modal1" className="modal modal-fixed-footer">
           <div className="modal-content">
             {
@@ -255,7 +259,10 @@ class DocListing extends React.Component {
                     id="access"
                     onChange={this.onChange}
                   >
-                    <option disabled>Select Document Access</option>
+                    <option
+                      defaultValue=""
+                      disabled
+                    >Select Document Access</option>
                     <option value="0">Public</option>
                     <option value="1">Private</option>
                     <option value="2">Role Based</option>
@@ -265,12 +272,9 @@ class DocListing extends React.Component {
               </div>
               <div className="clear" />
             </div>
-            <textarea
-              name="editor"
-              id="editor"
-              cols=""
-              rows="10"
-              className="browser-defaults"
+            <TinyMceComponent
+              id="tinymce" handleEditorChange={this.handleEditorChange}
+              content={this.state.content}
             />
           </div>
           <div className="modal-footer">
@@ -307,7 +311,10 @@ DocListing.propTypes = {
   }).isRequired,
   createDocument: PropTypes.func.isRequired,
   getDocuments: PropTypes.func.isRequired,
-  documents: PropTypes.arrayOf(PropTypes.object).isRequired
+  documents: PropTypes.arrayOf(PropTypes.object).isRequired,
+  errors: PropTypes.shape({
+    document: PropTypes.shape({})
+  }),
 };
 
 DocListing.defaultProps = {
@@ -319,12 +326,16 @@ DocListing.defaultProps = {
       roleId: null,
     }),
   }),
+  errors: PropTypes.shape({
+    document: {}
+  })
 };
 
 const mapPropsToState = state => (
   {
     auth: state.auth,
-    documents: state.documents
+    documents: state.documents,
+    errors: state.errors
   }
 );
 
