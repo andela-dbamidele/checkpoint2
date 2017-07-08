@@ -71,9 +71,14 @@ export function createDocument(document) {
  * @export
  * @returns {promise} -
  */
-export function getDocuments() {
+export function getDocuments(offset = 0, limit = 11) {
   return dispatch => (
-    axios.get('/api/documents')
+    axios.get('/api/documents', {
+      params: {
+        offset,
+        limit
+      }
+    })
   ).then(
     (response) => {
       dispatch(addAllDocumentsToState(response.data));
@@ -90,7 +95,10 @@ export function getDocuments() {
  */
 export function deleteDocuments() {
   return (dispatch) => {
-    dispatch(addAllDocumentsToState([]));
+    dispatch(addAllDocumentsToState({
+      rows: [],
+      count: 0
+    }));
   };
 }
 

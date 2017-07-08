@@ -38,7 +38,7 @@ router.get('/documents', authenticateUser, (req, res) => {
   }
   const userRoleId = req.authenticatedUser.roleId;
   const userId = req.authenticatedUser.id;
-  Document.findAll({
+  Document.findAndCountAll({
     where: {
       $and: {
         title: {
