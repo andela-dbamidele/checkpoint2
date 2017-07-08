@@ -31,7 +31,8 @@ class DocHeader extends React.Component {
     // redirect the user to login page
     // if he/she is not authenticated
     if (!this.props.auth.isAuthenticated) {
-      this.props.history.push('/login');
+      const requestedLocation = this.props.location.pathname;
+      this.props.history.push(`/login?redirect=${requestedLocation}`);
     }
     $('.button-collapse').sideNav();
   }
@@ -70,7 +71,10 @@ DocHeader.propTypes = {
   }).isRequired,
   auth: PropTypes.shape({
     isAuthenticated: PropTypes.bool.isRequired
-  }).isRequired
+  }).isRequired,
+  location: PropTypes.shape({
+    pathname: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 const mapPropsToState = state => (

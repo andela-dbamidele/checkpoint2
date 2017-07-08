@@ -153,7 +153,7 @@ router.get('/:id', authenticateUser, (req, res) => {
 
     // returns error if the user does not have access to the document
     if (!validatedUser) {
-      return res.status(200).send(errorMsg);
+      return res.status(400).send(errorMsg);
     }
 
     // returns the document if all is right
@@ -186,7 +186,7 @@ router.put('/:id', authenticateUser, (req, res) => {
       userRoleId
     );
     if (!validatedUser) {
-      return res.status(200).send(errorMsg);
+      return res.status(400).send(errorMsg);
     }
     Document.findAll({
       where: {
@@ -222,8 +222,8 @@ router.delete('/:id/', authenticateUser, (req, res) => {
       message: 'Document ID must be a number'
     });
   }
-  const userId = 1; // change this
-  const userRoleId = 5; // change this
+  const userId = req.authenticatedUser.id;
+  const userRoleId = req.authenticatedUser.roleId;
   Document.findById(req.params.id)
   .then((doc) => {
     if (!doc) {
@@ -240,7 +240,7 @@ router.delete('/:id/', authenticateUser, (req, res) => {
       userRoleId
     );
     if (!validatedUser) {
-      return res.status(200).send(errorMsg);
+      return res.status(400).send(errorMsg);
     }
     return doc.destroy()
       .then(() => res.status(200).send({

@@ -107,6 +107,10 @@ export function setSingleDocument(docId) {
     axios.get(`/api/documents/${docId}`)
   ).then((response) => {
     dispatch(addSingleDocFromDb(response.data));
+  },
+  ({ response }) => {
+    dispatch(setError(response.data));
+    return true;
   }
   );
 }
@@ -124,6 +128,25 @@ export function updateDocument(docId, data) {
     axios.put(`/api/documents/${docId}`, data)
   ).then((document) => {
     dispatch(updateAction(document.data));
+  },
+  ({ response }) => {
+    dispatch(setError(response.data));
+    return true;
+  });
+}
+
+/**
+ * Deletes a particular document
+ * @function deleteSingleDocument
+ * @export
+ * @param {int} docId
+ * @return {void}
+ */
+export function deleteSingleDocument(docId) {
+  return dispatch => (
+    axios.delete(`/api/documents/${docId}`)
+  ).then(() => {
+    //
   },
   ({ response }) => {
     dispatch(setError(response.data));

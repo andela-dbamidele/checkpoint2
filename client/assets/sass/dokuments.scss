@@ -7,6 +7,19 @@ html, body {
   font-family: arial, sans-serif;
 }
 
+$myWidth: 100%;
+$myHeight: 100%;
+$myPadding: 40px;
+$overlay: rgba(0,0,0, 0.6);
+
+.myBackground{
+  background-image: url('/imgs/hd3.jpg');
+  background-position: top;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: "Open Sans", "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
   font-weight: 300;
@@ -125,6 +138,36 @@ nav {
   }
 }
 
+.home-div{
+  height: auto;
+  position: relative;
+  display: flex;
+
+  img {
+    @extend .responsive-img
+  }
+
+  .home-inner {
+    @extend .valign-wrapper;
+    min-height: 75vh;
+    box-sizing: border-box;
+    padding: $myPadding;
+
+    .inner-content{
+      @extend .center-align;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+  }
+  .home-inner-white{
+    @extend .valign-wrapper;
+    min-height: 75vh;
+    box-sizing: border-box;
+    background-color: #fff;
+    padding: $myPadding;
+  }
+}
+
 .h500 {
   height: 500px;
 }
@@ -164,7 +207,7 @@ nav {
   min-height: 600px;
 
   .doc-body {
-    max-width: 70%;
+    max-width: 960px;
     margin: 0 auto;
     padding: 40px 10px;
   }

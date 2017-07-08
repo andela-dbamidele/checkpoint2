@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
+import queryString from 'query-string';
 /**
  * Creates Login form component
  * @class LoginForm
@@ -50,7 +51,8 @@ class LoginForm extends React.Component {
     });
     const { loginAction } = this.props;
     loginAction(this.state).then(() => {
-      this.props.history.push('/documents');
+      const requestedLocation = queryString.parse(this.props.location.search);
+      this.props.history.push(requestedLocation.redirect || '/documents');
     })
     .catch(({ response }) => {
       this.setState({
@@ -124,6 +126,9 @@ LoginForm.propTypes = {
   loginAction: PropTypes.func.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
+  }).isRequired,
+  location: PropTypes.shape({
+    search: PropTypes.string.isRequired,
   }).isRequired,
 };
 

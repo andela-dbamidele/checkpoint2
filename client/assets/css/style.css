@@ -1972,7 +1972,7 @@ a {
   text-decoration: none;
   -webkit-tap-highlight-color: transparent; }
 
-.valign-wrapper, .parallax-container .content-wrapper {
+.valign-wrapper, .parallax-container .content-wrapper, .home-div .home-inner, .home-div .home-inner-white {
   display: flex;
   align-items: center; }
 
@@ -2035,7 +2035,7 @@ i {
   i.large {
     font-size: 6rem; }
 
-img.responsive-img,
+img.responsive-img, .home-div img,
 video.responsive-video {
   max-width: 100%;
   height: auto; }
@@ -2439,7 +2439,7 @@ td, th {
 .right-align {
   text-align: right; }
 
-.center, .parallax-container .content-wrapper .content-body, .center-align {
+.center, .parallax-container .content-wrapper .content-body, .center-align, .home-div .home-inner .inner-content {
   text-align: center; }
 
 .left {
@@ -6687,6 +6687,13 @@ html, body {
   padding: 0 !important;
   font-family: arial, sans-serif; }
 
+.myBackground {
+  background-image: url("/imgs/hd3.jpg");
+  background-position: top;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed; }
+
 h1, h2, h3, h4, h5, h6 {
   font-family: "Open Sans", "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
   font-weight: 300;
@@ -6767,6 +6774,23 @@ nav {
     background-image: url("/imgs/doc_security.png");
     height: 500px; }
 
+.home-div {
+  height: auto;
+  position: relative;
+  display: flex; }
+  .home-div .home-inner {
+    min-height: 75vh;
+    box-sizing: border-box;
+    padding: 40px; }
+    .home-div .home-inner .inner-content {
+      max-width: 700px;
+      margin: 0 auto; }
+  .home-div .home-inner-white {
+    min-height: 75vh;
+    box-sizing: border-box;
+    background-color: #fff;
+    padding: 40px; }
+
 .h500 {
   height: 500px; }
 
@@ -6798,7 +6822,7 @@ nav {
   background-color: #EEEEEE;
   min-height: 600px; }
   .documents-wrapper .doc-body {
-    max-width: 70%;
+    max-width: 960px;
     margin: 0 auto;
     padding: 40px 10px; }
 
