@@ -6,7 +6,9 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import _, { isEmpty } from 'lodash';
-import { createDocument, getDocuments } from '../../../actions/documentsAction';
+import { createDocument,
+  getDocuments,
+ } from '../../../actions/documentsAction';
 import SingleDoc from './SingleDoc';
 import TinyMceComponent from './TinyMceComponent';
 
@@ -79,6 +81,7 @@ class DocListing extends React.Component {
       [e.target.name]: e.target.value,
     });
   }
+
 
   /**
    * Sets documents to state
@@ -219,7 +222,7 @@ class DocListing extends React.Component {
     return (
       <div className="row">
         <div>
-          <div className="col s12 m4 l3 xl3">
+          <div className="col s6 m4 l3 xl3">
             <div className="card" onClick={() => this.openModal()}>
               <div className="card-image">
                 <img src="/imgs/add2.png" alt="" />
@@ -328,7 +331,7 @@ DocListing.defaultProps = {
   }),
   errors: PropTypes.shape({
     document: {}
-  })
+  }),
 };
 
 const mapPropsToState = state => (
@@ -340,4 +343,6 @@ const mapPropsToState = state => (
 );
 
 export default connect(mapPropsToState,
-{ createDocument, getDocuments })(withRouter(DocListing));
+  { createDocument,
+    getDocuments,
+  })(withRouter(DocListing));

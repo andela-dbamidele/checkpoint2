@@ -10,7 +10,7 @@ const SingleDoc = (props) => {
     'supervisor_account'
   ];
   return (
-    <div className="col s12 m4 l3 xl3">
+    <div className="col s6 m4 l3 xl3">
       <Link to={`/documents/read/${id}/`}>
         <div className="card">
           <div className="card-image">

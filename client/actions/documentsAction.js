@@ -153,3 +153,25 @@ export function deleteSingleDocument(docId) {
     return true;
   });
 }
+
+/**
+ * Query the database for a document
+ * @function searchDocuments
+ * @export
+ * @param {string} searchString - the search string
+ * @return {void}
+ */
+export function searchDocuments(searchString) {
+  return dispatch => (
+    axios.get('/api/search/documents', {
+      params: {
+        q: searchString
+      }
+    })
+  ).then((response) => {
+    dispatch(addAllDocumentsToState(response.data));
+  },
+  ({ response }) => {
+    //
+  });
+}
