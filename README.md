@@ -10,9 +10,7 @@
   *  Users can sign up and sign in with a unique username and email
   *  User's can create, view, edit and delete documents
   *  It allows users to search for a particular document by title
-  *  Pagination is added to allow for
-  *  Allows users to save favorite news 
-  *  Allows users to share interesting news on social media
+  *  Pagination is added to allow for easy accessing of documents
 *  A demo of the app can be access on heroku via [here](https://docunia.herokuapp.com)
 
 ## Dependencies
