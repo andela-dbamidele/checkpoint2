@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { withRouter, Link } from 'react-router-dom';
 import logoutAction from '../../actions/logoutAction';
 import { deleteDocuments } from '../../actions/documentsAction';
+import SideBar from './SideBar';
 
 
 /**
@@ -41,6 +42,19 @@ class Header extends React.Component {
     this.setState({
       isAuthenticated,
       user
+    });
+  }
+
+  /**
+   * Initialize sidenav on page load
+   * @method componentDidMount
+   * @return {void}
+   * @memberOf Header
+   */
+  componentDidMount() {
+      // Initialize collapse button
+    $('.bolu').sideNav({
+      edge: 'left', // Choose the horizontal origin
     });
   }
 
@@ -95,6 +109,25 @@ class Header extends React.Component {
                 Dokuments&trade;
               </Link>
             </span>
+            {
+              user.roleId === 1 ? (
+                <a
+                  href="#!"
+                  data-activates="slide-out"
+                  className="button-collapse bolu"
+                >
+                  <i className="material-icons">menu</i>
+                </a>
+              ) : (
+                <a
+                  href="#!"
+                  data-activates="mobile-demo"
+                  className="button-collapse"
+                >
+                  <i className="material-icons">menu</i>
+                </a>
+              )
+            }
             <ul id="nav-mobile" className="right hide-on-med-and-down">
               {
                 loggedIn ? (
@@ -105,6 +138,19 @@ class Header extends React.Component {
                         href="/logout"
                         onClick={e => this.logUserOut(e)}
                       >Logout</a></li>
+                    {
+                      user.roleId === 1 && (
+                        <li>
+                          <a
+                            href="#!"
+                            data-activates="slide-out"
+                            className="bolu"
+                          >
+                            <i className="material-icons">menu</i>
+                          </a>
+                        </li>
+                      )
+                    }
                   </div>
                 ) : (
                   <div>
@@ -113,8 +159,33 @@ class Header extends React.Component {
                 )
               }
             </ul>
+            <ul className="side-nav" id="mobile-demo">
+              {
+                loggedIn ? (
+                  <span>
+                    <li>Welcome, {user.username}</li>
+                    <li>
+                      <a
+                        href="/logout"
+                        onClick={e => this.logUserOut(e)}
+                      >Logout</a></li>
+                  </span>
+                ) : (
+                  <div>
+                    <li><Link to="/documents">Get Started</Link></li>
+                  </div>
+                )
+              }
+            </ul>
+            <div className="clear" />
           </div>
+          <div className="clear" />
         </nav>
+        <SideBar
+          user={user}
+          logUserOut={this.logUserOut}
+        />
+        <div className="clear" />
       </div>
     );
   }

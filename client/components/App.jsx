@@ -8,6 +8,7 @@ import Homepage from './body/Homepage';
 import LoginPage from './body/LoginPage';
 import NotFound from './body/NotFound';
 import SingleDocumentPage from './body/SingleDocumentPage';
+import Users from './body/Users';
 
 const history = createBrowserHistory();
 
@@ -24,6 +25,7 @@ const App = () => (
             component={SingleDocumentPage}
           />
           <Route exact path="/login" component={LoginPage} />
+          <Route exact path="/users" component={Users} />
           <Route component={NotFound} />
         </Switch>
         <div className="clear" />

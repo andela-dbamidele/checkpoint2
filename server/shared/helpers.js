@@ -1,5 +1,3 @@
-import Validator from 'validator';
-
 /**
  * Check if input is digit
  * @function isDigit
@@ -8,7 +6,7 @@ import Validator from 'validator';
  * @returns {boolean} -
  */
 export function isDigit(number) {
-  if (!Validator.isNumeric(number)) return false;
+  if (isNaN(parseInt(number, 10))) return false;
   return true;
 }
 

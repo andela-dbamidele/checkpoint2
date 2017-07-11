@@ -33,7 +33,7 @@ class DocListing extends React.Component {
       title: '',
       content: '',
       access: 1,
-      errors: {},
+      errors: this.props.errors,
       documents: documents.rows,
       pageCount: Math.ceil(documents.count / this.docsPerPage),
       offset: 0
@@ -352,7 +352,10 @@ DocListing.propTypes = {
   }).isRequired,
   createDocument: PropTypes.func.isRequired,
   getDocuments: PropTypes.func.isRequired,
-  documents: PropTypes.arrayOf(PropTypes.object).isRequired,
+  documents: PropTypes.shape({
+    rows: PropTypes.arrayOf(PropTypes.object).isRequired,
+    count: PropTypes.number.isRequired,
+  }).isRequired,
   errors: PropTypes.shape({
     document: PropTypes.shape({})
   }),

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
 import validateInput from '../../../../server/shared/validators/usersData';
 
 /**
@@ -190,8 +191,11 @@ class SignupForm extends React.Component {
 }
 
 SignupForm.propTypes = {
-  signUpAction: PropTypes.func.isRequired
+  signUpAction: PropTypes.func.isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 
-export default SignupForm;
+export default withRouter(SignupForm);

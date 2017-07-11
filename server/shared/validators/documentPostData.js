@@ -12,13 +12,15 @@ const validateDocumentData = (data) => {
   if (data.roleId === undefined) {
     errors.roleId = 'Document role is required';
   }
-  if (data.roleId !== undefined && typeof (data.roleId) !== 'number') {
+  if (data.roleId !== undefined &&
+    typeof (parseInt(data.roleId, 10)) !== 'number') {
     errors.roleId = 'Role must be an integer';
   }
   if (data.userId === undefined) {
     errors.userId = 'User is required';
   }
-  if (data.userId !== undefined && typeof (data.userId) !== 'number') {
+  if (data.userId !== undefined &&
+    typeof (parseInt(data.userId, 10)) !== 'number') {
     errors.userId = 'User must be an integer';
   }
   return {

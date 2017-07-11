@@ -68,6 +68,8 @@ export function createDocument(document) {
 /**
  * gets document from databse and save to store
  * @function getDocuments
+ * @param {number} [offset=0]
+ * @param {number} [limit=10]
  * @export
  * @returns {promise} -
  */
@@ -180,6 +182,7 @@ export function searchDocuments(searchString) {
     dispatch(addAllDocumentsToState(response.data));
   },
   ({ response }) => {
-    //
+    dispatch(setError(response.data));
+    return true;
   });
 }
