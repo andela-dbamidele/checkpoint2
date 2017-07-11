@@ -101,14 +101,14 @@ describe('API Routes', () => {
         });
       });
 
-      it('returns error message if no document is found', (done) => {
+      it('returns empty array if no document is found', (done) => {
         request
         .get('/api/documents')
         .set('Accept', 'application/json')
         .set('Authorization', Auth)
         .end((err, res) => {
           if (!err) {
-            expect(res.body.message).to.equal('No document found!');
+            expect(res.body.rows).to.eqls([]);
           }
           done();
         });
