@@ -107,7 +107,7 @@ router.get('/', authenticateUser, (req, res) => {
     };
   }
   // query the database for documents
-  Document.findAll(queryParams)
+  Document.findAndCountAll(queryParams)
   .then((doc) => {
     // reutns error if no document is found
     if (doc.length === 0) {

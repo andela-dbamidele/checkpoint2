@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import _, { isEmpty } from 'lodash';
+import ReactPaginate from 'react-paginate';
 import { createDocument,
   getDocuments,
  } from '../../../actions/documentsAction';
@@ -27,18 +28,22 @@ class DocListing extends React.Component {
   constructor(props) {
     super(props);
     const { documents } = this.props;
+    this.docsPerPage = 11;
     this.state = {
       title: '',
       content: '',
       access: 1,
       errors: {},
-      documents,
+      documents: documents.rows,
+      pageCount: Math.ceil(documents.count / this.docsPerPage),
+      offset: 0
     };
     this.openModal = this.openModal.bind(this);
     this.handleEditorChange = this.handleEditorChange.bind(this);
     this.onChange = this.onChange.bind(this);
     this.saveDocument = this.saveDocument.bind(this);
     this.cancelDocument = this.cancelDocument.bind(this);
+    this.handlePageClick = this.handlePageClick.bind(this);
     // this.setDocumentToState = this.setDocumentToState.bind(this);
   }
 
@@ -63,8 +68,9 @@ class DocListing extends React.Component {
    */
   componentWillReceiveProps(nextProps) {
     this.setState({
-      documents: nextProps.documents,
-      errors: nextProps.errors
+      documents: nextProps.documents.rows,
+      errors: nextProps.errors,
+      pageCount: Math.ceil(nextProps.documents.count / this.docsPerPage)
     });
   }
 
@@ -202,6 +208,22 @@ class DocListing extends React.Component {
   }
 
   /**
+   * Handles pagination
+   * @method handlePageClick
+   * @param {any} data
+   * @return {void}
+   * @memberOf DocListing
+   */
+  handlePageClick(data) {
+    const selected = data.selected;
+    const offset = Math.ceil(selected * this.docsPerPage);
+
+    this.setState({ offset }, () => {
+      this.props.getDocuments(this.state.offset);
+    });
+  }
+
+  /**
    * Renders JSX component
    * @method render
    * @returns {void} - component
@@ -235,6 +257,21 @@ class DocListing extends React.Component {
           </div>
           {Display}
           <div className="clear" />
+        </div>
+        <div className="row">
+          <ReactPaginate
+            previousLabel={'previous'}
+            nextLabel={'next'}
+            breakLabel={<a href="">...</a>}
+            breakClassName={'break-me'}
+            pageCount={this.state.pageCount}
+            marginPagesDisplayed={2}
+            pageRangeDisplayed={5}
+            onPageChange={this.handlePageClick}
+            containerClassName={'pagination'}
+            subContainerClassName={'pages pagination'}
+            activeClassName={'active'}
+          />
         </div>
         <div id="modal1" className="modal modal-fixed-footer">
           <div className="modal-content">
@@ -276,7 +313,8 @@ class DocListing extends React.Component {
               <div className="clear" />
             </div>
             <TinyMceComponent
-              id="tinymce" handleEditorChange={this.handleEditorChange}
+              id="tinymce"
+              handleEditorChange={this.handleEditorChange}
               content={this.state.content}
             />
           </div>
