@@ -1,0 +1,18 @@
+{
+  "development": {
+    "username": "andeladeveloper",
+    "password": null,
+    "database": "dokuments",
+    "host": "localhost",
+    "dialect": "postgres"
+  },
+  "test": {
+    "use_env_variable": "DATABASE_URL",
+    "logging": false
+  },
+  "production": {
+    "use_env_variable": "DATABASE_URL",
+    "logging": false,
+    "dialect": "postgres"
+  }
+}

@@ -1,2 +1,8 @@
 node_modules
 .DS_Store
+coverage/
+.nyc_output
+.vscode
+client/assets/js
+client/assets/css
+!client/assets/js/bundle.js
