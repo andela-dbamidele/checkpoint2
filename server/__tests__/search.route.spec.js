@@ -118,13 +118,13 @@ describe('APi Routes', () => {
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(200);
-            expect(res.body).to.eqls([]);
+            expect(res.body.rows).to.eqls([]);
           }
           done();
         });
       });
 
-      it('should return an array of documents if found', (done) => {
+      it('should return an array if documents is found', (done) => {
         Document.create({
           title: 'Hey Man!',
           content: 'Mr Yo!',
@@ -141,7 +141,7 @@ describe('APi Routes', () => {
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(200);
-            expect(res.body.length).to.be.greaterThan(0);
+            expect(res.body.rows.length).to.be.greaterThan(0);
           }
           done();
         });

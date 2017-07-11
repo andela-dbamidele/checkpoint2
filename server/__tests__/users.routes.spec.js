@@ -89,7 +89,7 @@ describe('API Routes', () => {
         .set('Authorization', Auth)
         .end((err, res) => {
           if (!err) {
-            expect(res.body).to.be.an('array');
+            expect(res.body.rows).to.be.an('array');
           }
           done();
         });
@@ -155,7 +155,6 @@ describe('API Routes', () => {
         .send(user)
         .end((err, res) => {
           if (!err) {
-            console.log(res.body);
             expect(res.status).to.equal(400);
             expect(res.body.message).to
             .equal('Username and email must be unique');
