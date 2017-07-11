@@ -55,8 +55,8 @@ router.get('/', authenticateUser, (req, res) => {
   const userId = req.authenticatedUser.id;
   // check for `limit` and `offset` params in the query
   if (req.query.limit !== undefined && req.query.offset !== undefined) {
-    const limit = parseInt(req.query.limit, 0);
-    const offset = parseInt(req.query.offset, 0);
+    const limit = parseInt(req.query.limit, 10);
+    const offset = parseInt(req.query.offset, 10);
 
     // returns error if the limit and offset is not a number
     if (isNaN(limit) || isNaN(offset)) {
@@ -195,7 +195,7 @@ router.put('/:id', authenticateUser, (req, res) => {
     })
     .then((originalDoc) => {
       if (originalDoc.length !== 0 && (originalDoc[0].dataValues.id !==
-      parseInt(req.params.id, 0))) {
+      parseInt(req.params.id, 10))) {
         return res.status(400).send({
           message: 'Title already exists'
         });

@@ -50,9 +50,10 @@ router.post('/', (req, res) => {
 
 router.get('/', authenticateUser, (req, res) => {
   let queryParams;
+  const userId = req.authenticatedUser.id;
   if (req.query.limit !== undefined && req.query.offset !== undefined) {
-    const limit = parseInt(req.query.limit, 0);
-    const offset = parseInt(req.query.offset, 0);
+    const limit = parseInt(req.query.limit, 10);
+    const offset = parseInt(req.query.offset, 10);
     if (isNaN(limit) || isNaN(offset)) {
       return res.status(400).send({
         message: 'Search param must be a number'
@@ -60,12 +61,17 @@ router.get('/', authenticateUser, (req, res) => {
     }
     queryParams = {
       offset,
-      limit
+      limit,
+      where: {
+        id: {
+          $ne: userId,
+        }
+      }
     };
   } else {
     queryParams = {};
   }
-  User.findAll(queryParams)
+  User.findAndCountAll(queryParams)
   .then((user) => {
     // returns error if no user is found
     // very unlikely bcos there's always a default user
@@ -107,7 +113,7 @@ router.get('/:id', authenticateUser, (req, res) => {
 });
 
 router.get('/:id/documents', authenticateUser, (req, res) => {
-  if (!isDigit(req.params.id)) {
+  if (!isDigit(parseInt(req.params.id, 10))) {
     return res.status(400).send({
       message: 'Input must be digit'
     });
@@ -140,7 +146,14 @@ router.get('/:id/documents', authenticateUser, (req, res) => {
 });
 
 router.put('/:id', authenticateUser, (req, res) => {
-  if (!isDigit(req.params.id)) {
+  const userId = req.authenticatedUser.id;
+  const roleId = req.authenticatedUser.roleId;
+  if (req.params.id !== userId && roleId !== 1) {
+    return res.status(400).send({
+      message: 'You do not have enough permission to perform this action'
+    });
+  }
+  if (!isDigit(parseInt(req.params.id, 10))) {
     return res.status(400).send({
       message: 'Input must be digit'
     });
@@ -171,7 +184,7 @@ router.put('/:id', authenticateUser, (req, res) => {
 });
 
 router.delete('/:id/', authenticateUser, (req, res) => {
-  if (!isDigit(req.params.id)) {
+  if (isNaN(parseInt(req.params.id, 10))) {
     return res.status(400).send({
       message: 'Input must be digit'
     });

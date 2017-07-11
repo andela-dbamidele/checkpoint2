@@ -46,6 +46,28 @@ p {
   @extend .navbar-fixed;
 }
 
+.card {
+  margin-bottom: 0px !important;
+}
+
+.card-title {
+  span {
+    i {
+      margin-right: 10px;
+    }
+  }
+}
+
+.card-content {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+
+.card-reveal {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+
 nav {
   color: #878B8D !important;
   background-color: #fff !important;
@@ -183,6 +205,8 @@ nav {
 .pr-20 {
   padding-right: 20px;
 }
+
+#sidenav-overlay { z-index: 99 !important; }
 
 .column:nth-child(odd) {
   background-color: #F6F6F6;
@@ -348,6 +372,10 @@ nav {
   }
 }
 
+.button-collapse i {
+  color: #000;
+}
+
 .login-page-wrapper {
   .content {
     min-height: 600px;
@@ -395,6 +423,13 @@ nav {
 .p-t-50 {
   padding-top: 50px;
 }
+.p-5 {
+  padding: 5px;
+}
+
+.bg-white {
+  background-color: #fff;
+}
 
 .flex-box {
   display: flex;
@@ -402,7 +437,9 @@ nav {
   max-height: 640px;
   height: 640px;
 }
-
+.mt-10 {
+  margin-top: 10px;
+}
 @media only screen and (max-width : 600px) {
   .flex-box {
     height: 300px !important;
