@@ -36,12 +36,30 @@ router.get('/documents', authenticateUser, (req, res) => {
   if (req.query.q === undefined) {
     return res.send([]);
   }
+  const userRoleId = req.authenticatedUser.roleId;
+  const userId = req.authenticatedUser.id;
   Document.findAll({
     where: {
-      title: {
-        $iLike: `%${req.query.q}%`
+      $and: {
+        title: {
+          $iLike: `%${req.query.q}%`
+        },
+        $or: [
+          {
+            access: 0,
+          },
+          {
+            access: 1,
+            userId
+          },
+          {
+            access: 2,
+            roleId: userRoleId
+          }
+        ]
       }
-    }
+    },
+    order: [['createdAt', 'DESC']]
   })
   .then((docs) => {
     if (docs.length === 0) {

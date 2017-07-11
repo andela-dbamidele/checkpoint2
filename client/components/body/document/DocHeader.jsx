@@ -2,6 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import {
+  searchDocuments
+ } from '../../../actions/documentsAction';
 
 /**
  * Creates the document header
@@ -19,6 +22,7 @@ class DocHeader extends React.Component {
     this.state = {
       access: 'Public'
     };
+    this.searchDoc = this.searchDoc.bind(this);
   }
 
   /**
@@ -38,6 +42,18 @@ class DocHeader extends React.Component {
   }
 
   /**
+   * Calls the searchDocuments action to query
+   * the database
+   * @method searchDoc
+   * @param {object} e - event
+   * @return {void}
+   * @memberOf DocHeader
+   */
+  searchDoc(e) {
+    this.props.searchDocuments(e.target.value);
+  }
+
+  /**
    * Renders the component
    * @method render
    * @returns {void}
@@ -48,10 +64,20 @@ class DocHeader extends React.Component {
     return (
       <div className="doc-header">
         <div className="row">
-          <div className="col s12 m6 l7">
+          <div className="col s12 m5 l3">
             <p>Showing {filter} documents</p>
           </div>
-          <div className="col s12 m6 l5">
+          <div className="col s12 m7 l5">
+            <div className="pr-20">
+              <input
+                type="text"
+                className="broswer-default search-box"
+                placeholder="Search for documents..."
+                onChange={this.searchDoc}
+              />
+            </div>
+          </div>
+          <div className="col s12 m12 l4">
             <select className="browser-default" name="access" id="access">
               <option value="all">All Documents</option>
               <option value="public">Public Documents</option>
@@ -75,6 +101,7 @@ DocHeader.propTypes = {
   location: PropTypes.shape({
     pathname: PropTypes.string.isRequired,
   }).isRequired,
+  searchDocuments: PropTypes.func.isRequired
 };
 
 const mapPropsToState = state => (
@@ -83,4 +110,6 @@ const mapPropsToState = state => (
   }
 );
 
-export default connect(mapPropsToState)(withRouter(DocHeader));
+export default connect(mapPropsToState, {
+  searchDocuments
+})(withRouter(DocHeader));
