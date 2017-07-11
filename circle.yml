@@ -1,0 +1,6 @@
+machine:
+  node
+
+test:
+  pre:
+    - npm install -g sequelize-cli
