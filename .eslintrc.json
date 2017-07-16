@@ -9,7 +9,8 @@
     "console": true,
     "document": true,
     "location": true,
-    "tinymce": true
+    "tinymce": true,
+    "before": true
   },
     "rules": {
     "class-methods-use-this": ["error", { "exceptMethods": 

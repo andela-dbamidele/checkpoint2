@@ -4,26 +4,35 @@ import {
 } from '../actions/type';
 
 const initialState = {
-  rows: [],
-  count: 0
+  pageNumber: 0,
+  pageCount: 0,
+  pageSize: 0,
+  documents: [],
+  totalCount: 0
 };
 
 export default (state = initialState, action = {}) => {
   switch (action.type) {
     case ADD_TO_DOCUMENTS:
       return {
-        rows: [
+        pageNumber: state.pageNumber,
+        pageCount: state.pageCount,
+        pageSize: state.pageSize,
+        documents: [
           action.document,
-          ...state.rows
+          ...state.documents
         ],
-        count: state.count + 1
+        totalCount: state.totalCount + 1,
       };
     case SET_DOCUMENTS_TO_STATE:
       return {
-        rows: [
-          ...action.documents.rows
+        pageNumber: action.data.pageNumber,
+        pageCount: action.data.pageCount,
+        pageSize: action.data.pageSize,
+        documents: [
+          action.data.documents
         ],
-        count: action.documents.count
+        totalCount: action.totalCount,
       };
     default: return state;
   }

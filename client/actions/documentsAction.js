@@ -23,7 +23,7 @@ const addSingleDocFromDb = document => (
 const addAllDocumentsToState = documents => (
   {
     type: SET_DOCUMENTS_TO_STATE,
-    documents
+    data: documents
   }
 );
 

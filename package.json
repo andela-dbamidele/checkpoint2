@@ -8,7 +8,9 @@
     "dev": "nodemon --watch server --exec babel-node -- server/server.js",
     "jest": "jest --coverage client/",
     "pretest": "DATABASE_URL=postgres://pjbfflvb:RmtQNOQCPa20E2cyu4D5LvtEosF2XpOn@pellefant.db.elephantsql.com:5432/pjbfflvb NODE_ENV=test sequelize db:migrate",
-    "test": "DATABASE_URL=postgres://pjbfflvb:RmtQNOQCPa20E2cyu4D5LvtEosF2XpOn@pellefant.db.elephantsql.com:5432/pjbfflvb NODE_ENV=test PORT=3000 nyc --reporter=html --reporter=text mocha --timeout 90000 --compilers js:babel-register -- ./server/__tests__/**/*.spec.js && npm run coverage && npm run jest",
+    "test": "DATABASE_URL=postgres://pjbfflvb:RmtQNOQCPa20E2cyu4D5LvtEosF2XpOn@pellefant.db.elephantsql.com:5432/pjbfflvb NODE_ENV=test PORT=3000 nyc --reporter=html --reporter=text mocha --timeout 90000 --compilers js:babel-register -- ./server/__tests__/**/*.spec.js",
+    "prelocalTest": "NODE_ENV=localTest sequelize db:migrate",
+    "localTest": "NODE_ENV=localTest PORT=3000 nyc --reporter=html --reporter=text mocha --timeout 90000 --compilers js:babel-register -- ./server/__tests__/**/*.spec.js",
     "coverage": "codecov --token=a2b092fc-494a-4700-90eb-51092453b1c6"
   },
   "jest": {
@@ -33,6 +35,14 @@
       "<rootDir>/test-env.js"
     ],
     "setupTestFrameworkScriptFile": "jest-environment-jsdom"
+  },
+  "nyc": {
+    "exclude": [
+      "**/*.spec.js",
+      "server/server.js",
+      "server/models/index.js",
+      "build"
+    ]
   },
   "repository": {
     "type": "git",
