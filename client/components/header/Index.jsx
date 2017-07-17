@@ -106,7 +106,7 @@ class Header extends React.Component {
                 to={loggedIn ? '/documents' : '/'}
                 className="brand-logo"
               >
-                Dokuments&trade;
+                Docunia&trade;
               </Link>
             </span>
             {

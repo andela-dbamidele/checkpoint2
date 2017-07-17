@@ -1,10 +1,27 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
+/**
+ * TinyMce react component class
+ * @class TinyMceComponent
+ * @extends {Component}
+ */
 class TinyMceComponent extends Component {
+  /**
+   * Creates an instance of TinyMceComponent.
+   * @memberOf TinyMceComponent
+   */
   constructor() {
     super();
     this.state = { editor: null };
   }
+
+  /**
+   * Initialize tinymce on compnent mount
+   * @method ComponentDidMount
+   * @return {void}
+   * @memberOf TinyMceComponent
+   */
   componentDidMount() {
     tinymce.init({
       selector: `#${this.props.id}`,
@@ -29,10 +46,22 @@ class TinyMceComponent extends Component {
     });
   }
 
+  /**
+   * Remove instance of tinymce on compnent unmount
+   * @method ComponentWillUnmount
+   * @return {void}
+   * @memberOf TinyMceComponent
+   */
   componentWillUnmount() {
     tinymce.remove(this.state.editor);
   }
 
+  /**
+   * Renders the component
+   * @method render
+   * @return {void}
+   * @memberOf TinyMceComponent
+   */
   render() {
     return (
       <textarea
@@ -42,5 +71,11 @@ class TinyMceComponent extends Component {
     );
   }
 }
+
+TinyMceComponent.propTypes = {
+  id: PropTypes.string.isRequired,
+  handleEditorChange: PropTypes.func.isRequired,
+  content: PropTypes.string.isRequired,
+};
 
 export default TinyMceComponent;

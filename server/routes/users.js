@@ -49,28 +49,33 @@ router.post('/', (req, res) => {
 });
 
 router.get('/', authenticateUser, (req, res) => {
-  let queryParams;
   const userId = req.authenticatedUser.id;
-  if (req.query.limit !== undefined && req.query.offset !== undefined) {
-    const limit = parseInt(req.query.limit, 10);
-    const offset = parseInt(req.query.offset, 10);
-    if (isNaN(limit) || isNaN(offset)) {
-      return res.status(400).send({
-        message: 'Search param must be a number'
-      });
-    }
-    queryParams = {
-      offset,
-      limit,
-      where: {
-        id: {
-          $ne: userId,
-        }
-      }
-    };
-  } else {
-    queryParams = {};
+
+  let limit = req.query.limit;
+  let offset = req.query.offset;
+
+  // returns error if the limit and offset is not a number
+  if ((limit && offset) &&
+    (isNaN(limit) || isNaN(offset))) {
+    return res.status(400).send({
+      message: 'Search param must be a number'
+    });
   }
+
+  limit = limit || 16;
+  offset = offset || 0;
+
+  const queryParams = {
+    offset,
+    limit,
+    attributes: { exclude: ['updatedAt', 'password', 'createdAt'] },
+    where: {
+      id: {
+        $ne: userId,
+      }
+    }
+  };
+
   User.findAndCountAll(queryParams)
   .then((user) => {
     // returns error if no user is found
@@ -94,12 +99,7 @@ router.get('/:id', authenticateUser, (req, res) => {
       message: 'Input must be digit'
     });
   }
-  User.findById(req.params.id, {
-    include: [{
-      model: Document,
-      as: 'documents'
-    }]
-  })
+  User.findById(req.params.id)
   .then((user) => {
     if (!user) {
       return res.status(400)

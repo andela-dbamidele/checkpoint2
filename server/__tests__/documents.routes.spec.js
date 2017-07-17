@@ -41,10 +41,14 @@ describe('API Routes', () => {
             })
             .then((err) => {
               if (!err) {
-                Role.create({
+                Role.bulkCreate([{
                   name: 'Admin',
                   description: 'This is the Admin role'
-                }).then((err) => {
+                },
+                {
+                  name: 'Regular',
+                  description: 'This is the Regular role'
+                }]).then((err) => {
                   if (!err) {
                     //
                   }
@@ -89,26 +93,53 @@ describe('API Routes', () => {
       });
 
       it('returns data', (done) => {
+        Document.create({
+          title: 'Hello world......!',
+          content: 'Mr Yo!',
+          author: 'Bamidele Daniel',
+          category: 'games',
+          userId: 1,
+          roleId: 1
+        })
+        .then(() => {
+          //
+        });
         request
         .get('/api/documents')
         .set('Accept', 'application/json')
         .set('Authorization', Auth)
         .end((err, res) => {
           if (!err) {
+            expect(res.status).to.equal(200);
             expect(res.body).to.be.an('object');
+            expect(res.body.documents).to.have.length.greaterThan(0);
           }
           done();
         });
       });
 
-      it('returns empty array if no document is found', (done) => {
+      it('returns error for invalid offset and limit', (done) => {
+        request
+        .get('/api/documents/?limit=15&offset=fgdgfgff')
+        .set('Authorization', Auth)
+        .end((err, res) => {
+          if (!err) {
+            expect(res.status).to.equal(400);
+            expect(res.body.message).to.equal('Search param must be a number');
+          }
+          done();
+        });
+      });
+
+      it('returns error message if no document is found', (done) => {
         request
         .get('/api/documents')
         .set('Accept', 'application/json')
         .set('Authorization', Auth)
         .end((err, res) => {
           if (!err) {
-            expect(res.body.rows).to.eqls([]);
+            expect(res.status).to.equal(400);
+            expect(res.body.message).to.equal('No document found!');
           }
           done();
         });
@@ -135,7 +166,6 @@ describe('API Routes', () => {
       it('should throw error on missing fields', (done) => {
         const doc = {
           title: 'Hey yo!',
-          content: 'Mr Yo!',
         };
         request
         .post('/api/documents')
@@ -143,8 +173,9 @@ describe('API Routes', () => {
         .send(doc)
         .end((err, res) => {
           if (!err) {
-            expect(res.body.roleId).to.equal('Document role is required');
-            expect(res.body.userId).to.equal('User is required');
+            expect(res.status).to.equal(400);
+            expect(res.body.errors.content)
+            .to.equal('Content is required');
           }
           done();
         });
@@ -196,6 +227,147 @@ describe('API Routes', () => {
           done();
         });
       });
+
+      // it('should return database error for wrongly formated title',
+      // (done) => {
+      //   const doc = {
+      //     title: '345678987653456787',
+      //     content: 345678987653456787,
+      //     author: 1234567,
+      //   };
+      //   request
+      //   .post('/api/documents')
+      //   .set('Authorization', Auth)
+      //   .send(doc)
+      //   .end((err, res) => {
+      //     if (!err) {
+      //       expect(res.status).to.equal(400);
+      //     }
+      //     done();
+      //   });
+      // });
+    });
+
+    /**
+     * TEST GET /api/documents/{id}
+     */
+    describe('GET /api/documents/:id', () => {
+      beforeEach((done) => {
+        const user = {
+          username: 'db',
+          fullname: 'Bamidele Daniel',
+          password: '123456',
+          email: 'greatbolutife@gmail.com',
+          roleId: 1
+        };
+        User.bulkCreate([user,
+          {
+            username: 'dbs',
+            fullname: 'Bamidele Daniel',
+            password: '123456',
+            email: 'greatbolu@gmail.com',
+            roleId: 2
+          }]
+        ).then(() => {
+          done();
+        });
+      });
+      it('should throw error for invalid id', (done) => {
+        request
+        .get('/api/documents/sdfsfd/')
+        .set('Authorization', Auth)
+        .end((err, res) => {
+          if (!err) {
+            expect(res.status).to.equal(400);
+            expect(res.body.message).to
+            .equal('Input must be digit');
+          }
+          done();
+        });
+      });
+
+      it('should return error if document is not found', (done) => {
+        request
+        .get('/api/documents/1/')
+        .set('Authorization', Auth)
+        .end((err, res) => {
+          if (!err) {
+            expect(res.status).to.equal(400);
+            expect(res.body.message).to
+            .equal('Document not found');
+          }
+          done();
+        });
+      });
+
+      it('should throw error for Unathorized access', (done) => {
+        Document.create({
+          title: 'Hey buddy!',
+          content: 'Mr Yo!',
+          author: 'Bamidele Daniel',
+          category: '',
+          userId: 1,
+          roleId: 1,
+          access: 1
+        })
+        .then(() => {
+          //
+        });
+        const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXV' +
+        'CJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJiaW50aTQiLCJmdWxsbmF' +
+        'tZSI6IkVtbWFudWVsbGEiLCJyb2xlSWQiOjIsImlhdCI6MTQ5OTk3MTQwOH0.7F0Y' +
+        'TUWb4JJwhbWyNE-Mfaax4D_5124i1OLxFg-8OYc';
+        request
+        .get('/api/documents/1/')
+        .set('Authorization', token)
+        .end((err, res) => {
+          if (!err) {
+            expect(res.status).to.equal(400);
+            expect(res.body.message)
+            .to
+            .equal('Sorry, you do not have enough priviledges' +
+            ' to access this document!');
+          }
+          done();
+        });
+      });
+
+      it('should get a document a user has access to', (done) => {
+        Document.create({
+          title: 'Hey buddy!',
+          content: 'Mr Yo!',
+          author: 'Bamidele Daniel',
+          category: '',
+          userId: 1,
+          roleId: 1,
+          access: 1
+        })
+        .then(() => {
+          //
+        });
+
+        request
+        .get('/api/documents/1/')
+        .set('Authorization', Auth)
+        .end((err, res) => {
+          if (!err) {
+            expect(res.status).to.equal(200);
+          }
+          done();
+        });
+      });
+
+      it('should return database error for out of range values', (done) => {
+        request
+        .get('/api/documents/1949494994949494949494949494949449949494949/')
+        .set('Authorization', Auth)
+        .end((err, res) => {
+          if (!err) {
+            expect(res.status).to.equal(400);
+          }
+          done();
+        });
+      });
     });
 
     /**
@@ -210,10 +382,19 @@ describe('API Routes', () => {
           email: 'greatbolutife@gmail.com',
           roleId: 1
         };
-        User.create(user).then(() => {
+        User.bulkCreate([user,
+          {
+            username: 'dbs',
+            fullname: 'Bamidele Daniel',
+            password: '123456',
+            email: 'greatbolu@gmail.com',
+            roleId: 2
+          }]
+        ).then(() => {
           done();
         });
       });
+
       it('return error on invalid document id', (done) => {
         const doc = {
           title: 'Hey buddy!',
@@ -250,26 +431,86 @@ describe('API Routes', () => {
         });
       });
 
-      it('edits a single document', (done) => {
+      it('should throw error for Unathorized access', (done) => {
         Document.create({
           title: 'Hey buddy!',
           content: 'Mr Yo!',
           author: 'Bamidele Daniel',
           category: '',
           userId: 1,
-          roleId: 1
+          roleId: 1,
+          access: 1
+        })
+        .then(() => {
+          //
+        });
+        const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXV' +
+        'CJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJiaW50aTQiLCJmdWxsbmF' +
+        'tZSI6IkVtbWFudWVsbGEiLCJyb2xlSWQiOjIsImlhdCI6MTQ5OTk3MTQwOH0.7F0Y' +
+        'TUWb4JJwhbWyNE-Mfaax4D_5124i1OLxFg-8OYc';
+        request
+        .put('/api/documents/1/')
+        .set('Authorization', token)
+        .send({
+          content: 'Whats up buddy'
+        })
+        .end((err, res) => {
+          if (!err) {
+            expect(res.status).to.equal(400);
+            expect(res.body.message)
+            .to
+            .equal('Sorry, you do not have enough priviledges' +
+            ' to access this document!');
+          }
+          done();
+        });
+      });
+
+      it('edits a single document', (done) => {
+        Document.create({
+          title: 'Hey buddy!',
+          content: 'Mr Yo!',
+          author: 'Bamidele Daniel',
+          category: '',
         })
         .then(() => {
           request
           .put('/api/documents/1/')
           .set('Authorization', Auth)
-          .send({
-            content: 'Whats up buddy'
-          })
+          .send({})
           .end((err, res) => {
             if (!err) {
               expect(res.status).to.equal(201);
-              expect(res.body.content).to.equal('Whats up buddy');
+              expect(res.body.content).to.equal('Mr Yo!');
+            }
+            done();
+          });
+        });
+      });
+
+      it('throw error for duplicate title', (done) => {
+        Document.bulkCreate([{
+          title: 'Hey buddy!',
+          content: 'Mr Yo!',
+          author: 'Bamidele Daniel',
+          category: '',
+        }, {
+          title: 'Hey Yo!',
+          content: 'Mr Yo!',
+          author: 'Bamidele Daniel',
+          category: '',
+        }])
+        .then(() => {
+          request
+          .put('/api/documents/1/')
+          .set('Authorization', Auth)
+          .send({
+            title: 'Hey Yo!',
+          })
+          .end((err, res) => {
+            if (!err) {
+              expect(res.status).to.equal(400);
+              expect(res.body.message).to.equal('Title already exists');
             }
             done();
           });
@@ -289,10 +530,19 @@ describe('API Routes', () => {
           email: 'greatbolutife@gmail.com',
           roleId: 1
         };
-        User.create(user).then(() => {
+        User.bulkCreate([user,
+          {
+            username: 'dbs',
+            fullname: 'Bamidele Daniel',
+            password: '123456',
+            email: 'greatbolu@gmail.com',
+            roleId: 2
+          }]
+        ).then(() => {
           done();
         });
       });
+
       it('returns error for invalid parameter', (done) => {
         request
         .delete('/api/documents/ad/')
@@ -314,6 +564,38 @@ describe('API Routes', () => {
           if (!err) {
             expect(res.status).to.equal(400);
             expect(res.body.message).to.equal('Document not found');
+          }
+          done();
+        });
+      });
+
+      it('should throw error for Unathorized access', (done) => {
+        Document.create({
+          title: 'Hey buddy!',
+          content: 'Mr Yo!',
+          author: 'Bamidele Daniel',
+          category: '',
+          userId: 1,
+          roleId: 1,
+          access: 1
+        })
+        .then(() => {
+          //
+        });
+        const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXV' +
+        'CJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJiaW50aTQiLCJmdWxsbmF' +
+        'tZSI6IkVtbWFudWVsbGEiLCJyb2xlSWQiOjIsImlhdCI6MTQ5OTk3MTQwOH0.7F0Y' +
+        'TUWb4JJwhbWyNE-Mfaax4D_5124i1OLxFg-8OYc';
+        request
+        .delete('/api/documents/1/')
+        .set('Authorization', token)
+        .end((err, res) => {
+          if (!err) {
+            expect(res.status).to.equal(400);
+            expect(res.body.message)
+            .to
+            .equal('Sorry, you do not have enough priviledges' +
+            ' to access this document!');
           }
           done();
         });

@@ -93,7 +93,7 @@ class SignupForm extends React.Component {
   render() {
     const { errors } = this.state;
     return (
-      <div className="row p-t-50">
+      <div className="row">
         <h3>Register</h3>
         { errors.message &&
           <div className="errors">
@@ -103,9 +103,7 @@ class SignupForm extends React.Component {
         <form className="col s12">
           <div className="row">
             <div className="input-field col s12">
-              <i className="material-icons prefix">account_circle</i>
               <input
-                id="icon_prefix"
                 type="text"
                 className="validate"
                 name="fullname"
@@ -117,9 +115,7 @@ class SignupForm extends React.Component {
             </div>
 
             <div className="input-field col s12">
-              <i className="material-icons prefix">face</i>
               <input
-                id="icon_prefix"
                 type="text"
                 className="validate"
                 name="username"
@@ -131,9 +127,7 @@ class SignupForm extends React.Component {
             </div>
 
             <div className="input-field col s12">
-              <i className="material-icons prefix">email</i>
               <input
-                id="icon_prefix"
                 type="email"
                 className="validate"
                 name="email"
@@ -145,9 +139,7 @@ class SignupForm extends React.Component {
             </div>
 
             <div className="input-field col s12">
-              <i className="material-icons prefix">vpn_key</i>
               <input
-                id="icon_prefix"
                 type="password"
                 className="validate"
                 name="password"
@@ -159,9 +151,7 @@ class SignupForm extends React.Component {
             </div>
 
             <div className="input-field col s12">
-              <i className="material-icons prefix">vpn_key</i>
               <input
-                id="icon_prefix"
                 type="password"
                 className="validate"
                 name="passwordConfirmation"
@@ -175,11 +165,11 @@ class SignupForm extends React.Component {
 
             <div className="input-field">
               <button
-                className="btn waves-effect waves-light"
+                className="btn waves-effect waves-light left btn-color"
                 type="submit"
                 name="action"
                 onClick={this.submitForm}
-              >Submit
+              >REGISTER NOW
                 <i className="material-icons right">send</i>
               </button>
             </div>
