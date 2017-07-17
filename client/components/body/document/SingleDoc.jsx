@@ -13,9 +13,6 @@ const SingleDoc = (props) => {
     <div className="col s6 m4 l3 xl3">
       <Link to={`/documents/read/${id}/`}>
         <div className="card">
-          <div className="card-image">
-            <img src="/imgs/docs.png" alt="" />
-          </div>
           <div className="card-action">
             <p className="truncate">{title}</p>
             <p>

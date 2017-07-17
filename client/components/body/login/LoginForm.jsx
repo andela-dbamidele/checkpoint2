@@ -72,7 +72,7 @@ class LoginForm extends React.Component {
   render() {
     const { errors } = this.state;
     return (
-      <div className="row p-t-50">
+      <div className="row">
         <h3>Login</h3>
         { errors.message &&
           <div className="errors">
@@ -82,21 +82,17 @@ class LoginForm extends React.Component {
         <form className="col s12">
           <div className="row">
             <div className="input-field col s12">
-              <i className="material-icons prefix">account_circle</i>
               <input
-                id="icon_prefix"
                 type="text"
                 className="validate"
                 name="identifier"
                 onChange={this.onChange}
               />
-              <label htmlFor="icon_prefix">Username</label>
+              <label htmlFor="icon_prefix">Username / Email</label>
             </div>
 
             <div className="input-field col s12">
-              <i className="material-icons prefix">vpn_key</i>
               <input
-                id="icon_prefix"
                 type="password"
                 className="validate"
                 name="password"
@@ -105,13 +101,13 @@ class LoginForm extends React.Component {
               <label htmlFor="icon_prefix">Password</label>
             </div>
 
-            <div className="input-field">
+            <div className="input-field col s12">
               <button
-                className="btn waves-effect waves-light"
+                className="btn waves-effect waves-light left btn-color"
                 type="submit"
                 name="action"
                 onClick={this.submitForm}
-              >Submit
+              >LOG IN
                 <i className="material-icons right">send</i>
               </button>
             </div>

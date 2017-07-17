@@ -63,7 +63,7 @@ class DocHeader extends React.Component {
     const filter = this.state.access;
     return (
       <div className="doc-header">
-        <div className="row">
+        <div className="row mt-20">
           <div className="col s12 m5 l3">
             <p>Showing {filter} documents</p>
           </div>

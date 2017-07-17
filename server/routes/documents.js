@@ -16,8 +16,14 @@ router.post('/', authenticateUser, (req, res) => {
   const { errors, isValid } = validateDocumentData(req.body);
   if (!isValid) {
     // returns error on invalid request
-    return res.status(400).send(errors);
+    return res.status(400).send({
+      status: 400,
+      errors
+    });
   }
+
+  const userRoleId = req.authenticatedUser.roleId;
+  const userId = req.authenticatedUser.id;
 
   // check the databse for duplicate title and throw error if there is
   Document.findOne({
@@ -28,6 +34,7 @@ router.post('/', authenticateUser, (req, res) => {
   .then((doc) => {
     if (doc) {
       return res.status(400).send({
+        status: 400,
         message: 'Document with the same title already exist',
       });
     }
@@ -36,13 +43,20 @@ router.post('/', authenticateUser, (req, res) => {
     Document.create({
       title: req.body.title,
       author: req.body.author,
-      roleId: req.body.roleId,
+      roleId: userRoleId,
       content: req.body.content,
-      userId: req.body.userId,
+      userId,
       access: req.body.access
     })
-    .then(newDoc => res.status(200).send(newDoc))
-    .catch(error => res.status(400).send(error));
+    .then(newDoc => res.status(200).send({
+      status: 200,
+      document: newDoc
+    }))
+    .catch((error) => {
+      res.status(400).send({
+        error
+      });
+    });
   });
 });
 
@@ -50,77 +64,79 @@ router.post('/', authenticateUser, (req, res) => {
 // returns all documents on success
 // returns error on error
 router.get('/', authenticateUser, (req, res) => {
-  let queryParams;
   const userRoleId = req.authenticatedUser.roleId;
   const userId = req.authenticatedUser.id;
-  // check for `limit` and `offset` params in the query
-  if (req.query.limit !== undefined && req.query.offset !== undefined) {
-    const limit = parseInt(req.query.limit, 10);
-    const offset = parseInt(req.query.offset, 10);
 
-    // returns error if the limit and offset is not a number
-    if (isNaN(limit) || isNaN(offset)) {
-      return res.status(400).send({
-        message: 'Search param must be a number'
-      });
-    }
+  let limit = req.query.limit;
+  let offset = req.query.offset;
 
-    // prepare a databse query param if query is present in the request
-    queryParams = {
-      offset,
-      limit,
-      where: {
-        $or: [
-          {
-            access: 0,
-          },
-          {
-            access: 1,
-            userId
-          },
-          {
-            access: 2,
-            roleId: userRoleId
-          }
-        ]
-      },
-      order: [['createdAt', 'DESC']]
-    };
-  } else {
-    queryParams = {
-      where: {
-        $or: [
-          {
-            access: 0,
-          },
-          {
-            access: 1,
-            userId
-          },
-          {
-            access: 2,
-            roleId: userRoleId
-          }
-        ]
-      },
-      order: [['createdAt', 'DESC']]
-    };
+  const pageNumber = Math.ceil(((req.query.offset) /
+    (req.query.limit)) + 1) || 1;
+
+  // returns error if the limit and offset is not a number
+  if ((limit && offset) &&
+    (isNaN(limit) || isNaN(offset))) {
+    return res.status(400).send({
+      message: 'Search param must be a number'
+    });
   }
+
+  limit = limit || 16;
+  offset = offset || 0;
+
+
+  // prepare a databse query param if query is present in the request
+  const queryParams = {
+    offset,
+    limit,
+    attributes: { exclude: ['updatedAt'] },
+    where: {
+      $or: [
+        {
+          access: 0,
+        },
+        {
+          access: 1,
+          userId
+        },
+        {
+          access: 2,
+          roleId: userRoleId
+        }
+      ]
+    },
+    order: [['createdAt', 'DESC']]
+  };
   // query the database for documents
   Document.findAndCountAll(queryParams)
   .then((doc) => {
     // reutns error if no document is found
-    if (doc.length === 0) {
+    if (doc.rows.length === 0) {
       return res.status(400).send({
+        status: 400,
         message: 'No document found!'
       });
     }
 
+    const pageCount = Math.ceil(doc.count / limit);
+    const pageSize = limit;
+    const totalCount = doc.count;
     // sends the public document and other documents
     // that the user have access to
-    return res.status(200).send(doc);
+    return res.status(200).send({
+      pageNumber,
+      pageCount,
+      pageSize,
+      totalCount,
+      documents: doc.rows,
+    });
   })
-  .catch(error => res.status(400).send(error));
+  .catch((error) => {
+    res.status(400).send({
+      status: 400,
+      error
+    });
+  });
 });
 
 router.get('/:id', authenticateUser, (req, res) => {
@@ -203,7 +219,7 @@ router.put('/:id', authenticateUser, (req, res) => {
       return doc.update({
         title: req.body.title || doc.title,
         author: req.body.author || doc.author,
-        roleId: req.body.roleId || doc.roleId,
+        roleId: userRoleId,
         content: req.body.content || doc.content,
         category: req.body.category || doc.category,
         access: req.body.access || doc.access

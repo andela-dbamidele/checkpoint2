@@ -34,8 +34,7 @@ export function validateAccess(
   if ((docAccess === 1 && docUserId !== userId) ||
     (docAccess === 2 && docRoleId !== userRoleId)) {
     validatedUser = false;
-    errorMsg.message = 'Sorry, you do not have' +
-      ' enough priviledges to access this document!';
+    errorMsg.message = 'You do not have access to this document';
   }
   return {
     errorMsg,

@@ -1,12 +1,11 @@
-import Validator from 'validator';
-import isEmpty from 'lodash/isEmpty';
+import { isEmpty } from 'lodash';
 
 const validateLogin = (data) => {
   const errors = {};
-  if (data.identifier === undefined || Validator.isEmpty(data.identifier)) {
+  if (data.identifier === undefined || isEmpty((data.identifier).toString())) {
     errors.identifier = 'Username or email is required';
   }
-  if (data.password === undefined || Validator.isEmpty(data.password)) {
+  if (data.password === undefined || isEmpty((data.password).toString())) {
     errors.password = 'Password cannot be empty';
   }
   return {

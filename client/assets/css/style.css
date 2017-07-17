@@ -6687,12 +6687,28 @@ html, body {
   padding: 0 !important;
   font-family: arial, sans-serif; }
 
+.myColor i {
+  color: rgba(0, 0, 0, 0.7) !important; }
+
+.col a {
+  color: rgba(0, 0, 0, 0.7); }
+  .col a p:nth-child(even) {
+    color: #999999; }
+
+.light-color {
+  background-color: #EEEEEE; }
+
 .myBackground {
   background-image: url("/imgs/hd3.jpg");
   background-position: top;
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed; }
+
+#login, #register {
+  background-color: #fff;
+  padding-bottom: 10px;
+  border-radius: 0px 0px 5px 5px; }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: "Open Sans", "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
@@ -6848,11 +6864,27 @@ nav {
 
 .documents-wrapper {
   background-color: #EEEEEE;
-  min-height: 600px; }
+  min-height: 600px;
+  position: relative; }
   .documents-wrapper .doc-body {
     max-width: 960px;
     margin: 0 auto;
-    padding: 40px 10px; }
+    padding: 40px 10px;
+    min-height: 600px; }
+  .documents-wrapper .paginate-fixed {
+    position: absolute;
+    bottom: -7px; }
+    .documents-wrapper .paginate-fixed .pagination a {
+      cursor: pointer !important; }
+    .documents-wrapper .paginate-fixed .pagination li {
+      border: thin solid #EEEEEE;
+      border-radius: 0px; }
+    .documents-wrapper .paginate-fixed .pagination .active {
+      background-color: #fff !important;
+      border: thin solid #fff;
+      border: none; }
+      .documents-wrapper .paginate-fixed .pagination .active a {
+        color: rgba(0, 0, 0, 0.7) !important; }
 
 .card {
   border: thin solid #f8f8f8;
@@ -6945,21 +6977,26 @@ nav {
   color: #000; }
 
 .login-page-wrapper .content {
-  min-height: 600px;
-  max-width: 860px;
+  min-height: 500px;
+  max-width: 400px;
   margin: 0 auto;
-  padding: 20px 5px; }
-  .login-page-wrapper .content .input-field button {
-    float: right; }
-  .login-page-wrapper .content .input-field input {
-    margin-bottom: 5px !important; }
-  .login-page-wrapper .content .input-field p {
-    margin-left: 40px;
-    font-size: 11px;
-    color: red;
-    margin-bottom: 10px !important; }
+  padding: 20px 5px;
+  text-align: left; }
+  .login-page-wrapper .content form {
+    padding: 0px; }
+  .login-page-wrapper .content .input-field {
+    padding: 0px; }
+    .login-page-wrapper .content .input-field button {
+      float: right; }
+    .login-page-wrapper .content .input-field input {
+      margin-bottom: 15px !important; }
+    .login-page-wrapper .content .input-field p {
+      margin-left: 40px;
+      font-size: 11px;
+      color: red;
+      margin-bottom: 10px !important; }
   .login-page-wrapper .content h3 {
-    margin-left: 20px; }
+    margin-top: 20px; }
   .login-page-wrapper .content .errors {
     background-color: #e57373;
     color: white;
@@ -6981,6 +7018,43 @@ nav {
 .bg-white {
   background-color: #fff; }
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus input:-webkit-autofill,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-text-fill-color: inherit !important;
+  box-shadow: 0 0 0px 1000px #FFFFFF inset;
+  transition: background-color 5000s ease-in-out 0s; }
+
+input:-webkit-autofill {
+  box-shadow: 0 0 0px 1000px white inset;
+  background-color: #fff !important; }
+
+.tabs {
+  border-radius: 5px 5px 0px 0px; }
+  .tabs .tab a {
+    background-color: #2D3B55;
+    color: #fff !important; }
+  .tabs .tab a:hover {
+    background-color: #2D3B55; }
+  .tabs .tab a.active {
+    background-color: #E8E9EC;
+    color: #666 !important; }
+  .tabs .indicator {
+    background-color: #E8E9EC; }
+
+.btn-color {
+  background-color: #2D3B55; }
+
+.fixed {
+  position: fixed;
+  top: 70px;
+  left: 50px; }
+
 .flex-box {
   display: flex;
   align-items: center;
@@ -6989,6 +7063,9 @@ nav {
 
 .mt-10 {
   margin-top: 10px; }
+
+.mt-20 {
+  margin-top: 20px; }
 
 @media only screen and (max-width: 600px) {
   .flex-box {

@@ -9,9 +9,11 @@ import _, { isEmpty } from 'lodash';
 import ReactPaginate from 'react-paginate';
 import { createDocument,
   getDocuments,
+  searchDocuments
  } from '../../../actions/documentsAction';
 import SingleDoc from './SingleDoc';
 import TinyMceComponent from './TinyMceComponent';
+import ErrorComponent from '../ErrorComponent';
 
 /**
  * Creates DocListing component
@@ -28,15 +30,17 @@ class DocListing extends React.Component {
   constructor(props) {
     super(props);
     const { documents } = this.props;
-    this.docsPerPage = 11;
+    this.docsPerPage = 16;
     this.state = {
       title: '',
       content: '',
       access: 1,
       errors: this.props.errors,
-      documents: documents.rows,
-      pageCount: Math.ceil(documents.count / this.docsPerPage),
-      offset: 0
+      documents: documents.documents,
+      pageCount: Math.ceil(documents.totalCount / this.docsPerPage),
+      offset: 0,
+      search: documents.search,
+      searchString: documents.searchString
     };
     this.openModal = this.openModal.bind(this);
     this.handleEditorChange = this.handleEditorChange.bind(this);
@@ -68,9 +72,11 @@ class DocListing extends React.Component {
    */
   componentWillReceiveProps(nextProps) {
     this.setState({
-      documents: nextProps.documents.rows,
+      documents: nextProps.documents.documents,
       errors: nextProps.errors,
-      pageCount: Math.ceil(nextProps.documents.count / this.docsPerPage)
+      pageCount: Math.ceil(nextProps.documents.totalCount / this.docsPerPage),
+      search: nextProps.documents.search,
+      searchString: nextProps.documents.searchString
     });
   }
 
@@ -153,6 +159,13 @@ class DocListing extends React.Component {
           'success'
         ).then(() => {
           $('body #modal1').modal('close');
+          tinymce.activeEditor.setContent('');
+          this.setState({
+            title: '',
+            content: '',
+            access: 0,
+            errors: {}
+          });
         });
       } else {
         let errors = '';
@@ -219,7 +232,11 @@ class DocListing extends React.Component {
     const offset = Math.ceil(selected * this.docsPerPage);
 
     this.setState({ offset }, () => {
-      this.props.getDocuments(this.state.offset);
+      if (this.state.search) {
+        this.props.searchDocuments(this.state.searchString, this.state.offset);
+      } else {
+        this.props.getDocuments(this.state.offset);
+      }
     });
   }
 
@@ -230,7 +247,7 @@ class DocListing extends React.Component {
    * @memberOf DocListing
    */
   render() {
-    const { errors, documents } = this.state;
+    const { errors, documents, search } = this.state;
     const Display = documents.map(doc => (
       <SingleDoc
         id={doc.id}
@@ -243,36 +260,44 @@ class DocListing extends React.Component {
     ));
     return (
       <div className="row">
+        <a
+          className={
+            'btn-floating btn-large waves-effect' +
+            'waves-light white fixed myColor'
+          }
+          onClick={() => this.openModal()}
+        >
+          <i className="material-icons">mode_edit</i>
+        </a>
         <div>
-          <div className="col s6 m4 l3 xl3">
-            <div className="card" onClick={() => this.openModal()}>
-              <div className="card-image">
-                <img src="/imgs/add2.png" alt="" />
-              </div>
-              <div className="card-action">
-                <p className="truncate">Create New Document</p>
-                <p>&nbsp;</p>
-              </div>
-            </div>
-          </div>
+          {documents.length === 0 && (
+            <ErrorComponent
+              errorMsg={search ? 'No matching document Found!' :
+              'No document Found! Start Creating....'}
+              errorType={404}
+            />
+          )}
           {Display}
           <div className="clear" />
         </div>
-        <div className="row">
-          <ReactPaginate
-            previousLabel={'previous'}
-            nextLabel={'next'}
-            breakLabel={<a href="">...</a>}
-            breakClassName={'break-me'}
-            pageCount={this.state.pageCount}
-            marginPagesDisplayed={2}
-            pageRangeDisplayed={5}
-            onPageChange={this.handlePageClick}
-            containerClassName={'pagination'}
-            subContainerClassName={'pages pagination'}
-            activeClassName={'active'}
-          />
-        </div>
+        {documents.length > 0 && (
+          <div className="row paginate-fixed">
+            <ReactPaginate
+              previousLabel={'previous'}
+              nextLabel={'next'}
+              breakLabel={<a href="">...</a>}
+              breakClassName={'break-me'}
+              pageCount={this.state.pageCount}
+              marginPagesDisplayed={2}
+              pageRangeDisplayed={5}
+              onPageChange={this.handlePageClick}
+              containerClassName={'pagination'}
+              subContainerClassName={'pages pagination'}
+              activeClassName={'active'}
+            />
+          </div>
+        )}
+        <div className="clear" />
         <div id="modal1" className="modal modal-fixed-footer">
           <div className="modal-content">
             {
@@ -352,9 +377,12 @@ DocListing.propTypes = {
   }).isRequired,
   createDocument: PropTypes.func.isRequired,
   getDocuments: PropTypes.func.isRequired,
+  searchDocuments: PropTypes.func.isRequired,
   documents: PropTypes.shape({
-    rows: PropTypes.arrayOf(PropTypes.object).isRequired,
-    count: PropTypes.number.isRequired,
+    documents: PropTypes.arrayOf(PropTypes.object).isRequired,
+    totalCount: PropTypes.number.isRequired,
+    search: PropTypes.bool.isRequired,
+    searchString: PropTypes.string.isRequired,
   }).isRequired,
   errors: PropTypes.shape({
     document: PropTypes.shape({})
@@ -386,4 +414,5 @@ const mapPropsToState = state => (
 export default connect(mapPropsToState,
   { createDocument,
     getDocuments,
+    searchDocuments
   })(withRouter(DocListing));
