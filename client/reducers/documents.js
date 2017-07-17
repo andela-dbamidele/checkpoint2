@@ -8,7 +8,9 @@ const initialState = {
   pageCount: 0,
   pageSize: 0,
   documents: [],
-  totalCount: 0
+  totalCount: 0,
+  search: false,
+  searchString: ''
 };
 
 export default (state = initialState, action = {}) => {
@@ -23,6 +25,8 @@ export default (state = initialState, action = {}) => {
           ...state.documents
         ],
         totalCount: state.totalCount + 1,
+        search: false,
+        searchString: ''
       };
     case SET_DOCUMENTS_TO_STATE:
       return {
@@ -30,9 +34,11 @@ export default (state = initialState, action = {}) => {
         pageCount: action.data.pageCount,
         pageSize: action.data.pageSize,
         documents: [
-          action.data.documents
+          ...action.data.documents
         ],
-        totalCount: action.totalCount,
+        totalCount: action.data.totalCount,
+        search: action.search,
+        searchString: action.searchString
       };
     default: return state;
   }

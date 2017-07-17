@@ -20,10 +20,13 @@ const addSingleDocFromDb = document => (
   }
 );
 
-const addAllDocumentsToState = documents => (
+const addAllDocumentsToState = (documents, search = false,
+  searchString = '') => (
   {
     type: SET_DOCUMENTS_TO_STATE,
-    data: documents
+    data: documents,
+    search,
+    searchString,
   }
 );
 
@@ -55,7 +58,7 @@ export function createDocument(document) {
     axios.post('/api/documents', document)
   ).then(
     (response) => {
-      dispatch(addSingleDocumentToState(response.data));
+      dispatch(addSingleDocumentToState(response.data.document));
     },
     ({ response }) => {
       const errors = response.data;
@@ -73,7 +76,7 @@ export function createDocument(document) {
  * @export
  * @returns {promise} -
  */
-export function getDocuments(offset = 0, limit = 11) {
+export function getDocuments(offset, limit) {
   return dispatch => (
     axios.get('/api/documents', {
       params: {
@@ -83,7 +86,7 @@ export function getDocuments(offset = 0, limit = 11) {
     })
   ).then(
     (response) => {
-      dispatch(addAllDocumentsToState(response.data));
+      dispatch(addAllDocumentsToState(response.data, false));
     }
   );
 }
@@ -98,8 +101,13 @@ export function getDocuments(offset = 0, limit = 11) {
 export function deleteDocuments() {
   return (dispatch) => {
     dispatch(addAllDocumentsToState({
-      rows: [],
-      count: 0
+      pageNumber: 0,
+      pageCount: 0,
+      pageSize: 0,
+      documents: [],
+      totalCount: 0,
+      search: false,
+      searchString: ''
     }));
   };
 }
@@ -169,17 +177,25 @@ export function deleteSingleDocument(docId) {
  * @function searchDocuments
  * @export
  * @param {string} searchString - the search string
+ * @param {number} offset -
+ * @param {number} limit -
  * @return {void}
  */
-export function searchDocuments(searchString) {
+export function searchDocuments(searchString, offset, limit) {
   return dispatch => (
     axios.get('/api/search/documents', {
       params: {
-        q: searchString
+        q: searchString,
+        offset,
+        limit
       }
     })
   ).then((response) => {
-    dispatch(addAllDocumentsToState(response.data));
+    let search = true;
+    if (searchString === '') {
+      search = false;
+    }
+    dispatch(addAllDocumentsToState(response.data, search, searchString));
   },
   ({ response }) => {
     dispatch(setError(response.data));

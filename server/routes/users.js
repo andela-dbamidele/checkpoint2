@@ -99,12 +99,7 @@ router.get('/:id', authenticateUser, (req, res) => {
       message: 'Input must be digit'
     });
   }
-  User.findById(req.params.id, {
-    include: [{
-      model: Document,
-      as: 'documents'
-    }]
-  })
+  User.findById(req.params.id)
   .then((user) => {
     if (!user) {
       return res.status(400)

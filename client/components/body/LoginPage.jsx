@@ -38,6 +38,7 @@ class LoginPage extends React.Component {
     if (this.props.auth.isAuthenticated) {
       this.props.history.push('/documents');
     }
+    $('ul.tabs').tabs();
   }
 
   /**
@@ -49,17 +50,28 @@ class LoginPage extends React.Component {
   render() {
     return (
       <div className="row login-page-wrapper">
-        <div className="content">
-          <div className="col s12 m6 l6 xl6">
-            <LoginForm loginAction={this.loginAction} />
-            <div className="clear" />
+        <div className="home-div">
+          <div className="col s12 home-inner light-color" id="notFound">
+            <div className="inner-content m-auto">
+              <div className="content">
+                <ul className="tabs">
+                  <li className="tab col s6"><a href="#login">Login</a></li>
+                  <li className="tab col s6">
+                    <a href="#register">Register</a>
+                  </li>
+                </ul>
+                <div id="login" className="col s12">
+                  <LoginForm loginAction={this.loginAction} />
+                  <div className="clear" />
+                </div>
+                <div id="register" className="col s12">
+                  <SignupForm signUpAction={this.signUpAction} />
+                  <div className="clear" />
+                </div>
+                <div className="clear" />
+              </div>
+            </div>
           </div>
-
-          <div className="col s12 m6 l6 xl6">
-            <SignupForm signUpAction={this.signUpAction} />
-            <div className="clear" />
-          </div>
-          <div className="clear" />
         </div>
       </div>
     );
