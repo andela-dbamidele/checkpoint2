@@ -18,7 +18,7 @@ import tinymceConfig from '../tinymceConfig.json';
  * @class SingleDocumentPage
  * @extends {React.Component}
  */
-class SingleDocumentPage extends React.Component {
+export class SingleDocumentPage extends React.Component {
   /**
    * Creates an instance of SingleDocumentPage.
    * @param {any} props
@@ -65,11 +65,10 @@ class SingleDocumentPage extends React.Component {
             loading: false,
             documentNotFound: true
           });
-        } else {
-          this.setState({
-            loading: false
-          });
         }
+        this.setState({
+          loading: false
+        });
       });
     }
   }
@@ -151,6 +150,7 @@ class SingleDocumentPage extends React.Component {
    * @memberOf SingleDocumentPage
    */
   saveChanges() {
+    $('body #saveChanges').attr('disabled', true);
     const docId = this.state.document.id;
     const newDoc = {};
     newDoc.title = this.state.editedTitle;
@@ -173,11 +173,14 @@ class SingleDocumentPage extends React.Component {
             'Ok',
         });
       } else {
-        swal(
-          'Success',
-          'Document saved successfully!',
-          'success'
-        ).then(() => {
+        $('body #saveChanges').hide();
+        swal({
+          title: 'Success',
+          html: 'Document saved successfully!',
+          type: 'success',
+          allowOutsideClick: false
+        }).then(() => {
+          $('body #saveChanges').show();
           this.removeEditor();
         });
       }
@@ -217,6 +220,8 @@ class SingleDocumentPage extends React.Component {
             allowOutsideClick: false
           });
         } else {
+          $('body #addEditor').remove();
+          $('body #deleteDocument').remove();
           swal(
             {
               type: 'success',
@@ -261,24 +266,26 @@ class SingleDocumentPage extends React.Component {
     return (
       <div className="row single-document-wrapper">
         {
-          loading ? (<h5>loading</h5>) : (
-            <div>
+          loading ? (
+            <div id="loading"><h5>loading</h5></div>
+          ) : (
+            <div id="documentDiv">
               { documentNotFound ?
                 (
-                  <div>
+                  <div id="notFound">
                     {
-                      errors.document.message ? (
-                        <h5>
+                      errors.document.message !== '' ? (
+                        <h5 id="403">
                           <ErrorComponent
                             errorMsg={errors.document.message}
-                            errorType={403}
+                            errorType={400}
                           />
                         </h5>
                       ) : (
-                        <h6>
+                        <h6 id="503">
                           <ErrorComponent
                             errorMsg={'System failure. Please try again Later!'}
-                            errorType={400}
+                            errorType={503}
                           />
                         </h6>
                       )
@@ -292,7 +299,10 @@ class SingleDocumentPage extends React.Component {
                       <div className="editorTools">
                         { editorOpen ? (
                           <div>
-                            <span onClick={this.saveChanges}>
+                            <span
+                              id="saveChanges"
+                              onClick={this.saveChanges}
+                            >
                               <i className="material-icons">save</i>
                             </span>
                             {/* <hr />
@@ -302,11 +312,17 @@ class SingleDocumentPage extends React.Component {
                           </div>
                         ) : (
                           <div>
-                            <span onClick={this.addEditor}>
+                            <span
+                              onClick={this.addEditor}
+                              id="addEditor"
+                            >
                               <i className="material-icons">mode_edit</i>
                             </span>
                             <hr />
-                            <span onClick={this.deleteDocument}>
+                            <span
+                              onClick={this.deleteDocument}
+                              id="deleteDocument"
+                            >
                               <i className="material-icons">delete_forever</i>
                             </span>
                           </div>

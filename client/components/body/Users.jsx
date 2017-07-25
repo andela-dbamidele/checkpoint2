@@ -14,7 +14,7 @@ import SingleUser from './users/SingleUser';
  * @class Users
  * @extends {Component}
  */
-class Users extends Component {
+export class Users extends Component {
   /**
    * Creates an instance of Users.
    * @param {object} props
@@ -25,11 +25,13 @@ class Users extends Component {
     this.usersPerPage = 10;
     const { users } = this.props;
     this.state = {
-      users,
+      users: users.users,
       pageCount: Math.ceil(users.count / this.docsPerPage),
       offset: 0,
       editedRole: '',
-      errors: this.props.errors
+      errors: this.props.errors,
+      loading: true,
+      cantSave: false
     };
     this.handlePageClick = this.handlePageClick.bind(this);
     this.onChange = this.onChange.bind(this);
@@ -63,8 +65,8 @@ class Users extends Component {
    */
   componentWillReceiveProps(nextProps) {
     this.setState({
-      users: nextProps.users,
-      pageCount: Math.ceil(nextProps.users.count / this.usersPerPage),
+      users: nextProps.users.users,
+      pageCount: Math.ceil(nextProps.users.totalCount / this.usersPerPage),
       errors: nextProps.errors,
     });
   }
@@ -101,6 +103,9 @@ class Users extends Component {
           this.props.getUsers();
         });
       } else {
+        this.setState({
+          cantSave: true
+        });
         swal(
           'Error',
           'You do not have enough privilege to perform this action',
@@ -169,7 +174,7 @@ class Users extends Component {
 
           <div className="row bg-white p-5 mt-10">
             {
-              users.rows.map(user => (
+              users.map(user => (
                 <SingleUser
                   key={user.id}
                   user={user}
@@ -205,7 +210,11 @@ class Users extends Component {
 }
 
 Users.propTypes = {
-  users: PropTypes.arrayOf[PropTypes.object],
+  users: PropTypes.shape({
+    pageCount: PropTypes.number.isRequired,
+    totalCount: PropTypes.number.isRequired,
+    users: PropTypes.arrayOf(PropTypes.object)
+  }),
   editUserRole: PropTypes.func.isRequired,
   getUsers: PropTypes.func.isRequired,
   deleteUser: PropTypes.func.isRequired,
@@ -223,7 +232,7 @@ Users.propTypes = {
 };
 
 Users.defaultProps = {
-  users: [],
+  users: [{}],
   errors: {}
 };
 

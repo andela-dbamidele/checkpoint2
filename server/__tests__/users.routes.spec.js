@@ -89,7 +89,7 @@ describe('API Routes', () => {
         .set('Authorization', Auth)
         .end((err, res) => {
           if (!err) {
-            expect(res.body.rows).to.be.an('array');
+            expect(res.body.users).to.be.an('array');
           }
           done();
         });
@@ -179,12 +179,6 @@ describe('API Routes', () => {
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(201);
-            expect(res.body).to.have.property('savedUser');
-            expect(res.body.savedUser.username).to.equal('db');
-            expect(res.body.savedUser.fullname).to.equal('Bamidele Daniel');
-            expect(res.body.savedUser.email).to.equal('greatbol@gmail.com');
-            expect(res.body.savedUser).to.have.property('createdAt');
-            expect(res.body.savedUser).to.have.property('updatedAt');
           }
           done();
         });
@@ -216,10 +210,10 @@ describe('API Routes', () => {
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(200);
-            expect(res.body.id).to.equal(1);
-            expect(res.body.username).to.equal('boluwatifemi');
-            expect(res.body.fullname).to.equal('Bingo');
-            expect(res.body.email).to.equal('greatbolutife@gmail.com');
+            expect(res.body.user.id).to.equal(1);
+            expect(res.body.user.username).to.equal('boluwatifemi');
+            expect(res.body.user.fullname).to.equal('Bingo');
+            expect(res.body.user.email).to.equal('greatbolutife@gmail.com');
           }
           done();
         });
@@ -231,7 +225,7 @@ describe('API Routes', () => {
         .set('Authorization', Auth)
         .end((err, res) => {
           if (!err) {
-            expect(res.status).to.equal(400);
+            expect(res.status).to.equal(404);
             expect(res.body.message).to.equal('User not found');
           }
           done();
@@ -305,10 +299,7 @@ describe('API Routes', () => {
         })
         .end((err, res) => {
           if (!err) {
-            expect(res.status).to.equal(201);
-            expect(res.body.username).to.equal('boluwatifemi');
-            expect(res.body.fullname).to.equal('Ibukunoluwa');
-            expect(res.body.email).to.equal('greatbolutife@gmail.com');
+            expect(res.status).to.equal(200);
           }
           done();
         });

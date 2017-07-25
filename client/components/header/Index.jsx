@@ -12,7 +12,7 @@ import SideBar from './SideBar';
  * @class Header
  * @extends {React.Component}
  */
-class Header extends React.Component {
+export class Header extends React.Component {
   /**
    * Creates an instance of Header.
    * @param {any} props
@@ -135,6 +135,7 @@ class Header extends React.Component {
                     <li>Welcome, {user.username}</li>
                     <li>
                       <a
+                        id="logout"
                         href="/logout"
                         onClick={e => this.logUserOut(e)}
                       >Logout</a></li>
@@ -166,6 +167,7 @@ class Header extends React.Component {
                     <li>Welcome, {user.username}</li>
                     <li>
                       <a
+                        id="logoutmobile"
                         href="/logout"
                         onClick={e => this.logUserOut(e)}
                       >Logout</a></li>

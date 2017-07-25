@@ -1,7 +1,7 @@
 import React from 'react';
 
 const HomeColumn1 = () => (
-  <div className="column">
+  <div id="home1" className="column">
     <div className="row">
       <div className="col s12 m6 l6 xl6 m-auto">
         <div className="content-wrapper">

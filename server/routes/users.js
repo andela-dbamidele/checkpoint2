@@ -42,9 +42,17 @@ router.post('/', (req, res) => {
         fullname: savedUser.fullname,
         roleId: savedUser.roleId
       }, config.jwtSecret);
-      res.status(201).send({ savedUser, token });
+      res.status(201).send({
+        status: 201,
+        message: 'Registration Successful',
+        token
+      });
     })
-    .catch(error => res.status(400).send(error));
+    .catch(error => res.status(400).send({
+      status: 400,
+      message: 'A fatal error was encountered, Please try again.',
+      error
+    }));
   });
 });
 
@@ -54,6 +62,9 @@ router.get('/', authenticateUser, (req, res) => {
   let limit = req.query.limit;
   let offset = req.query.offset;
 
+  const pageNumber = Math.ceil(((req.query.offset) /
+    (req.query.limit)) + 1) || 1;
+
   // returns error if the limit and offset is not a number
   if ((limit && offset) &&
     (isNaN(limit) || isNaN(offset))) {
@@ -62,7 +73,7 @@ router.get('/', authenticateUser, (req, res) => {
     });
   }
 
-  limit = limit || 16;
+  limit = limit || 10;
   offset = offset || 0;
 
   const queryParams = {
@@ -77,20 +88,34 @@ router.get('/', authenticateUser, (req, res) => {
   };
 
   User.findAndCountAll(queryParams)
-  .then((user) => {
+  .then((users) => {
     // returns error if no user is found
     // very unlikely bcos there's always a default user
-    if (user.length === 0) {
-      return res.status(200)
-        .send([
-          {
-            message: 'No Users found!'
-          }
-        ]);
+    if (users.length === 0) {
+      return res.status(404)
+        .send({
+          status: 404,
+          message: 'No Users found!'
+        });
     }
-    return res.status(200).send(user);
+
+    const pageCount = Math.ceil(users.count / limit);
+    const pageSize = limit;
+    const totalCount = users.count;
+
+    return res.status(200).send({
+      pageNumber,
+      pageCount,
+      pageSize,
+      totalCount,
+      users: users.rows,
+    });
   })
-  .catch(error => res.status(400).send(error));
+  .catch(error => res.status(400).send({
+    status: 400,
+    message: 'A fatal error was encountered, Please try again.',
+    error
+  }));
 });
 
 router.get('/:id', authenticateUser, (req, res) => {
@@ -102,22 +127,48 @@ router.get('/:id', authenticateUser, (req, res) => {
   User.findById(req.params.id)
   .then((user) => {
     if (!user) {
-      return res.status(400)
+      return res.status(404)
         .send({
+          status: 404,
           message: 'User not found'
         });
     }
-    return res.status(200).send(user);
+    return res.status(200).send({
+      status: 200,
+      user
+    });
   })
-  .catch(error => res.status(400).send(error));
+  .catch(error => res.status(400).send({
+    status: 400,
+    message: 'A fatal error was encountered, Please try again.',
+    error
+  }));
 });
 
 router.get('/:id/documents', authenticateUser, (req, res) => {
   if (!isDigit(parseInt(req.params.id, 10))) {
     return res.status(400).send({
+      status: 400,
       message: 'Input must be digit'
     });
   }
+
+  let limit = req.query.limit;
+  let offset = req.query.offset;
+
+  const pageNumber = Math.ceil(((req.query.offset) /
+    (req.query.limit)) + 1) || 1;
+
+  // returns error if the limit and offset is not a number
+  if ((limit && offset) &&
+    (isNaN(limit) || isNaN(offset))) {
+    return res.status(400).send({
+      message: 'Search param must be a number'
+    });
+  }
+
+  limit = limit || 16;
+  offset = offset || 0;
   User.findById(req.params.id)
   .then((user) => {
     if (!user) {
@@ -127,6 +178,8 @@ router.get('/:id/documents', authenticateUser, (req, res) => {
         });
     }
     Document.findAll({
+      limit,
+      offset,
       where: {
         userId: req.params.id,
         access: 0
@@ -134,15 +187,33 @@ router.get('/:id/documents', authenticateUser, (req, res) => {
     })
     .then((doc) => {
       if (doc.length === 0) {
-        return res.status(200).send({
+        return res.status(404).send({
+          status: 404,
           message: 'No Document for this user yet'
         });
       }
-      return res.status(200).send(doc);
+      const pageCount = Math.ceil(doc.count / limit);
+      const pageSize = limit;
+      const totalCount = doc.count;
+      return res.status(200).send({
+        pageNumber,
+        pageCount,
+        pageSize,
+        totalCount,
+        documents: doc.rows,
+      });
     })
-    .catch(error => res.status(400).send(error));
+    .catch(error => res.status(400).send({
+      status: 400,
+      message: 'A fatal error was encountered, Please try again.',
+      error
+    }));
   })
-  .catch(error => res.status(400).send(error));
+  .catch(error => res.status(400).send({
+    status: 400,
+    message: 'A fatal error was encountered, Please try again.',
+    error
+  }));
 });
 
 router.put('/:id', authenticateUser, (req, res) => {
@@ -150,11 +221,13 @@ router.put('/:id', authenticateUser, (req, res) => {
   const roleId = req.authenticatedUser.roleId;
   if (req.params.id !== userId && roleId !== 1) {
     return res.status(400).send({
+      status: 400,
       message: 'You do not have enough permission to perform this action'
     });
   }
   if (!isDigit(parseInt(req.params.id, 10))) {
     return res.status(400).send({
+      status: 400,
       message: 'Input must be digit'
     });
   }
@@ -163,6 +236,7 @@ router.put('/:id', authenticateUser, (req, res) => {
     if (!user) {
       return res.status(400)
         .send({
+          status: 400,
           message: 'User not found'
         });
     }
@@ -177,10 +251,30 @@ router.put('/:id', authenticateUser, (req, res) => {
       email: req.body.email || user.email,
       roleId: req.body.roleId || user.roleId
     })
-    .then(() => res.status(201).send(user))
-    .catch(error => res.status(400).send(error));
+    .then(() => {
+      const token = jwt.sign({
+        id: user.dataValues.id,
+        username: user.username,
+        fullname: user.fullname,
+        roleId: user.roleId
+      }, config.jwtSecret);
+      res.status(200).send({
+        status: 200,
+        message: 'Update successful',
+        token
+      });
+    })
+    .catch(error => res.status(400).send({
+      status: 400,
+      message: 'A fatal error was encountered, Please try again.',
+      error
+    }));
   })
-  .catch(error => res.status(400).send(error));
+  .catch(error => res.status(400).send({
+    status: 400,
+    message: 'A fatal error was encountered, Please try again.',
+    error
+  }));
 });
 
 router.delete('/:id/', authenticateUser, (req, res) => {
@@ -209,9 +303,17 @@ router.delete('/:id/', authenticateUser, (req, res) => {
       .then(() => res.status(200).json({
         message: 'User deleted successfully'
       }))
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(400).send({
+        status: 400,
+        message: 'A fatal error was encountered, Please try again.',
+        error
+      }));
   })
-  .catch(error => res.status(400).send(error));
+  .catch(error => res.status(400).send({
+    status: 400,
+    message: 'A fatal error was encountered, Please try again.',
+    error
+  }));
 });
 
 export default router;

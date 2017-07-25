@@ -16,6 +16,7 @@ const SingleUser = (props) => {
             <i
               className="material-icons"
               onClick={() => deleteSingleUser(id)}
+              id="deleteUser"
             >delete_forever</i>
           </span>
         </span>
@@ -26,6 +27,7 @@ const SingleUser = (props) => {
             <div className="col s7">
               <select
                 name="editedRole"
+                id="editedRole"
                 className="browser-default"
                 defaultValue={roleId}
                 onChange={onChange}
@@ -38,6 +40,7 @@ const SingleUser = (props) => {
               <span
                 className="btn"
                 onClick={() => editUser(id)}
+                id="editUser"
               >Change Role</span>
             </div>
             <div className="col s1">

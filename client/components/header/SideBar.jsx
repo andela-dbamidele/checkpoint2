@@ -4,7 +4,7 @@ import { isEmpty } from 'lodash';
 import { Link } from 'react-router-dom';
 
 const SideBar = ({ user, logUserOut }) => (
-  <div>
+  <div id="sidebar">
     {
       !isEmpty(user) ? (
         <ul id="slide-out" className="side-nav">
@@ -27,6 +27,7 @@ const SideBar = ({ user, logUserOut }) => (
           <li><a href="/roles">Manage Roles</a></li>
           <li>
             <a
+              id="logout"
               href="/logout"
               onClick={e => logUserOut(e)}
             >Logout</a></li>

@@ -69,6 +69,7 @@ router.get('/', authenticateUser, (req, res) => {
 
   let limit = req.query.limit;
   let offset = req.query.offset;
+  let access = req.query.access;
 
   const pageNumber = Math.ceil(((req.query.offset) /
     (req.query.limit)) + 1) || 1;
@@ -84,27 +85,38 @@ router.get('/', authenticateUser, (req, res) => {
   limit = limit || 16;
   offset = offset || 0;
 
+  // returns error if access is not a number
+  if (access &&
+    (isNaN(parseInt(access, 10)))) {
+    return res.status(400).send({
+      message: 'Document type must be an integer'
+    });
+  }
+
+  let buildQuery = {
+    access: 0
+  };
+
+  access = parseInt(access, 10);
+
+  if (access === 1) {
+    buildQuery = {
+      access: 1,
+      userId
+    };
+  } else if (access === 2) {
+    buildQuery = {
+      access: 2,
+      roleId: userRoleId
+    };
+  }
 
   // prepare a databse query param if query is present in the request
   const queryParams = {
     offset,
     limit,
+    where: buildQuery,
     attributes: { exclude: ['updatedAt'] },
-    where: {
-      $or: [
-        {
-          access: 0,
-        },
-        {
-          access: 1,
-          userId
-        },
-        {
-          access: 2,
-          roleId: userRoleId
-        }
-      ]
-    },
     order: [['createdAt', 'DESC']]
   };
   // query the database for documents
@@ -112,8 +124,8 @@ router.get('/', authenticateUser, (req, res) => {
   .then((doc) => {
     // reutns error if no document is found
     if (doc.rows.length === 0) {
-      return res.status(400).send({
-        status: 400,
+      return res.status(200).send({
+        status: 200,
         message: 'No document found!'
       });
     }
@@ -134,6 +146,7 @@ router.get('/', authenticateUser, (req, res) => {
   .catch((error) => {
     res.status(400).send({
       status: 400,
+      message: 'Server Error',
       error
     });
   });

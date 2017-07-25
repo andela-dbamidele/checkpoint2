@@ -118,7 +118,7 @@ describe('APi Routes', () => {
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(200);
-            expect(res.body.rows).to.eqls([]);
+            expect(res.body.documents).to.eqls([]);
           }
           done();
         });
@@ -141,7 +141,7 @@ describe('APi Routes', () => {
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(200);
-            expect(res.body.rows.length).to.be.greaterThan(0);
+            expect(res.body.documents.length).to.be.greaterThan(0);
           }
           done();
         });

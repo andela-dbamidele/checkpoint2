@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+// import 'materialize-css/dist/js/materialize.min';
 import LoginForm from './login/LoginForm';
 import SignupForm from './login/SignupForm';
 import signUpAction from '../../actions/signUpAction';
@@ -55,16 +56,16 @@ class LoginPage extends React.Component {
             <div className="inner-content m-auto">
               <div className="content">
                 <ul className="tabs">
-                  <li className="tab col s6"><a href="#login">Login</a></li>
-                  <li className="tab col s6">
-                    <a href="#register">Register</a>
+                  <li className="tab col s6"><a href="#loginform">Login</a></li>
+                  <li id="registerlink" className="tab col s6">
+                    <a href="#registerform">Register</a>
                   </li>
                 </ul>
-                <div id="login" className="col s12">
+                <div id="loginform" className="col s12">
                   <LoginForm loginAction={this.loginAction} />
                   <div className="clear" />
                 </div>
-                <div id="register" className="col s12">
+                <div id="registerform" className="col s12">
                   <SignupForm signUpAction={this.signUpAction} />
                   <div className="clear" />
                 </div>

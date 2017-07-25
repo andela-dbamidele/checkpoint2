@@ -6,7 +6,7 @@ import Homepage from '../../../components/body/Homepage';
 import Header from '../../../components/header/Index';
 import Footer from '../../../components/footer/Footer';
 
-describe('>>>App component', () => {
+describe('App component', () => {
   let wrapper;
   beforeAll(() => {
     wrapper = shallow(<App />);
