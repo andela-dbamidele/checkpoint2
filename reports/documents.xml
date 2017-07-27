@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="1"
+            failures="0"
+            tests="1">
+
+  <testsuite name="documents"
+    errors="1" failures="0" hostname="" id="" package="documents" skipped="0"
+    tests="1" time="0.01000" timestamp="Tue, 25 Jul 2017 13:02:12 GMT">
+  
+    <testcase name="Create a new document" classname="documents" time="0.01000" assertions="0">
+    </testcase>
+  
+
+  
+    <system-err>
+        Error while running [Documents / Create a new document]:
+
+  TypeError: browser.url(...).waitForElementVisible(...).click(...).waitForElementVisible(...).assert.containsText(...).setValue(...).setValue(...).pause(...).click(...).waitForElementVisible(...).pause(...).assert.containsText(...).click(...).waitForElementVisible(...).pause(...).waitForElementVisible(...).setValue(...).change is not a function
+    at Object.Create a new document (/Users/andeladeveloper/checkpoint2/e2e/documents.js:29:6)
+    at Module.call (/usr/local/lib/node_modules/nightwatch/lib/runner/module.js:62:34)
+    at /usr/local/lib/node_modules/nightwatch/lib/runner/testcase.js:70:29
+    at _fulfilled (/usr/local/lib/node_modules/nightwatch/node_modules/q/q.js:834:54)
+    at self.promiseDispatch.done (/usr/local/lib/node_modules/nightwatch/node_modules/q/q.js:863:30)
+    at Promise.promise.promiseDispatch (/usr/local/lib/node_modules/nightwatch/node_modules/q/q.js:796:13)
+    at /usr/local/lib/node_modules/nightwatch/node_modules/q/q.js:556:49
+    at runSingle (/usr/local/lib/node_modules/nightwatch/node_modules/q/q.js:137:13)
+    at flush (/usr/local/lib/node_modules/nightwatch/node_modules/q/q.js:125:13)
+    at _combinedTickCallback (internal/process/next_tick.js:73:7)
+    </system-err>
+  
+
+  
+  </testsuite>
+</testsuites>

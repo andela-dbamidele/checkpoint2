@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="0"
+            failures="0"
+            tests="1">
+
+  <testsuite name="documents"
+    errors="0" failures="0" hostname="" id="" package="documents" skipped="0"
+    tests="1" time="20.00" timestamp="Tue, 25 Jul 2017 14:32:40 GMT">
+  
+    <testcase name="Deletes a single document" classname="documents" time="20.00" assertions="9">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    </testcase>
+  
+
+  
+
+  
+  </testsuite>
+</testsuites>

@@ -14,8 +14,8 @@ router.get('/users', authenticateUser, (req, res) => {
   let limit = req.query.limit;
   let offset = req.query.offset;
 
-  const pageNumber = Math.ceil(((req.query.offset) /
-    (req.query.limit)) + 1) || 1;
+  // const pageNumber = Math.ceil(((req.query.offset) /
+  //   (req.query.limit)) + 1) || 1;
 
   // returns error if the limit and offset is not a number
   if ((limit && offset) &&
@@ -62,6 +62,7 @@ router.get('/documents', authenticateUser, (req, res) => {
   }
   let limit = req.query.limit;
   let offset = req.query.offset;
+  let access = req.query.access;
 
   const userRoleId = req.authenticatedUser.roleId;
   const userId = req.authenticatedUser.id;
@@ -81,30 +82,47 @@ router.get('/documents', authenticateUser, (req, res) => {
 
   limit = limit || 16;
   offset = offset || 0;
+
+  // returns error if access is not a number
+  if (access &&
+    (isNaN(parseInt(access, 10)))) {
+    return res.status(400).send({
+      message: 'Document type must be an integer'
+    });
+  }
+
+  let buildQuery = {
+    title: {
+      $iLike: `%${queryString}%`
+    },
+    access: 0
+  };
+
+  access = parseInt(access, 10);
+
+  if (access === 1) {
+    buildQuery = {
+      title: {
+        $iLike: `%${queryString}%`
+      },
+      access: 1,
+      userId
+    };
+  } else if (access === 2) {
+    buildQuery = {
+      title: {
+        $iLike: `%${queryString}%`
+      },
+      access: 2,
+      roleId: userRoleId
+    };
+  }
+
   Document.findAndCountAll({
     offset,
     limit,
     attributes: { exclude: ['updatedAt'] },
-    where: {
-      $and: {
-        title: {
-          $iLike: `%${queryString}%`
-        },
-        $or: [
-          {
-            access: 0,
-          },
-          {
-            access: 1,
-            userId
-          },
-          {
-            access: 2,
-            roleId: userRoleId
-          }
-        ]
-      }
-    },
+    where: buildQuery,
     order: [['createdAt', 'DESC']]
   })
   .then((docs) => {

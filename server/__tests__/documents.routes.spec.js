@@ -138,7 +138,7 @@ describe('API Routes', () => {
         .set('Authorization', Auth)
         .end((err, res) => {
           if (!err) {
-            expect(res.status).to.equal(400);
+            expect(res.status).to.equal(200);
             expect(res.body.message).to.equal('No document found!');
           }
           done();
@@ -325,8 +325,7 @@ describe('API Routes', () => {
             expect(res.status).to.equal(400);
             expect(res.body.message)
             .to
-            .equal('Sorry, you do not have enough priviledges' +
-            ' to access this document!');
+            .equal('You do not have access to this document');
           }
           done();
         });
@@ -459,8 +458,7 @@ describe('API Routes', () => {
             expect(res.status).to.equal(400);
             expect(res.body.message)
             .to
-            .equal('Sorry, you do not have enough priviledges' +
-            ' to access this document!');
+            .equal('You do not have access to this document');
           }
           done();
         });
@@ -594,8 +592,7 @@ describe('API Routes', () => {
             expect(res.status).to.equal(400);
             expect(res.body.message)
             .to
-            .equal('Sorry, you do not have enough priviledges' +
-            ' to access this document!');
+            .equal('You do not have access to this document');
           }
           done();
         });

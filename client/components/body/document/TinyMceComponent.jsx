@@ -66,7 +66,7 @@ class TinyMceComponent extends Component {
     return (
       <textarea
         id={this.props.id}
-        value={this.props.content}
+        defaultValue={this.props.content}
       />
     );
   }

@@ -1,3 +1,30 @@
-import $ from 'jquery';
+global.$ = () => ({
+  tabs: () => null,
+  attr: () => null,
+  sideNav: () => null,
+  modal: () => null,
+  parallax: () => null,
+  show: () => null,
+  hide: () => null
+});
 
-global.$ = $;
+global.tinymce = {
+  remove: () => null,
+  init: () => null,
+  activeEditor: {
+    getContent: () => null
+  }
+};
+
+global.e = {
+  target: {
+    name: 'input',
+    value: 'input'
+  }
+};
+
+// global._ = {
+//   forEach: () => null
+// };
+
+global.swal = () => Promise.resolve(true);

@@ -1,17 +1,10 @@
 import axios from 'axios';
-import { ADD_TO_DOCUMENTS,
+import {
   SET_DOCUMENTS_TO_STATE,
   SET_SINGLE_DOCUMENT_TO_STATE,
   CREATE_DOCUMENT_ERROR,
   UPDATE_SINGLE_DOCUMENT
  } from './type';
-
-const addSingleDocumentToState = document => (
-  {
-    type: ADD_TO_DOCUMENTS,
-    document
-  }
-);
 
 const addSingleDocFromDb = document => (
   {
@@ -45,6 +38,31 @@ const updateAction = document => (
 );
 
 /**
+ * gets document from databse and save to store
+ * @function getDocuments
+ * @param {number} [offset=0]
+ * @param {number} [limit=10]
+ * @param {number} access -
+ * @export
+ * @returns {promise} -
+ */
+export function getDocuments(offset, limit, access = 0) {
+  return dispatch => (
+    axios.get('/api/documents', {
+      params: {
+        offset,
+        limit,
+        access
+      }
+    })
+  ).then(
+    (response) => {
+      dispatch(addAllDocumentsToState(response.data, false));
+    }
+  );
+}
+
+/**
  * Saves a new document to the database
  * and dispatch an action with the new document
  * to the store
@@ -57,36 +75,12 @@ export function createDocument(document) {
   return dispatch => (
     axios.post('/api/documents', document)
   ).then(
-    (response) => {
-      dispatch(addSingleDocumentToState(response.data.document));
+    () => {
+      dispatch(getDocuments(0, 16));
     },
     ({ response }) => {
       const errors = response.data;
       return dispatch(setError(errors));
-    }
-  );
-}
-
-
-/**
- * gets document from databse and save to store
- * @function getDocuments
- * @param {number} [offset=0]
- * @param {number} [limit=10]
- * @export
- * @returns {promise} -
- */
-export function getDocuments(offset, limit) {
-  return dispatch => (
-    axios.get('/api/documents', {
-      params: {
-        offset,
-        limit
-      }
-    })
-  ).then(
-    (response) => {
-      dispatch(addAllDocumentsToState(response.data, false));
     }
   );
 }
@@ -179,15 +173,17 @@ export function deleteSingleDocument(docId) {
  * @param {string} searchString - the search string
  * @param {number} offset -
  * @param {number} limit -
+ * @param {number} access -
  * @return {void}
  */
-export function searchDocuments(searchString, offset, limit) {
+export function searchDocuments(searchString, offset, limit, access = 0) {
   return dispatch => (
     axios.get('/api/search/documents', {
       params: {
         q: searchString,
         offset,
-        limit
+        limit,
+        access
       }
     })
   ).then((response) => {

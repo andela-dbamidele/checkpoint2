@@ -1,0 +1,22 @@
+{
+  "auth": {
+    "isAuthenticated": false,
+    "user": {}
+  },
+  "documents": {
+    "pageNumber": 0,
+    "pageCount": 0,
+    "pageSize": 0,
+    "documents": [],
+    "totalCount": 0,
+    "search": false,
+    "searchString": ""
+  },
+  "singleDocument": {},
+  "errors": {},
+  "success": {},
+  "users": {
+    "rows": [],
+    "count": 0
+  }
+}

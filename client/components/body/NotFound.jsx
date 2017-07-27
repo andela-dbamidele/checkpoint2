@@ -1,7 +1,13 @@
 import React from 'react';
+import ErrorComponent from './ErrorComponent';
 
 const NotFound = () => (
-  <h2> Sorry, the page is not found </h2>
+  <div id="notfound">
+    <ErrorComponent
+      errorMsg={'Page not Found'}
+      errorType={404}
+    />
+  </div>
 );
 
 export default NotFound;

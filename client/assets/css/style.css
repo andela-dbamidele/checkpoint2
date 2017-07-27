@@ -6980,8 +6980,10 @@ nav {
   min-height: 500px;
   max-width: 400px;
   margin: 0 auto;
-  padding: 20px 5px;
-  text-align: left; }
+  text-align: left;
+  background-color: #fff;
+  border-radius: 5px 5px 0px 0px;
+  padding-bottom: 10px; }
   .login-page-wrapper .content form {
     padding: 0px; }
   .login-page-wrapper .content .input-field {

@@ -6,7 +6,7 @@ import HomeColumn1 from '../../../components/body/home/HomeColumn1';
 import HomeColumn2 from '../../../components/body/home/HomeColumn2';
 import HomeColumn3 from '../../../components/body/home/HomeColumn3';
 
-describe('>>> Home page', () => {
+describe('Home page', () => {
   const wrapper = shallow(<Homepage />);
   it('renders', () => {
     expect(wrapper.find(Slider)).toHaveLength(1);

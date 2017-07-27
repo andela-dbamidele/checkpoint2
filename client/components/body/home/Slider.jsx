@@ -33,7 +33,11 @@ class Slider extends React.Component {
               <h1>Dokuments&#174; Document Manager</h1>
               <p>With Dokuments, creating, editing and&nbsp;
               sharing of document becomes easy.</p>
-              <Link to="/documents" className="btn btn-large">GET STARTED</Link>
+              <Link
+                to="/documents"
+                className="btn btn-large"
+                id="getStarted"
+              >GET STARTED</Link>
             </div>
           </div>
           <div className="parallax">
