@@ -1,8 +1,8 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import HomeColumn1 from '../../../../components/body/home/HomeColumn1';
+import HomeColumn1 from '../../../../components/body/landing/Editing';
 
-describe('Homepage column 1', () => {
+describe('Landing column 1', () => {
   const wrapper = shallow(
     <HomeColumn1 />
   );

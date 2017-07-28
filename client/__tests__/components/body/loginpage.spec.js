@@ -2,7 +2,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { MemoryRouter } from 'react-router-dom';
 import configureStore from 'redux-mock-store';
-import LoginPage from '../../../components/body/LoginPage';
+import Login from '../../../components/body/Login';
 import storeMock from '../../../__mocks__/storeMock.json';
 import authStoreMock from '../../../__mocks__/authStoreMock.json';
 
@@ -15,7 +15,7 @@ describe('Login Component', () => {
     store = mockStore(initialState);
     wrapper = mount(
       <MemoryRouter>
-        <LoginPage store={store} />
+        <Login store={store} />
       </MemoryRouter>
     );
   });
@@ -33,7 +33,7 @@ describe('Login Component', () => {
       const newStore = mockStore(newState);
       const authWrapper = mount(
         <MemoryRouter>
-          <LoginPage store={newStore} />
+          <Login store={newStore} />
         </MemoryRouter>
       );
       expect(authWrapper.instance().history

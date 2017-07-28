@@ -10,7 +10,7 @@
     "pretest": "DATABASE_URL=postgres://pjbfflvb:RmtQNOQCPa20E2cyu4D5LvtEosF2XpOn@pellefant.db.elephantsql.com:5432/pjbfflvb NODE_ENV=test sequelize db:migrate",
     "test": "DATABASE_URL=postgres://pjbfflvb:RmtQNOQCPa20E2cyu4D5LvtEosF2XpOn@pellefant.db.elephantsql.com:5432/pjbfflvb NODE_ENV=test PORT=3000 nyc --reporter=html --reporter=text mocha --timeout 90000 --compilers js:babel-register -- ./server/__tests__/**/*.spec.js",
     "prelocalTest": "NODE_ENV=localTest sequelize db:migrate",
-    "localTest": "NODE_ENV=localTest PORT=3000 nyc --reporter=html --reporter=text mocha --timeout 90000 --compilers js:babel-register -- ./server/__tests__/**/*.spec.js",
+    "localTest": "NODE_ENV=localTest PORT=3000 nyc --reporter=html --reporter=text mocha --timeout 90000 --compilers js:babel-register -- ./server/__tests__/**/*.spec.js && npm run jest && npm run coverage",
     "coverage": "codecov --token=a2b092fc-494a-4700-90eb-51092453b1c6"
   },
   "jest": {
@@ -23,6 +23,11 @@
     },
     "testEnvironment": "jsdom",
     "collectCoverage": true,
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/node_modules/",
+      "<rootDir>/client/components/body/document/TinyMceComponent.jsx",
+      "<rootDir>/server/utils/"
+    ],
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
       "\\.(css|less|scss)$": "identity-obj-proxy"

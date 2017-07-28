@@ -1,6 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
-// import sinon from 'sinon';
+import sinon from 'sinon';
 import { SignupForm } from '../../../../components/body/login/SignupForm';
 
 describe('Signup Form Component', () => {
@@ -10,17 +10,24 @@ describe('Signup Form Component', () => {
     }
   };
 
-  const signUpAction = jest.fn(() => Promise.resolve());
+  let stub;
 
-  const wrapper = mount(
-    <SignupForm
-      signUpAction={signUpAction}
-      {...props}
-    />
-  );
+  beforeEach(() => {
+    stub = sinon.stub();
+  });
+
+  afterEach(() => {
+    stub.reset();
+  });
 
   describe('Rendering', () => {
     it('renders', () => {
+      const wrapper = mount(
+        <SignupForm
+          signUpAction={stub}
+          {...props}
+        />
+      );
       expect(wrapper.find('#signupForm'))
       .toHaveLength(1);
     });
@@ -29,25 +36,31 @@ describe('Signup Form Component', () => {
   describe('Class Methods', () => {
     describe('onChange', () => {
       it('sets form value to state', () => {
-        const spy = jest.spyOn(wrapper.instance(), 'onChange');
-        // const spy = sinon.spy(LoginForm.prototype, 'onChange');
+        const onChangeSpy = sinon.spy(SignupForm.prototype, 'onChange');
+        const wrapper = mount(
+          <SignupForm
+            signUpAction={stub}
+            {...props}
+          />
+        );
         wrapper.find('#fullname')
         .simulate('change', { target: { name: 'fullname', value: 'daniel' } });
-        expect(spy).toHaveBeenCalled();
-        spy.mockReset();
-        spy.mockRestore();
+        expect(onChangeSpy.called).toBeTruthy();
       });
     });
 
     describe('submitForm', () => {
       it('makes request to the login action', () => {
-        const spy = jest.spyOn(wrapper.instance(), 'submitForm');
-        // const spy = sinon.spy(LoginForm.prototype, 'onChange');
+        const registerSpy = sinon.spy(SignupForm.prototype, 'submitForm');
+        const wrapper = mount(
+          <SignupForm
+            signUpAction={stub}
+            {...props}
+          />
+        );
         wrapper.find('#registerbutton')
         .simulate('click');
-        expect(spy).toHaveBeenCalled();
-        spy.mockReset();
-        spy.mockRestore();
+        expect(registerSpy.called).toBeTruthy();
       });
     });
   });

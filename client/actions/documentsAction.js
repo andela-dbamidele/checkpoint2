@@ -1,25 +1,36 @@
 import axios from 'axios';
 import {
+  ADD_TO_DOCUMENTS,
   SET_DOCUMENTS_TO_STATE,
   SET_SINGLE_DOCUMENT_TO_STATE,
   CREATE_DOCUMENT_ERROR,
   UPDATE_SINGLE_DOCUMENT
  } from './type';
 
-const addSingleDocFromDb = document => (
+const addSingleDocumentFromDb = (document, access) => (
   {
     type: SET_SINGLE_DOCUMENT_TO_STATE,
-    document
+    document,
+    currentDocuments: access
   }
 );
 
-const addAllDocumentsToState = (documents, search = false,
+const addSingleDocFromDb = (document, access) => (
+  {
+    type: ADD_TO_DOCUMENTS,
+    document,
+    currentDocuments: access
+  }
+);
+
+const addAllDocumentsToState = (documents, access, search = false,
   searchString = '') => (
   {
     type: SET_DOCUMENTS_TO_STATE,
     data: documents,
     search,
     searchString,
+    currentDocuments: access
   }
 );
 
@@ -40,13 +51,13 @@ const updateAction = document => (
 /**
  * gets document from databse and save to store
  * @function getDocuments
+ * @param {number} access -
  * @param {number} [offset=0]
  * @param {number} [limit=10]
- * @param {number} access -
  * @export
  * @returns {promise} -
  */
-export function getDocuments(offset, limit, access = 0) {
+export function getDocuments(access = 0, offset, limit) {
   return dispatch => (
     axios.get('/api/documents', {
       params: {
@@ -57,7 +68,7 @@ export function getDocuments(offset, limit, access = 0) {
     })
   ).then(
     (response) => {
-      dispatch(addAllDocumentsToState(response.data, false));
+      dispatch(addAllDocumentsToState(response.data, access, false));
     }
   );
 }
@@ -69,14 +80,15 @@ export function getDocuments(offset, limit, access = 0) {
  * @function createDocument
  * @export
  * @param {object} document
+ * @param {number} access
  * @returns {void}
  */
-export function createDocument(document) {
+export function createDocument(document, access) {
   return dispatch => (
     axios.post('/api/documents', document)
   ).then(
-    () => {
-      dispatch(getDocuments(0, 16));
+    (response) => {
+      dispatch(addSingleDocFromDb(response.data.document, access));
     },
     ({ response }) => {
       const errors = response.data;
@@ -109,16 +121,17 @@ export function deleteDocuments() {
 /**
  * Gets document from database and
  * add them to state
- * @function setSingleDocument
+ * @function setSingleDocumentument
  * @export
  * @param {int} docId
+ * @param {int} access
  * @returns {void}
  */
-export function setSingleDocument(docId) {
+export function setSingleDocument(docId, access) {
   return dispatch => (
     axios.get(`/api/documents/${docId}`)
   ).then((response) => {
-    dispatch(addSingleDocFromDb(response.data));
+    dispatch(addSingleDocumentFromDb(response.data, access));
   },
   ({ response }) => {
     dispatch(setError(response.data));
@@ -149,7 +162,7 @@ export function updateDocument(docId, data) {
 
 /**
  * Deletes a particular document
- * @function deleteSingleDocument
+ * @function deleteSingleDocumentument
  * @export
  * @param {int} docId
  * @return {void}
@@ -171,12 +184,12 @@ export function deleteSingleDocument(docId) {
  * @function searchDocuments
  * @export
  * @param {string} searchString - the search string
+ *  @param {number} access -
  * @param {number} offset -
  * @param {number} limit -
- * @param {number} access -
  * @return {void}
  */
-export function searchDocuments(searchString, offset, limit, access = 0) {
+export function searchDocuments(searchString, access = 0, offset, limit = 0) {
   return dispatch => (
     axios.get('/api/search/documents', {
       params: {
@@ -191,7 +204,8 @@ export function searchDocuments(searchString, offset, limit, access = 0) {
     if (searchString === '') {
       search = false;
     }
-    dispatch(addAllDocumentsToState(response.data, search, searchString));
+    dispatch(addAllDocumentsToState(response.data, access,
+        search, searchString));
   },
   ({ response }) => {
     dispatch(setError(response.data));

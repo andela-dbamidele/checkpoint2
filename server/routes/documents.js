@@ -1,6 +1,6 @@
 import express from 'express';
-import validateDocumentData from '../shared/validators/documentPostData';
-import { isDigit, validateAccess } from '../../server/shared/helpers';
+import dataValidators from '../utils/dataValidators';
+import { isDigit, validateAccess } from '../../server/utils/helpers';
 import authenticateUser from './middlewares/authenticateUsers';
 
 const Document = require('../models').Document;
@@ -13,7 +13,7 @@ const router = express.Router();
 // creates a new document and returns the document
 router.post('/', authenticateUser, (req, res) => {
   // validates the request body
-  const { errors, isValid } = validateDocumentData(req.body);
+  const { errors, isValid } = dataValidators.documentsPostData(req.body);
   if (!isValid) {
     // returns error on invalid request
     return res.status(400).send({
@@ -66,6 +66,7 @@ router.post('/', authenticateUser, (req, res) => {
 router.get('/', authenticateUser, (req, res) => {
   const userRoleId = req.authenticatedUser.roleId;
   const userId = req.authenticatedUser.id;
+  console.log(userId);
 
   let limit = req.query.limit;
   let offset = req.query.offset;
@@ -78,7 +79,7 @@ router.get('/', authenticateUser, (req, res) => {
   if ((limit && offset) &&
     (isNaN(limit) || isNaN(offset))) {
     return res.status(400).send({
-      message: 'Search param must be a number'
+      message: 'Limit and offset must be an integer'
     });
   }
 
@@ -89,7 +90,7 @@ router.get('/', authenticateUser, (req, res) => {
   if (access &&
     (isNaN(parseInt(access, 10)))) {
     return res.status(400).send({
-      message: 'Document type must be an integer'
+      message: 'Document access type must be an integer'
     });
   }
 
@@ -125,8 +126,13 @@ router.get('/', authenticateUser, (req, res) => {
     // reutns error if no document is found
     if (doc.rows.length === 0) {
       return res.status(200).send({
+        pageNumber: 0,
+        pageCount: 0,
+        pageSize: 0,
+        totalCount: 0,
         status: 200,
-        message: 'No document found!'
+        message: 'No document found!',
+        documents: []
       });
     }
 
@@ -158,8 +164,7 @@ router.get('/:id', authenticateUser, (req, res) => {
       message: 'Input must be digit'
     });
   }
-  const userId = req.authenticatedUser.id;
-  const userRoleId = req.authenticatedUser.roleId;
+  const userData = req.authenticatedUser;
 
   // check the database for the required document
   Document.findById(req.params.id)
@@ -172,13 +177,7 @@ router.get('/:id', authenticateUser, (req, res) => {
     }
 
     // validates the access right of the current user
-    const { validatedUser, errorMsg } = validateAccess(
-      doc.userId,
-      doc.access,
-      doc.roleId,
-      userId,
-      userRoleId
-    );
+    const { validatedUser, errorMsg } = validateAccess(doc, userData);
 
     // returns error if the user does not have access to the document
     if (!validatedUser) {
@@ -197,8 +196,7 @@ router.put('/:id', authenticateUser, (req, res) => {
       message: 'Document id must be digit'
     });
   }
-  const userId = req.authenticatedUser.id;
-  const userRoleId = req.authenticatedUser.roleId;
+  const userData = req.authenticatedUser;
   Document.findById(req.params.id)
   .then((doc) => {
     if (!doc) {
@@ -207,13 +205,7 @@ router.put('/:id', authenticateUser, (req, res) => {
           message: 'Document not found'
         });
     }
-    const { validatedUser, errorMsg } = validateAccess(
-      doc.userId,
-      doc.access,
-      doc.roleId,
-      userId,
-      userRoleId
-    );
+    const { validatedUser, errorMsg } = validateAccess(doc, userData);
     if (!validatedUser) {
       return res.status(400).send(errorMsg);
     }
@@ -232,7 +224,7 @@ router.put('/:id', authenticateUser, (req, res) => {
       return doc.update({
         title: req.body.title || doc.title,
         author: req.body.author || doc.author,
-        roleId: userRoleId,
+        roleId: userData.roleId,
         content: req.body.content || doc.content,
         category: req.body.category || doc.category,
         access: req.body.access || doc.access
@@ -251,8 +243,7 @@ router.delete('/:id/', authenticateUser, (req, res) => {
       message: 'Document ID must be a number'
     });
   }
-  const userId = req.authenticatedUser.id;
-  const userRoleId = req.authenticatedUser.roleId;
+  const userData = req.authenticatedUser;
   Document.findById(req.params.id)
   .then((doc) => {
     if (!doc) {
@@ -261,13 +252,7 @@ router.delete('/:id/', authenticateUser, (req, res) => {
           message: 'Document not found'
         });
     }
-    const { validatedUser, errorMsg } = validateAccess(
-      doc.userId,
-      doc.access,
-      doc.roleId,
-      userId,
-      userRoleId
-    );
+    const { validatedUser, errorMsg } = validateAccess(doc, userData);
     if (!validatedUser) {
       return res.status(400).send(errorMsg);
     }

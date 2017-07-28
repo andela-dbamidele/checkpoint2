@@ -11,7 +11,7 @@ import { createDocument,
   getDocuments,
   searchDocuments
  } from '../../../actions/documentsAction';
-import SingleDoc from './SingleDoc';
+import DocumentCard from '../cards/DocumentCard';
 import TinyMceComponent from './TinyMceComponent';
 import ErrorComponent from '../ErrorComponent';
 
@@ -34,14 +34,15 @@ export class DocListing extends React.Component {
     this.state = {
       title: '',
       content: '',
-      access: 1,
+      access: 0,
       errors: this.props.errors,
       documents: documents.documents,
       pageCount: Math.ceil(documents.totalCount / this.docsPerPage),
       offset: 0,
       search: documents.search,
       searchString: documents.searchString,
-      loading: true
+      loading: true,
+      currentDocuments: documents.currentDocuments
     };
     this.openModal = this.openModal.bind(this);
     this.handleEditorChange = this.handleEditorChange.bind(this);
@@ -78,7 +79,8 @@ export class DocListing extends React.Component {
       pageCount: Math.ceil(nextProps.documents.totalCount / this.docsPerPage),
       search: nextProps.documents.search,
       searchString: nextProps.documents.searchString,
-      loading: false
+      loading: false,
+      currentDocuments: nextProps.documents.currentDocuments,
     });
   }
 
@@ -138,7 +140,7 @@ export class DocListing extends React.Component {
     document.author = user.fullname;
     document.userId = user.id;
     document.roleId = user.roleId;
-    this.props.createDocument(document)
+    this.props.createDocument(document, this.state.currentDocuments)
     .then((response) => {
       if (isEmpty(response)) {
         swal(
@@ -211,19 +213,20 @@ export class DocListing extends React.Component {
   /**
    * Handles pagination
    * @method handlePageClick
-   * @param {any} data
+   * @param {any} page
    * @return {void}
    * @memberOf DocListing
    */
-  handlePageClick(data) {
-    const selected = data.selected;
+  handlePageClick(page) {
+    const selected = page.selected;
     const offset = Math.ceil(selected * this.docsPerPage);
 
     this.setState({ offset }, () => {
       if (this.state.search) {
-        this.props.searchDocuments(this.state.searchString, this.state.offset);
+        this.props.searchDocuments(this.state.searchString,
+            this.state.currentDocuments, this.state.offset);
       } else {
-        this.props.getDocuments(this.state.offset);
+        this.props.getDocuments(this.state.currentDocuments, this.state.offset);
       }
     });
   }
@@ -237,7 +240,7 @@ export class DocListing extends React.Component {
   render() {
     const { errors, documents, search, loading } = this.state;
     const Display = documents.map(doc => (
-      <SingleDoc
+      <DocumentCard
         id={doc.id}
         title={doc.title}
         date={doc.date}
@@ -389,6 +392,7 @@ DocListing.propTypes = {
     totalCount: PropTypes.number.isRequired,
     search: PropTypes.bool.isRequired,
     searchString: PropTypes.string.isRequired,
+    currentDocuments: PropTypes.number.isRequired
   }).isRequired,
   errors: PropTypes.shape({
     document: PropTypes.shape({})
@@ -417,8 +421,11 @@ const mapPropsToState = state => (
   }
 );
 
-export default connect(mapPropsToState,
+const Documents = connect(mapPropsToState,
   { createDocument,
     getDocuments,
     searchDocuments
   })(withRouter(DocListing));
+
+export { Documents as DocBody };
+

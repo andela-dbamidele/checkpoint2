@@ -2,7 +2,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { MemoryRouter as Router } from 'react-router-dom';
 // import mockProps from '../../../../__mocks__/mockProps.json';
-import SingleDoc from '../../../../components/body/document/SingleDoc';
+import DocumentCard from '../../../../components/body/cards/DocumentCard';
 
 describe('Single Document Page', () => {
   const props = {
@@ -14,12 +14,12 @@ describe('Single Document Page', () => {
 
   const wrapper = mount(
     <Router>
-      <SingleDoc {...props} />
+      <DocumentCard {...props} />
     </Router>
   );
 
   it('renders', () => {
-    expect(wrapper.find('#singledoc'))
+    expect(wrapper.find('#DocumentCard'))
     .toHaveLength(1);
   });
 });

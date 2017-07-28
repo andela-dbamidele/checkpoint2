@@ -2,8 +2,8 @@ import express from 'express';
 import bcrypt from 'bcrypt-nodejs';
 import jwt from 'jsonwebtoken';
 import config from './config/config';
-import validateInput from '../shared/validators/usersData';
-import { isDigit } from '../../server/shared/helpers';
+import dataValidators from '../utils/dataValidators';
+import { isDigit } from '../../server/utils/helpers';
 import authenticateUser from './middlewares/authenticateUsers';
 
 const User = require('../models').User;
@@ -12,7 +12,7 @@ const Document = require('../models').Document;
 const router = express.Router();
 
 router.post('/', (req, res) => {
-  const { errors, isValid } = validateInput(req.body);
+  const { errors, isValid } = dataValidators.validateInput(req.body);
   if (!isValid) {
     return res.status(400).send(errors);
   }
@@ -163,7 +163,7 @@ router.get('/:id/documents', authenticateUser, (req, res) => {
   if ((limit && offset) &&
     (isNaN(limit) || isNaN(offset))) {
     return res.status(400).send({
-      message: 'Search param must be a number'
+      message: 'Limit and offset must be an integer'
     });
   }
 
@@ -305,7 +305,7 @@ router.delete('/:id/', authenticateUser, (req, res) => {
       }))
       .catch(error => res.status(400).send({
         status: 400,
-        message: 'A fatal error was encountered, Please try again.',
+        message: 'You are not authorize to perform this action',
         error
       }));
   })

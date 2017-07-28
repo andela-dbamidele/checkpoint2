@@ -7069,6 +7069,10 @@ input:-webkit-autofill {
 .mt-20 {
   margin-top: 20px; }
 
+.nav-mobile li {
+  padding-left: 5px;
+  padding-right: 5px; }
+
 @media only screen and (max-width: 600px) {
   .flex-box {
     height: 300px !important; }

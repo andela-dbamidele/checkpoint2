@@ -1,5 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
+import sinon from 'sinon';
 import { Users } from
   '../../../components/body/Users';
 import mockProps from '../../../__mocks__/mockProps.json';
@@ -88,14 +89,12 @@ describe('Admin Page', () => {
         .simulate('change', { target: { value: 2 } });
         expect(spy)
         .toHaveBeenCalled();
-        spy.mockReset();
-        spy.mockRestore();
       });
     });
 
     describe('deleteUser Method', () => {
       it('deletes a user when called', () => {
-        const spy = jest.spyOn(wrapper.instance(), 'deleteSingleUser');
+        const spy = jest.spyOn(wrapper.instance(), 'deleteUserCard');
         wrapper.setState({
           users: [
             {
@@ -111,8 +110,6 @@ describe('Admin Page', () => {
         .simulate('click');
         expect(spy)
         .toHaveBeenCalled();
-        spy.mockReset();
-        spy.mockRestore();
       });
 
       it('returns error message if user is not authorized', () => {
@@ -126,7 +123,7 @@ describe('Admin Page', () => {
             deleteUser={deleteUserFalse}
           />
         );
-        const spy = jest.spyOn(altWrapper.instance(), 'deleteSingleUser');
+        const spy = jest.spyOn(altWrapper.instance(), 'deleteUserCard');
         altWrapper.setState({
           users: [
             {
@@ -142,10 +139,6 @@ describe('Admin Page', () => {
         .simulate('click');
         expect(spy)
         .toHaveBeenCalled();
-        spy.mockReset();
-        spy.mockRestore();
-        // expect(altWrapper.instance().state.cantSave)
-        // .toBeTruthy();
       });
     });
 
@@ -167,8 +160,6 @@ describe('Admin Page', () => {
         .simulate('click');
         expect(spy)
         .toHaveBeenCalled();
-        spy.mockReset();
-        spy.mockRestore();
       });
 
       it('returns error message if an error occured', () => {
@@ -198,37 +189,41 @@ describe('Admin Page', () => {
         .simulate('click');
         expect(spy)
         .toHaveBeenCalled();
-        spy.mockReset();
-        spy.mockRestore();
-        // expect(altWrapper.instance().state.cantSave)
-        // .toBeTruthy();
       });
     });
 
-    describe('handlePageClick Method', () => {
-      it('gets the next set of documents based on limit', () => {
-        const spy = jest.spyOn(wrapper.instance(), 'handlePageClick');
-        wrapper.setState({
-          users: [
-            {
-              id: 7,
-              fullname: 'imanued',
-              username: 'ncsifncedn',
-              email: 'hsdjd@erev.com',
-              roleId: 1
-            }
-          ]
-        });
-        const data = {
-          selected: 1
-        };
-        wrapper.find('li.active')
-        .simulate('click', data);
-        expect(spy)
-        .toHaveBeenCalled();
-        spy.mockReset();
-        spy.mockRestore();
-      });
-    });
+    // describe('handlePageClick Method', () => {
+    //   it('gets the next set of documents based on limit', () => {
+    //     const spy2 = sinon.spy(Users.prototype, 'handlePageClick');
+    //     const wrapper2 = mount(
+    //       <Users
+    //         history={historyMock}
+    //         {...props}
+    //         editUserRole={editUserRole}
+    //         getUsers={getUsers}
+    //         deleteUser={deleteUser}
+    //       />
+    //     );
+    //     wrapper2.setState({
+    //       users: [
+    //         {
+    //           id: 5,
+    //           fullname: 'imanued',
+    //           username: 'ncsifncedn',
+    //           email: 'hsdjd@erev.com',
+    //           roleId: 1
+    //         }
+    //       ],
+    //       pageCount: 2,
+    //       loading: false
+    //     });
+    //     const data = {
+    //       selected: 1
+    //     };
+    //     wrapper2.find('li.active')
+    //     .simulate('click', data);
+    //     expect(spy2.called).toBeTruthy();
+    //   });
+    // });
   });
 });

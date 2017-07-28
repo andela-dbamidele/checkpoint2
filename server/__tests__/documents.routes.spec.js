@@ -125,7 +125,8 @@ describe('API Routes', () => {
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(400);
-            expect(res.body.message).to.equal('Search param must be a number');
+            expect(res.body.message)
+            .to.equal('Limit and offset must be an integer');
           }
           done();
         });

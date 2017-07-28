@@ -1,11 +1,10 @@
 import React from 'react';
 import { mount, /** shallow */ } from 'enzyme';
-// import { MemoryRouter as Router } from 'react-router-dom';
-// import mockProps from '../../../../__mocks__/mockProps.json';
+import sinon from 'sinon';
 import authMockProps from '../../../../__mocks__/authMockProps.json';
 import historyMock from '../../../../__mocks__/historyMock';
 import { DocListing } from '../../../../components/body/document/DocListing';
-// import SingleDoc from '../../../../components/body/document/SingleDoc';
+// import DocumentCard from '../../../../components/body/cards/DocumentCard';
 
 describe('Document Listing Component', () => {
   const createDocument = jest.fn()
@@ -14,40 +13,35 @@ describe('Document Listing Component', () => {
       { title: 'title is required' }));
   const getDocuments = jest.fn(() => Promise.resolve(true));
   const searchDocuments = jest.fn(() => Promise.resolve(true));
-  const wrapper = mount(
-    <DocListing
-      history={historyMock}
-      createDocument={createDocument}
-      getDocuments={getDocuments}
-      searchDocuments={searchDocuments}
-      {...authMockProps}
-    />
-  );
 
   describe('Rendering', () => {
     it('renders without crashing', () => {
+      const wrapper = mount(
+        <DocListing
+          history={historyMock}
+          createDocument={createDocument}
+          getDocuments={getDocuments}
+          searchDocuments={searchDocuments}
+          {...authMockProps}
+        />
+      );
       expect(wrapper.find('#doclisting'))
       .toHaveLength(1);
     });
-
-    // it('contains `SingleDoc` component', () => {
-      // const shallowWrapper = shallow(
-      //   <DocListing
-      //     history={historyMock}
-      //     createDocument={createDocument}
-      //     getDocuments={getDocuments}
-      //     searchDocuments={searchDocuments}
-      //     {...authMockProps}
-      //   />
-      // );
-
-    //   console.log(shallowWrapper.find(<SingleDoc />));
-    // });
   });
 
   describe('Class methods', () => {
     describe('ComponentWillReceiveProps', () => {
       it('sets new props to state on call', () => {
+        const wrapper = mount(
+          <DocListing
+            history={historyMock}
+            createDocument={createDocument}
+            getDocuments={getDocuments}
+            searchDocuments={searchDocuments}
+            {...authMockProps}
+          />
+        );
         const nextProps = {
           documents: {
             documents: [],
@@ -65,17 +59,36 @@ describe('Document Listing Component', () => {
 
     describe('onChange method', () => {
       it('sets value of input box to state', () => {
-        const spy = jest.spyOn(wrapper.instance(), 'onChange');
+        const spy = sinon.spy(DocListing.prototype, 'onChange');
+        const wrapper = mount(
+          <DocListing
+            history={historyMock}
+            createDocument={createDocument}
+            getDocuments={getDocuments}
+            searchDocuments={searchDocuments}
+            {...authMockProps}
+          />
+        );
+        wrapper.setProps({
+          loading: false
+        });
         wrapper.find('#access')
         .simulate('change', { target: { name: 'access', value: 'value' } });
-        expect(spy).toHaveBeenCalled();
-        spy.mockReset();
-        spy.mockRestore();
+        expect(spy.called).toBeTruthy();
       });
     });
 
     describe('handleEditorChange method', () => {
       it('sets value of input box to state', () => {
+        const wrapper = mount(
+          <DocListing
+            history={historyMock}
+            createDocument={createDocument}
+            getDocuments={getDocuments}
+            searchDocuments={searchDocuments}
+            {...authMockProps}
+          />
+        );
         const content = 'hello world';
         wrapper.instance().handleEditorChange(content);
         expect(wrapper.instance().state.content)
@@ -85,48 +98,98 @@ describe('Document Listing Component', () => {
 
     describe('openModal method', () => {
       it('opens modal for writing new document', () => {
-        const spy = jest.spyOn(wrapper.instance(), 'openModal');
+        const spy = sinon.spy(DocListing.prototype, 'openModal');
+        const wrapper = mount(
+          <DocListing
+            history={historyMock}
+            createDocument={createDocument}
+            getDocuments={getDocuments}
+            searchDocuments={searchDocuments}
+            {...authMockProps}
+          />
+        );
+        wrapper.setProps({
+          loading: false
+        });
         wrapper.find('#openModal')
         .simulate('click');
-        expect(spy).toHaveBeenCalled();
-        spy.mockReset();
-        spy.mockRestore();
+        expect(spy.called).toBeTruthy();
       });
     });
 
     describe('saveDocument method', () => {
       it('saves document to the database', () => {
-        const spy = jest.spyOn(wrapper.instance(), 'saveDocument');
+        const spy = sinon.spy(DocListing.prototype, 'saveDocument');
+        const wrapper = mount(
+          <DocListing
+            history={historyMock}
+            createDocument={createDocument}
+            getDocuments={getDocuments}
+            searchDocuments={searchDocuments}
+            {...authMockProps}
+          />
+        );
+        wrapper.setProps({
+          loading: false
+        });
         wrapper.find('#saveDocument')
         .simulate('click');
-        expect(spy).toHaveBeenCalled();
-        spy.mockReset();
-        spy.mockRestore();
+        expect(spy.called).toBeTruthy();
+        spy.restore();
       });
 
       it('returns error for missing fields', () => {
-        const spy = jest.spyOn(wrapper.instance(), 'saveDocument');
+        const spy = sinon.spy(DocListing.prototype, 'saveDocument');
+        const wrapper = mount(
+          <DocListing
+            history={historyMock}
+            createDocument={createDocument}
+            getDocuments={getDocuments}
+            searchDocuments={searchDocuments}
+            {...authMockProps}
+          />
+        );
+        wrapper.setProps({
+          loading: false
+        });
         wrapper.find('#saveDocument')
         .simulate('click');
-        expect(spy).toHaveBeenCalled();
-        spy.mockReset();
-        spy.mockRestore();
+        expect(spy.called).toBeTruthy();
       });
     });
 
     describe('cancelDocument method', () => {
       it('close the document modal', () => {
-        const spy = jest.spyOn(wrapper.instance(), 'cancelDocument');
+        const spy = sinon.spy(DocListing.prototype, 'cancelDocument');
+        const wrapper = mount(
+          <DocListing
+            history={historyMock}
+            createDocument={createDocument}
+            getDocuments={getDocuments}
+            searchDocuments={searchDocuments}
+            {...authMockProps}
+          />
+        );
+        wrapper.setProps({
+          loading: false
+        });
         wrapper.find('#closeModal')
         .simulate('click');
-        expect(spy).toHaveBeenCalled();
-        spy.mockReset();
-        spy.mockRestore();
+        expect(spy.called).toBeTruthy();
       });
     });
 
     describe('handlePageClick Method', () => {
       it('gets the next set of documents based on limit', () => {
+        const wrapper = mount(
+          <DocListing
+            history={historyMock}
+            createDocument={createDocument}
+            getDocuments={getDocuments}
+            searchDocuments={searchDocuments}
+            {...authMockProps}
+          />
+        );
         wrapper.instance().docsPerPage = 10;
         wrapper.instance().handlePageClick({
           selected: 2
@@ -143,29 +206,6 @@ describe('Document Listing Component', () => {
         });
         expect(wrapper.instance().state.offset)
         .toEqual(30);
-        // const shallowWrapper = mount(
-        //   <Router>
-        //     <DocListing
-        //       history={historyMock}
-        //       createDocument={createDocument}
-        //       getDocuments={getDocuments}
-        //       searchDocuments={searchDocuments}
-        //       {...authMockProps}
-        //     />
-        //   </Router>
-        // );
-        // shallowWrapper.setState({
-        //   documents: [
-        //     {
-        //       id: 1,
-        //       title: 'hello world',
-        //       date: '2-4-7',
-        //       access: 1,
-        //     }
-        //   ],
-        //   pageCount: 1
-        // });
-        // console.log(shallowWrapper.find('li.active'));
       });
     });
   });

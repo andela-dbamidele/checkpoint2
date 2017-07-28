@@ -2,7 +2,7 @@ import express from 'express';
 import bcrypt from 'bcrypt-nodejs';
 import jwt from 'jsonwebtoken';
 import config from './config/config';
-import validateLogin from '../shared/validators/login';
+import dataValidators from '../utils/dataValidators';
 
 const User = require('../models').User;
 
@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.post('/login', (req, res) => {
   // validates request body
-  const { errors, isValid } = validateLogin(req.body);
+  const { errors, isValid } = dataValidators.validateLogin(req.body);
   if (!isValid) {
     return res.status(400).send(errors);
   }
