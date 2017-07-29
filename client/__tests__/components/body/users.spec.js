@@ -1,6 +1,5 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import sinon from 'sinon';
 import { Users } from
   '../../../components/body/Users';
 import mockProps from '../../../__mocks__/mockProps.json';

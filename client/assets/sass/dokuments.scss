@@ -115,7 +115,7 @@ nav {
 }
 
 .body-cont {
-  min-height: 570px;
+  min-height: 580px;
 }
 
 .parallax-container {
@@ -195,7 +195,7 @@ nav {
 
   .home-inner {
     @extend .valign-wrapper;
-    min-height: 75vh;
+    min-height: 70vh;
     box-sizing: border-box;
     padding: $myPadding;
 
@@ -228,6 +228,12 @@ nav {
 
 .pr-20 {
   padding-right: 20px;
+}
+
+.side-nav{
+  .divider {
+    margin: 0px !important;
+  }
 }
 
 #sidenav-overlay { z-index: 99 !important; }
@@ -554,9 +560,21 @@ input:-webkit-autofill {
 .mt-20 {
   margin-top: 20px;
 }
-.nav-mobile li {
-  padding-left: 5px;
-  padding-right: 5px;
+#nav-mobile li {
+  padding-left: 5px !important;
+  padding-right: 5px !important;
+}
+
+#notfound {
+  text-align: center;
+  display: block;
+  position: relative;
+  max-width: 480px;
+  margin: auto;
+}
+
+#errorImg {
+  max-height: 300px !important;
 }
 
 @media only screen and (max-width : 600px) {

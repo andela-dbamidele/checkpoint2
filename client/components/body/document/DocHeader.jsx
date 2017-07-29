@@ -52,7 +52,7 @@ export class DocHeader extends React.Component {
    */
   onChange(e) {
     this.setState({
-      [e.target.name]: e.target.value
+      [e.target.name]: parseInt(e.target.value, 0)
     }, () => {
       this.props.getDocuments(this.state.access);
     });

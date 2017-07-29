@@ -8,29 +8,27 @@ const SideBar = ({ user, logUserOut }) => (
     {
       !isEmpty(user) ? (
         <ul id="slide-out" className="side-nav">
-          <li>
-            <div className="user-view">
-              <a href="#!name">
-                <span className="white-text name">{ user.fullname }</span>
-              </a>
-              <a href="#!email">
-                <span className="white-text email">{ user.email }</span>
-              </a>
-            </div>
-          </li>
+          <li><div className="divider" /></li>
           <li>
             <a href="/users">
-              <i className="material-icons">cloud</i>Manage Users
+              <i className="material-icons">people</i> Manage Users
             </a>
           </li>
           <li><div className="divider" /></li>
-          <li><a href="/roles">Manage Roles</a></li>
+          <li>
+            <a href="#!">
+              <i className="material-icons">swap_vert</i>
+            Manage Roles
+            </a>
+          </li>
+          <li><div className="divider" /></li>
           <li>
             <a
               id="logout"
               href="/logout"
               onClick={e => logUserOut(e)}
-            >Logout</a></li>
+            ><i className="material-icons">lock</i>Logout</a></li>
+          <li><div className="divider" /></li>
         </ul>
       ) : (
         <div>

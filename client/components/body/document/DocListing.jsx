@@ -243,7 +243,7 @@ export class DocListing extends React.Component {
       <DocumentCard
         id={doc.id}
         title={doc.title}
-        date={doc.date}
+        date={doc.createdAt}
         type="docs"
         access={doc.access}
         key={doc.title}

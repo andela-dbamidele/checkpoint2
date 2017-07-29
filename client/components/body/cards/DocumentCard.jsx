@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import timeago from 'timeago.js';
 import { Link } from 'react-router-dom';
 
 const DocumentCard = (props) => {
@@ -9,6 +10,9 @@ const DocumentCard = (props) => {
     'lock',
     'supervisor_account'
   ];
+  $(() => {
+    timeago().render(document.querySelectorAll('.timeSpan'));
+  });
   return (
     <div id="DocumentCard" className="col s6 m4 l3 xl3">
       <Link to={`/documents/read/${id}/`}>
@@ -17,7 +21,11 @@ const DocumentCard = (props) => {
             <p className="truncate">{title}</p>
             <p>
               <i className="material-icons">{ accessIcons[access] }</i>
-              <span>&nbsp;Created on {date}&nbsp;</span>
+              <span>&nbsp;Created&nbsp;
+                <span
+                  className="timeSpan"
+                  dateTime={date}
+                />&nbsp;</span>
             </p>
           </div>
         </div>

@@ -5,6 +5,7 @@ import _, { isEmpty } from 'lodash';
 import Parser from 'html-react-parser';
 import PropTypes from 'prop-types';
 import swal from 'sweetalert2';
+import timeago from 'timeago.js';
 import {
   setSingleDocument,
   updateDocument,
@@ -70,6 +71,7 @@ export class SingleDocumentComponent extends React.Component {
           loading: false
         });
       });
+      timeago().render(document.querySelectorAll('.timeSpan'));
     }
   }
 
@@ -345,7 +347,11 @@ export class SingleDocumentComponent extends React.Component {
                             <span>
                               <span>
                                 <i className="material-icons">date_range</i>
-                                {document.createdAt}
+                                <span>&nbsp;Created&nbsp;
+                                <span
+                                  className="timeSpan"
+                                  dateTime={document.createdAt}
+                                />&nbsp;</span>
                               </span>
                               <span>
                                 <i
