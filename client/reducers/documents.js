@@ -20,7 +20,9 @@ export default (state = initialState, action = {}) => {
   switch (action.type) {
     case ADD_TO_DOCUMENTS:
       oldState = state.documents;
-      oldState.pop();
+      if ((oldState).length > 15) {
+        oldState.pop();
+      }
       return {
         pageNumber: state.pageNumber,
         pageCount: state.pageCount,

@@ -33,6 +33,7 @@ router.post('/', authenticateUser, (req, res) => {
   })
   .then((doc) => {
     if (doc) {
+      // returns error for duplicate title
       return res.status(400).send({
         status: 400,
         message: 'Document with the same title already exist',
@@ -66,12 +67,13 @@ router.post('/', authenticateUser, (req, res) => {
 router.get('/', authenticateUser, (req, res) => {
   const userRoleId = req.authenticatedUser.roleId;
   const userId = req.authenticatedUser.id;
-  console.log(userId);
 
+  // get the query from the parameter
   let limit = req.query.limit;
   let offset = req.query.offset;
   let access = req.query.access;
 
+  // calculates the current pagenumber from the offset and limit
   const pageNumber = Math.ceil(((req.query.offset) /
     (req.query.limit)) + 1) || 1;
 
@@ -94,6 +96,7 @@ router.get('/', authenticateUser, (req, res) => {
     });
   }
 
+  // prepares the query
   let buildQuery = {
     access: 0
   };
@@ -123,7 +126,7 @@ router.get('/', authenticateUser, (req, res) => {
   // query the database for documents
   Document.findAndCountAll(queryParams)
   .then((doc) => {
-    // reutns error if no document is found
+    // returns error if no document is found
     if (doc.rows.length === 0) {
       return res.status(200).send({
         pageNumber: 0,
@@ -158,6 +161,9 @@ router.get('/', authenticateUser, (req, res) => {
   });
 });
 
+/**
+ * GET DOCUMENT ROUTE
+ */
 router.get('/:id', authenticateUser, (req, res) => {
   if (!isDigit(req.params.id)) {
     return res.status(400).send({
@@ -190,7 +196,11 @@ router.get('/:id', authenticateUser, (req, res) => {
   .catch(error => res.status(400).send(error));
 });
 
+/**
+ * EDIT DOCUMENT ROUTE
+ */
 router.put('/:id', authenticateUser, (req, res) => {
+  // check if document id is a digit
   if (!isDigit(req.params.id)) {
     return res.status(400).send({
       message: 'Document id must be digit'
@@ -205,22 +215,29 @@ router.put('/:id', authenticateUser, (req, res) => {
           message: 'Document not found'
         });
     }
+    // validates the user's access
     const { validatedUser, errorMsg } = validateAccess(doc, userData);
     if (!validatedUser) {
       return res.status(400).send(errorMsg);
     }
+
+    // query the database to check if the new title exists
     Document.findAll({
       where: {
         title: req.body.title
       }
     })
     .then((originalDoc) => {
+      // returns error if the title exists and the title does not belong
+      // to the same document
       if (originalDoc.length !== 0 && (originalDoc[0].dataValues.id !==
       parseInt(req.params.id, 10))) {
         return res.status(400).send({
           message: 'Title already exists'
         });
       }
+
+      // updates the document if everything is ok
       return doc.update({
         title: req.body.title || doc.title,
         author: req.body.author || doc.author,
@@ -237,13 +254,22 @@ router.put('/:id', authenticateUser, (req, res) => {
   .catch(error => res.status(400).send(error));
 });
 
+/**
+ * DELETE DOCUMENT ROUTE
+ */
 router.delete('/:id/', authenticateUser, (req, res) => {
+  // cehck if id is an integer
   if (!isDigit(req.params.id)) {
     return res.status(400).send({
       message: 'Document ID must be a number'
     });
   }
+
+  // gets the user's data from the middleware
   const userData = req.authenticatedUser;
+
+  // check the database for the document and returns error
+  // if the document does not exists
   Document.findById(req.params.id)
   .then((doc) => {
     if (!doc) {
@@ -252,10 +278,15 @@ router.delete('/:id/', authenticateUser, (req, res) => {
           message: 'Document not found'
         });
     }
+    // validates the user's access
     const { validatedUser, errorMsg } = validateAccess(doc, userData);
+
+    // returns error for unathorized access
     if (!validatedUser) {
       return res.status(400).send(errorMsg);
     }
+
+    // deletes the user
     return doc.destroy()
       .then(() => res.status(200).send({
         message: 'Document deleted successfully'

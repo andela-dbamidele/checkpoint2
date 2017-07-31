@@ -7,8 +7,14 @@ const Role = require('../models').Role;
 
 const router = express.Router();
 
+/**
+ * CREATE NEW ROLE ROUTE
+ */
 router.post('/', authenticateRole, (req, res) => {
+  // validates user access
   const { errors, isValid } = dataValidators.validateRolePostData(req.body);
+
+  // returns error message if user does not have enough privilegde
   if (!isValid) {
     return res.status(400).send(errors);
   }
