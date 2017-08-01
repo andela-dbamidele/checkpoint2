@@ -11,7 +11,7 @@ import { createDocument,
   getDocuments,
   searchDocuments
  } from '../../../actions/documentsAction';
-import SingleDoc from './SingleDoc';
+import DocumentCard from '../cards/DocumentCard';
 import TinyMceComponent from './TinyMceComponent';
 import ErrorComponent from '../ErrorComponent';
 
@@ -20,7 +20,7 @@ import ErrorComponent from '../ErrorComponent';
  * @class DocListing
  * @extends {React.Component}
  */
-class DocListing extends React.Component {
+export class DocListing extends React.Component {
   /**
    * Creates an instance of DocListing.
    * @param {object} props -
@@ -34,13 +34,15 @@ class DocListing extends React.Component {
     this.state = {
       title: '',
       content: '',
-      access: 1,
+      access: 0,
       errors: this.props.errors,
       documents: documents.documents,
       pageCount: Math.ceil(documents.totalCount / this.docsPerPage),
       offset: 0,
       search: documents.search,
-      searchString: documents.searchString
+      searchString: documents.searchString,
+      loading: true,
+      currentDocuments: documents.currentDocuments
     };
     this.openModal = this.openModal.bind(this);
     this.handleEditorChange = this.handleEditorChange.bind(this);
@@ -76,7 +78,9 @@ class DocListing extends React.Component {
       errors: nextProps.errors,
       pageCount: Math.ceil(nextProps.documents.totalCount / this.docsPerPage),
       search: nextProps.documents.search,
-      searchString: nextProps.documents.searchString
+      searchString: nextProps.documents.searchString,
+      loading: false,
+      currentDocuments: nextProps.documents.currentDocuments,
     });
   }
 
@@ -91,20 +95,6 @@ class DocListing extends React.Component {
   onChange(e) {
     this.setState({
       [e.target.name]: e.target.value,
-    });
-  }
-
-
-  /**
-   * Sets documents to state
-   * @method setDocumentToState
-   * @param {array} doc -
-   * @return {void}
-   * @memberOf DocListing
-   */
-  setDocumentToState(doc) {
-    this.setState({
-      documents: doc,
     });
   }
 
@@ -150,7 +140,7 @@ class DocListing extends React.Component {
     document.author = user.fullname;
     document.userId = user.id;
     document.roleId = user.roleId;
-    this.props.createDocument(document)
+    this.props.createDocument(document, this.state.currentDocuments)
     .then((response) => {
       if (isEmpty(response)) {
         swal(
@@ -223,19 +213,20 @@ class DocListing extends React.Component {
   /**
    * Handles pagination
    * @method handlePageClick
-   * @param {any} data
+   * @param {any} page
    * @return {void}
    * @memberOf DocListing
    */
-  handlePageClick(data) {
-    const selected = data.selected;
+  handlePageClick(page) {
+    const selected = page.selected;
     const offset = Math.ceil(selected * this.docsPerPage);
 
     this.setState({ offset }, () => {
       if (this.state.search) {
-        this.props.searchDocuments(this.state.searchString, this.state.offset);
+        this.props.searchDocuments(this.state.searchString,
+            this.state.currentDocuments, this.state.offset);
       } else {
-        this.props.getDocuments(this.state.offset);
+        this.props.getDocuments(this.state.currentDocuments, this.state.offset);
       }
     });
   }
@@ -247,119 +238,137 @@ class DocListing extends React.Component {
    * @memberOf DocListing
    */
   render() {
-    const { errors, documents, search } = this.state;
+    const { errors, documents, search, loading } = this.state;
     const Display = documents.map(doc => (
-      <SingleDoc
+      <DocumentCard
         id={doc.id}
         title={doc.title}
-        date={doc.date}
+        date={doc.createdAt}
         type="docs"
         access={doc.access}
         key={doc.title}
       />
     ));
     return (
-      <div className="row">
-        <a
-          className={
-            'btn-floating btn-large waves-effect' +
-            'waves-light white fixed myColor'
-          }
-          onClick={() => this.openModal()}
-        >
-          <i className="material-icons">mode_edit</i>
-        </a>
-        <div>
-          {documents.length === 0 && (
-            <ErrorComponent
-              errorMsg={search ? 'No matching document Found!' :
-              'No document Found! Start Creating....'}
-              errorType={404}
-            />
-          )}
-          {Display}
-          <div className="clear" />
-        </div>
-        {documents.length > 0 && (
-          <div className="row paginate-fixed">
-            <ReactPaginate
-              previousLabel={'previous'}
-              nextLabel={'next'}
-              breakLabel={<a href="">...</a>}
-              breakClassName={'break-me'}
-              pageCount={this.state.pageCount}
-              marginPagesDisplayed={2}
-              pageRangeDisplayed={5}
-              onPageChange={this.handlePageClick}
-              containerClassName={'pagination'}
-              subContainerClassName={'pages pagination'}
-              activeClassName={'active'}
-            />
-          </div>
-        )}
-        <div className="clear" />
-        <div id="modal1" className="modal modal-fixed-footer">
-          <div className="modal-content">
-            {
-              errors.message &&
-              <div className="errors">
-                <h5>{ errors.message }</h5>
+      <div id="doclisting" className="row">
+        { loading ? (
+          <div className="home-div">
+            <div className="col s12 home-inner" id="notFound">
+              <div className="inner-content center m-auto">
+                <span className="center">
+                  <img alt="loading" src="/imgs/loading_new.gif" />
+                </span>
+                <h3 className="center">Loading...</h3>
               </div>
-            }
-            <div className="title">
-              <div className="row">
-                <div className="col s12 m7 l8 xl8">
-                  <input
-                    type="text"
-                    value={this.state.title}
-                    name="title"
-                    onChange={this.onChange}
-                    placeholder="Enter Document Title"
+            </div>
+          </div>
+        ) : (
+          <div>
+            <a
+              className={
+                'btn-floating btn-large waves-effect' +
+                'waves-light white fixed myColor'
+              }
+              id="openModal"
+              onClick={() => this.openModal()}
+            >
+              <i className="material-icons">mode_edit</i>
+            </a>
+            <div>
+              {documents.length === 0 && (
+                <ErrorComponent
+                  errorMsg={search ? 'No matching document Found!' :
+                  'No document Found! Start Creating....'}
+                  errorType={404}
+                />
+              )}
+              {Display}
+              <div className="clear" />
+            </div>
+            <div>
+              {documents.length > 0 && (
+                <div className="row paginate-fixed">
+                  <ReactPaginate
+                    previousLabel={'previous'}
+                    nextLabel={'next'}
+                    breakLabel={<a href="">...</a>}
+                    breakClassName={'break-me'}
+                    pageCount={this.state.pageCount}
+                    marginPagesDisplayed={2}
+                    pageRangeDisplayed={5}
+                    onPageChange={this.handlePageClick}
+                    containerClassName={'pagination'}
+                    subContainerClassName={'pages pagination'}
+                    activeClassName={'active'}
                   />
                 </div>
-                <div className="col s12 m5 l4 xl4">
-                  <select
-                    className="browser-default"
-                    name="access"
-                    id="access"
-                    onChange={this.onChange}
-                  >
-                    <option
-                      defaultValue=""
-                      disabled
-                    >Select Document Access</option>
-                    <option value="0">Public</option>
-                    <option value="1">Private</option>
-                    <option value="2">Role Based</option>
-                  </select>
+              )}
+            </div>
+            <div className="clear" />
+            <div id="modal1" className="modal modal-fixed-footer">
+              <div className="modal-content">
+                {
+                  errors.message &&
+                  <div className="errors">
+                    <h5>{ errors.message }</h5>
+                  </div>
+                }
+                <div className="title">
+                  <div className="row">
+                    <div className="col s12 m7 l8 xl8">
+                      <input
+                        type="text"
+                        value={this.state.title}
+                        name="title"
+                        onChange={this.onChange}
+                        placeholder="Enter Document Title"
+                      />
+                    </div>
+                    <div className="col s12 m5 l4 xl4">
+                      <select
+                        className="browser-default"
+                        name="access"
+                        id="access"
+                        onChange={this.onChange}
+                      >
+                        <option
+                          defaultValue=""
+                          disabled
+                        >Select Document Access</option>
+                        <option value="0">Public</option>
+                        <option value="1">Private</option>
+                        <option value="2">Role Based</option>
+                      </select>
+                    </div>
+                    <div className="clear" />
+                  </div>
+                  <div className="clear" />
                 </div>
-                <div className="clear" />
+                <TinyMceComponent
+                  id="tinymce"
+                  handleEditorChange={this.handleEditorChange}
+                  content={this.state.content}
+                />
+              </div>
+              <div className="modal-footer">
+                <span
+                  id="closeModal"
+                  className="modal-action waves-effect waves-green btn-flat"
+                  onClick={() => this.cancelDocument()}
+                >Cancel
+                </span>
+                <span
+                  id="saveDocument"
+                  className="modal-action waves-effect waves-green btn-flat"
+                  onClick={this.saveDocument}
+                >Save
+                </span>
               </div>
               <div className="clear" />
             </div>
-            <TinyMceComponent
-              id="tinymce"
-              handleEditorChange={this.handleEditorChange}
-              content={this.state.content}
-            />
+            <div className="clear" />
           </div>
-          <div className="modal-footer">
-            <span
-              id="closeModal"
-              className="modal-action waves-effect waves-green btn-flat"
-              onClick={() => this.cancelDocument()}
-            >Cancel
-            </span>
-            <span
-              id="saveDocument"
-              className="modal-action waves-effect waves-green btn-flat"
-              onClick={this.saveDocument}
-            >Save
-            </span>
-          </div>
-          <div className="clear" />
-        </div>
-        <div className="clear" />
+        ) }
       </div>
     );
   }
@@ -383,6 +392,7 @@ DocListing.propTypes = {
     totalCount: PropTypes.number.isRequired,
     search: PropTypes.bool.isRequired,
     searchString: PropTypes.string.isRequired,
+    currentDocuments: PropTypes.number.isRequired
   }).isRequired,
   errors: PropTypes.shape({
     document: PropTypes.shape({})
@@ -411,8 +421,11 @@ const mapPropsToState = state => (
   }
 );
 
-export default connect(mapPropsToState,
+const Documents = connect(mapPropsToState,
   { createDocument,
     getDocuments,
     searchDocuments
   })(withRouter(DocListing));
+
+export { Documents as DocBody };
+

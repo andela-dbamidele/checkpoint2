@@ -1,14 +1,20 @@
 import express from 'express';
-import validateRolePostData from '../shared/validators/rolePostData';
-import { isDigit } from '../../server/shared/helpers';
+import dataValidators from '../utils/dataValidators';
+import { isDigit } from '../../server/utils/helpers';
 import authenticateRole from './middlewares/authenticateRole';
 
 const Role = require('../models').Role;
 
 const router = express.Router();
 
+/**
+ * CREATE NEW ROLE ROUTE
+ */
 router.post('/', authenticateRole, (req, res) => {
-  const { errors, isValid } = validateRolePostData(req.body);
+  // validates user access
+  const { errors, isValid } = dataValidators.validateRolePostData(req.body);
+
+  // returns error message if user does not have enough privilegde
   if (!isValid) {
     return res.status(400).send(errors);
   }

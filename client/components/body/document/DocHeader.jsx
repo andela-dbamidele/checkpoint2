@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import {
-  searchDocuments
+  searchDocuments,
+  getDocuments
  } from '../../../actions/documentsAction';
 
 /**
@@ -11,7 +12,7 @@ import {
  * @class DocHeader
  * @extends {React.Component}
  */
-class DocHeader extends React.Component {
+export class DocHeader extends React.Component {
   /**
    * Creates an instance of DocHeader.
    * @param {any} props
@@ -20,9 +21,10 @@ class DocHeader extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      access: 'Public'
+      access: 0
     };
     this.searchDoc = this.searchDoc.bind(this);
+    this.onChange = this.onChange.bind(this);
   }
 
   /**
@@ -42,6 +44,21 @@ class DocHeader extends React.Component {
   }
 
   /**
+   * Set's value of access to state
+   * @method onChange
+   * @param {event} e
+   * @return {void}
+   * @memberOf DocHeader
+   */
+  onChange(e) {
+    this.setState({
+      [e.target.name]: parseInt(e.target.value, 0)
+    }, () => {
+      this.props.getDocuments(this.state.access);
+    });
+  }
+
+  /**
    * Calls the searchDocuments action to query
    * the database
    * @method searchDoc
@@ -50,7 +67,11 @@ class DocHeader extends React.Component {
    * @memberOf DocHeader
    */
   searchDoc(e) {
-    this.props.searchDocuments(e.target.value);
+    if (e.target.value !== '') {
+      this.props.searchDocuments(e.target.value, this.state.access);
+    } else {
+      this.props.getDocuments(this.state.access);
+    }
   }
 
   /**
@@ -61,28 +82,41 @@ class DocHeader extends React.Component {
    */
   render() {
     const filter = this.state.access;
+    const accessFields = [
+      'Public',
+      'Private',
+      'Role'
+    ];
     return (
       <div className="doc-header">
         <div className="row mt-20">
           <div className="col s12 m5 l3">
-            <p>Showing {filter} documents</p>
+            <p
+              className="currentFilter"
+            >Showing {accessFields[filter]} documents</p>
           </div>
           <div className="col s12 m7 l5">
             <div className="pr-20">
               <input
                 type="text"
+                id="searchDocs"
                 className="broswer-default search-box"
-                placeholder="Search for documents..."
+                placeholder={`Search for ${accessFields[filter]} documents`}
                 onChange={this.searchDoc}
               />
             </div>
           </div>
           <div className="col s12 m12 l4">
-            <select className="browser-default" name="access" id="access">
-              <option value="all">All Documents</option>
-              <option value="public">Public Documents</option>
-              <option value="private">Private Documents</option>
-              <option value="role">Role Based Documents</option>
+            <select
+              className="browser-default"
+              name="access"
+              id="access"
+              defaultValue="0"
+              onChange={this.onChange}
+            >
+              <option value="0">Public Documents</option>
+              <option value="1">Private Documents</option>
+              <option value="2">Role Based Documents</option>
             </select>
           </div>
         </div>
@@ -101,7 +135,8 @@ DocHeader.propTypes = {
   location: PropTypes.shape({
     pathname: PropTypes.string.isRequired,
   }).isRequired,
-  searchDocuments: PropTypes.func.isRequired
+  searchDocuments: PropTypes.func.isRequired,
+  getDocuments: PropTypes.func.isRequired
 };
 
 const mapPropsToState = state => (
@@ -110,6 +145,9 @@ const mapPropsToState = state => (
   }
 );
 
-export default connect(mapPropsToState, {
-  searchDocuments
+const Header = connect(mapPropsToState, {
+  searchDocuments,
+  getDocuments
 })(withRouter(DocHeader));
+
+export { Header as DocumentHeader };

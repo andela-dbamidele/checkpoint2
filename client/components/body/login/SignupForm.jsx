@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-import validateInput from '../../../../server/shared/validators/usersData';
+import dataValidators from '../../../../server/utils/dataValidators';
 
 /**
  * Creates sign up form component
  * @class SignupForm
  * @extends {React.Component}
  */
-class SignupForm extends React.Component {
+export class SignupForm extends React.Component {
   /**
    * Creates an instance of SignupForm.
    * @param {any} props
@@ -50,7 +50,7 @@ class SignupForm extends React.Component {
    * @memberOf SignupForm
    */
   validateData() {
-    const { errors, isValid } = validateInput(this.state);
+    const { errors, isValid } = dataValidators.validateInput(this.state);
     if (!isValid) {
       this.setState({ errors, });
     }
@@ -93,8 +93,8 @@ class SignupForm extends React.Component {
   render() {
     const { errors } = this.state;
     return (
-      <div className="row">
-        <h3>Register</h3>
+      <div id="signupForm" className="row">
+        <h3 id="registerlabel">Register</h3>
         { errors.message &&
           <div className="errors">
             <h5>{errors.message}</h5>
@@ -105,13 +105,14 @@ class SignupForm extends React.Component {
             <div className="input-field col s12">
               <input
                 type="text"
+                id="fullname"
                 className="validate"
                 name="fullname"
                 onChange={this.onChange}
                 required
               />
               <label htmlFor="icon_prefix">Full Name</label>
-              { errors.fullname && <p>{errors.fullname}</p> }
+              { errors.fullname && <p id="fullnameError">{errors.fullname}</p> }
             </div>
 
             <div className="input-field col s12">
@@ -142,6 +143,7 @@ class SignupForm extends React.Component {
               <input
                 type="password"
                 className="validate"
+                id="registerPassword"
                 name="password"
                 onChange={this.onChange}
                 required
@@ -168,6 +170,7 @@ class SignupForm extends React.Component {
                 className="btn waves-effect waves-light left btn-color"
                 type="submit"
                 name="action"
+                id="registerbutton"
                 onClick={this.submitForm}
               >REGISTER NOW
                 <i className="material-icons right">send</i>
@@ -187,5 +190,5 @@ SignupForm.propTypes = {
   }).isRequired,
 };
 
-
-export default withRouter(SignupForm);
+const SignupFormComponent = withRouter(SignupForm);
+export { SignupFormComponent };

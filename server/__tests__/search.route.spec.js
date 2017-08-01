@@ -2,6 +2,7 @@ import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import supertest from 'supertest';
 import app from '../server';
+import token from './helpers/token.json';
 
 const User = require('../models').User;
 const Role = require('../models').Role;
@@ -9,10 +10,6 @@ const Document = require('../models').Document;
 
 const request = supertest.agent(app);
 chai.use(chaiHttp);
-
-const Auth = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6' +
-              'MSwidXNlcm5hbWUiOiJib2x1d2F0aWZlbWkiLCJpYXQiO' +
-              'jE0OTgyODgyNDl9.PtsWTssgKdF5vtqJl6rNG4S9-4XxD7rBK3n3sgwEhUQ';
 
 process.env.NODE_ENV = 'test';
 
@@ -70,7 +67,7 @@ describe('APi Routes', () => {
       it('should return an empty array if user is not found', (done) => {
         request
         .get('/api/search/users?q=oldsanden')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(200);
@@ -83,7 +80,7 @@ describe('APi Routes', () => {
       it('should return an array of users if found', (done) => {
         request
         .get('/api/search/users?q=bolu')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(200);
@@ -114,11 +111,11 @@ describe('APi Routes', () => {
       it('should return an empty array if document is not found', (done) => {
         request
         .get('/api/search/documents/?q=oldsanden')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(200);
-            expect(res.body.rows).to.eqls([]);
+            expect(res.body.documents).to.eqls([]);
           }
           done();
         });
@@ -137,11 +134,11 @@ describe('APi Routes', () => {
         });
         request
         .get('/api/search/documents/?q=Hey')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(200);
-            expect(res.body.rows.length).to.be.greaterThan(0);
+            expect(res.body.documents.length).to.be.greaterThan(0);
           }
           done();
         });

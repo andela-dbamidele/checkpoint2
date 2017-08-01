@@ -8,13 +8,13 @@ import { getUsers,
   editUserRole,
   deleteUser
 } from '../../actions/usersAction';
-import SingleUser from './users/SingleUser';
+import UserCard from './cards/UsersCard';
 
 /**
  * @class Users
  * @extends {Component}
  */
-class Users extends Component {
+export class Users extends Component {
   /**
    * Creates an instance of Users.
    * @param {object} props
@@ -25,16 +25,18 @@ class Users extends Component {
     this.usersPerPage = 10;
     const { users } = this.props;
     this.state = {
-      users,
+      users: users.users,
       pageCount: Math.ceil(users.count / this.docsPerPage),
       offset: 0,
       editedRole: '',
-      errors: this.props.errors
+      errors: this.props.errors,
+      loading: true,
+      cantSave: false
     };
     this.handlePageClick = this.handlePageClick.bind(this);
     this.onChange = this.onChange.bind(this);
     this.editUser = this.editUser.bind(this);
-    this.deleteSingleUser = this.deleteSingleUser.bind(this);
+    this.deleteUserCard = this.deleteUserCard.bind(this);
   }
 
   /**
@@ -63,8 +65,8 @@ class Users extends Component {
    */
   componentWillReceiveProps(nextProps) {
     this.setState({
-      users: nextProps.users,
-      pageCount: Math.ceil(nextProps.users.count / this.usersPerPage),
+      users: nextProps.users.users,
+      pageCount: Math.ceil(nextProps.users.totalCount / this.usersPerPage),
       errors: nextProps.errors,
     });
   }
@@ -84,29 +86,53 @@ class Users extends Component {
 
   /**
    * calls the action that deletes user from db
-   * @method deleteSingleUser
+   * @method deleteUserCard
    * @param {number} id - user's id
    * @return {void}
    * @memberOf Users
    */
-  deleteSingleUser(id) {
-    this.props.deleteUser(id)
-    .then((res) => {
-      if (!res) {
-        swal(
-          'Success',
-          'User deleted successfully!',
-          'success'
-        ).then(() => {
-          this.props.getUsers();
-        });
-      } else {
-        swal(
-          'Error',
-          'You do not have enough privilege to perform this action',
-          'error'
-        );
-      }
+  deleteUserCard(id) {
+    swal({
+      title: 'Are you sure?',
+      text: 'The user will be delete from the database',
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No',
+      confirmButtonClass: 'btn btn-success',
+      cancelButtonClass: 'btn btn-danger',
+      buttonsStyling: false,
+      allowOutsideClick: false
+    }).then(() => {
+      this.props.deleteUser(id)
+      .then((res) => {
+        if (!res) {
+          swal(
+            {
+              type: 'success',
+              html: 'User deleted Successfully!',
+              title: 'Success',
+              allowOutsideClick: false,
+              showCloseButton: true,
+              confirmButtonText:
+                'Ok',
+            }
+          ).then(() => {
+            this.props.getUsers();
+          });
+        } else {
+          this.setState({
+            cantSave: true
+          });
+          swal(
+            'Error',
+            'You do not have enough privilege to perform this action',
+            'error'
+          );
+        }
+      });
     });
   }
 
@@ -139,12 +165,12 @@ class Users extends Component {
     /**
    * Handles pagination
    * @method handlePageClick
-   * @param {any} data
+   * @param {any} page
    * @return {void}
    * @memberOf Users
    */
-  handlePageClick(data) {
-    const selected = data.selected;
+  handlePageClick(page) {
+    const selected = page.selected;
     const offset = Math.ceil(selected * this.usersPerPage);
 
     this.setState({ offset }, () => {
@@ -169,13 +195,13 @@ class Users extends Component {
 
           <div className="row bg-white p-5 mt-10">
             {
-              users.rows.map(user => (
-                <SingleUser
+              users.map(user => (
+                <UserCard
                   key={user.id}
                   user={user}
                   onChange={this.onChange}
                   editUser={this.editUser}
-                  deleteSingleUser={this.deleteSingleUser}
+                  deleteUserCard={this.deleteUserCard}
                 />
               ))
             }
@@ -205,7 +231,11 @@ class Users extends Component {
 }
 
 Users.propTypes = {
-  users: PropTypes.arrayOf[PropTypes.object],
+  users: PropTypes.shape({
+    pageCount: PropTypes.number.isRequired,
+    totalCount: PropTypes.number.isRequired,
+    users: PropTypes.arrayOf(PropTypes.object)
+  }),
   editUserRole: PropTypes.func.isRequired,
   getUsers: PropTypes.func.isRequired,
   deleteUser: PropTypes.func.isRequired,
@@ -223,7 +253,7 @@ Users.propTypes = {
 };
 
 Users.defaultProps = {
-  users: [],
+  users: [{}],
   errors: {}
 };
 

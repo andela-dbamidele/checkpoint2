@@ -1,13 +1,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
-import DocumentsPage from './body/DocumentsPage';
+import DocumentsComponent from './body/DocumentsComponent';
 import Footer from './footer/Footer';
 import Header from './header/Index';
-import Homepage from './body/Homepage';
-import LoginPage from './body/LoginPage';
+import Landing from './body/Landing';
+import Login from './body/Login';
 import NotFound from './body/NotFound';
-import SingleDocumentPage from './body/SingleDocumentPage';
+import { SingleDocument } from './body/SingleDocumentComponent';
 import Users from './body/Users';
 
 const history = createBrowserHistory();
@@ -18,13 +18,13 @@ const App = () => (
       <Header />
       <div className="body-cont">
         <Switch>
-          <Route exact path="/" component={Homepage} />
-          <Route exact path="/documents" component={DocumentsPage} />
+          <Route exact path="/" component={Landing} />
+          <Route exact path="/documents" component={DocumentsComponent} />
           <Route
             exact path="/documents/read/:id"
-            component={SingleDocumentPage}
+            component={SingleDocument}
           />
-          <Route exact path="/login" component={LoginPage} />
+          <Route exact path="/login" component={Login} />
           <Route exact path="/users" component={Users} />
           <Route component={NotFound} />
         </Switch>

@@ -1,0 +1,55 @@
+{
+  "auth": {
+    "isAuthenticated": true,
+    "user": {
+      "id": 1,
+      "roleId": 1,
+      "fullname": "bamidele",
+      "username": "hello"
+    }
+  },
+  "documents": {
+    "pageNumber": 0,
+    "pageCount": 0,
+    "pageSize": 0,
+    "documents": [],
+    "totalCount": 0,
+    "search": false,
+    "searchString": ""
+  },
+  "document": {
+    "access": 1,
+    "title": "Hello world",
+    "content": "Hello World",
+    "userId": 1,
+    "roleId": 1
+  },
+  "errors": {
+    "document": {
+      "message": "error"
+    }
+  },
+  "success": {},
+  "users": {
+    "pageNumber": 0,
+    "pageCount": 0,
+    "pageSize": 0,
+    "totalCount": 0,
+    "users": [
+      {
+        "id": 1,
+        "roleId": 1,
+        "fullname": "bamidele",
+        "username": "hello"
+      }
+    ]
+  },
+  "match": {
+    "params": {
+      "id": 1
+    }
+  },
+  "location": {
+    "pathname": "/documents"
+  }
+}

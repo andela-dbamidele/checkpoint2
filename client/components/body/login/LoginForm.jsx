@@ -7,7 +7,7 @@ import queryString from 'query-string';
  * @class LoginForm
  * @extends {React.Component}
  */
-class LoginForm extends React.Component {
+export class LoginForm extends React.Component {
   /**
    * Creates an instance of LoginForm.
    * @param {any} props
@@ -49,8 +49,7 @@ class LoginForm extends React.Component {
     this.setState({
       errors: {}
     });
-    const { loginAction } = this.props;
-    loginAction(this.state).then(() => {
+    this.props.loginAction(this.state).then(() => {
       const requestedLocation = queryString.parse(this.props.location.search);
       this.props.history.push(requestedLocation.redirect || '/documents');
     })
@@ -72,8 +71,8 @@ class LoginForm extends React.Component {
   render() {
     const { errors } = this.state;
     return (
-      <div className="row">
-        <h3>Login</h3>
+      <div id="loginForm" className="row">
+        <h3 id="loginlabel">Login</h3>
         { errors.message &&
           <div className="errors">
             <h5>{errors.message}</h5>
@@ -84,6 +83,7 @@ class LoginForm extends React.Component {
             <div className="input-field col s12">
               <input
                 type="text"
+                id="identifier"
                 className="validate"
                 name="identifier"
                 onChange={this.onChange}
@@ -106,6 +106,7 @@ class LoginForm extends React.Component {
                 className="btn waves-effect waves-light left btn-color"
                 type="submit"
                 name="action"
+                id="loginbutton"
                 onClick={this.submitForm}
               >LOG IN
                 <i className="material-icons right">send</i>
@@ -128,5 +129,5 @@ LoginForm.propTypes = {
   }).isRequired,
 };
 
-
-export default withRouter(LoginForm);
+const LoginFormComponent = withRouter(LoginForm);
+export { LoginFormComponent };

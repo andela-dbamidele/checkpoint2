@@ -3,6 +3,7 @@ import chaiHttp from 'chai-http';
 import supertest from 'supertest';
 import isEmpty from 'lodash/isEmpty';
 import app from '../server';
+import token from './helpers/token.json';
 
 const User = require('../models').User;
 // const Document = require('../models').Document;
@@ -10,10 +11,6 @@ const Role = require('../models').Role;
 
 const request = supertest.agent(app);
 chai.use(chaiHttp);
-
-const Auth = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6' +
-              'MSwidXNlcm5hbWUiOiJib2x1d2F0aWZlbWkiLCJpYXQiO' +
-              'jE0OTgyODgyNDl9.PtsWTssgKdF5vtqJl6rNG4S9-4XxD7rBK3n3sgwEhUQ';
 
 process.env.NODE_ENV = 'test';
 
@@ -73,7 +70,7 @@ describe('API Routes', () => {
         request
         .get('/api/users')
         .set('Accept', 'application/json')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(200);
@@ -86,10 +83,10 @@ describe('API Routes', () => {
         request
         .get('/api/users')
         .set('Accept', 'application/json')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
-            expect(res.body.rows).to.be.an('array');
+            expect(res.body.users).to.be.an('array');
           }
           done();
         });
@@ -124,7 +121,7 @@ describe('API Routes', () => {
         };
         request
         .post('/api/users')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .send(user)
         .end((err, res) => {
           if (!err) {
@@ -151,7 +148,7 @@ describe('API Routes', () => {
 
         request
         .post('/api/users/')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .send(user)
         .end((err, res) => {
           if (!err) {
@@ -174,17 +171,11 @@ describe('API Routes', () => {
         };
         request
         .post('/api/users')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .send(user)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(201);
-            expect(res.body).to.have.property('savedUser');
-            expect(res.body.savedUser.username).to.equal('db');
-            expect(res.body.savedUser.fullname).to.equal('Bamidele Daniel');
-            expect(res.body.savedUser.email).to.equal('greatbol@gmail.com');
-            expect(res.body.savedUser).to.have.property('createdAt');
-            expect(res.body.savedUser).to.have.property('updatedAt');
           }
           done();
         });
@@ -212,14 +203,14 @@ describe('API Routes', () => {
       it('should get a user by id', (done) => {
         request
         .get('/api/users/1/')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(200);
-            expect(res.body.id).to.equal(1);
-            expect(res.body.username).to.equal('boluwatifemi');
-            expect(res.body.fullname).to.equal('Bingo');
-            expect(res.body.email).to.equal('greatbolutife@gmail.com');
+            expect(res.body.user.id).to.equal(1);
+            expect(res.body.user.username).to.equal('boluwatifemi');
+            expect(res.body.user.fullname).to.equal('Bingo');
+            expect(res.body.user.email).to.equal('greatbolutife@gmail.com');
           }
           done();
         });
@@ -228,10 +219,10 @@ describe('API Routes', () => {
       it('should return status 404 if user is not found', (done) => {
         request
         .get('/api/users/10')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
-            expect(res.status).to.equal(400);
+            expect(res.status).to.equal(404);
             expect(res.body.message).to.equal('User not found');
           }
           done();
@@ -241,7 +232,7 @@ describe('API Routes', () => {
       it('should return error if the userid is not a number', (done) => {
         request
         .get('/api/users/ade')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(400);
@@ -273,7 +264,7 @@ describe('API Routes', () => {
       it('return error if the userid is not a number', (done) => {
         request
         .put('/api/users/ade')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(400);
@@ -286,7 +277,7 @@ describe('API Routes', () => {
       it('return error if the user is not found', (done) => {
         request
         .put('/api/users/10')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(400);
@@ -299,16 +290,13 @@ describe('API Routes', () => {
       it('edits users', (done) => {
         request
         .put('/api/users/1/')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .send({
           fullname: 'Ibukunoluwa',
         })
         .end((err, res) => {
           if (!err) {
-            expect(res.status).to.equal(201);
-            expect(res.body.username).to.equal('boluwatifemi');
-            expect(res.body.fullname).to.equal('Ibukunoluwa');
-            expect(res.body.email).to.equal('greatbolutife@gmail.com');
+            expect(res.status).to.equal(200);
           }
           done();
         });
@@ -336,7 +324,7 @@ describe('API Routes', () => {
       it('return error if the userid is not a number', (done) => {
         request
         .delete('/api/users/ade')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(400);
@@ -349,7 +337,7 @@ describe('API Routes', () => {
       it('deletes user by id', (done) => {
         request
         .delete('/api/users/1')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(200);

@@ -6,12 +6,14 @@
   "scripts": {
     "start": "babel-node -- server/server.js",
     "dev": "nodemon --watch server --exec babel-node -- server/server.js",
-    "jest": "jest --coverage client/",
     "pretest": "DATABASE_URL=postgres://pjbfflvb:RmtQNOQCPa20E2cyu4D5LvtEosF2XpOn@pellefant.db.elephantsql.com:5432/pjbfflvb NODE_ENV=test sequelize db:migrate",
-    "test": "DATABASE_URL=postgres://pjbfflvb:RmtQNOQCPa20E2cyu4D5LvtEosF2XpOn@pellefant.db.elephantsql.com:5432/pjbfflvb NODE_ENV=test PORT=3000 nyc --reporter=html --reporter=text mocha --timeout 90000 --compilers js:babel-register -- ./server/__tests__/**/*.spec.js",
+    "client:test": "jest client/ && npm run client:coverage",
+    "test": "npm run client:test && npm run server:test",
+    "server:test": "DATABASE_URL=postgres://pjbfflvb:RmtQNOQCPa20E2cyu4D5LvtEosF2XpOn@pellefant.db.elephantsql.com:5432/pjbfflvb NODE_ENV=test PORT=3000 nyc --reporter=html --reporter=lcov mocha --timeout 90000 --compilers js:babel-register -- ./server/__tests__/**/*.spec.js && npm run server:coverage",
     "prelocalTest": "NODE_ENV=localTest sequelize db:migrate",
-    "localTest": "NODE_ENV=localTest PORT=3000 nyc --reporter=html --reporter=text mocha --timeout 90000 --compilers js:babel-register -- ./server/__tests__/**/*.spec.js",
-    "coverage": "codecov --token=a2b092fc-494a-4700-90eb-51092453b1c6"
+    "localTest": "NODE_ENV=localTest PORT=3000 nyc --reporter=html --reporter=text mocha --timeout 90000 --compilers js:babel-register -- ./server/__tests__/**/*.spec.js && npm run jest && npm run server:coverage",
+    "client:coverage": "codecov --token=a2b092fc-494a-4700-90eb-51092453b1c6",
+    "server:coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "jest": {
     "unmockedModulePathPatterns": [
@@ -22,8 +24,11 @@
       ".*": "<rootDir>/node_modules/babel-jest"
     },
     "testEnvironment": "jsdom",
-    "collectCoverageFrom": [
-      "client/components/**/*.jsx"
+    "collectCoverage": true,
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/node_modules/",
+      "<rootDir>/client/components/body/document/TinyMceComponent.jsx",
+      "<rootDir>/server/utils/"
     ],
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
@@ -61,12 +66,7 @@
   },
   "homepage": "https://github.com/andela-dbamidele/checkpoint2#readme",
   "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-loader": "^7.0.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-0": "^6.24.1",
-    "codecov": "^2.2.0",
+    "chromedriver": "^2.30.1",
     "identity-obj-proxy": "^3.0.0",
     "jest-environment-jsdom": "^20.0.3",
     "jest-localstorage-mock": "^1.2.0",
@@ -75,12 +75,13 @@
     "mock-local-storage": "^1.0.2",
     "nodemon": "^1.11.0",
     "nyc": "^11.0.3",
-    "react-hot-loader": "^1.3.1"
+    "sinon": "^2.3.8"
   },
   "dependencies": {
     "async": "^2.4.1",
     "axios": "^0.16.2",
     "babel-cli": "^6.24.1",
+    "babel-core": "^6.25.0",
     "babel-jest": "^20.0.3",
     "babel-loader": "^7.0.0",
     "babel-preset-es2015": "^6.24.1",
@@ -91,11 +92,14 @@
     "chai": "^4.0.2",
     "chai-http": "^3.0.0",
     "ckeditor": "^4.7.1",
+    "codecov": "^2.2.0",
+    "coveralls": "^2.13.1",
     "css-loader": "^0.28.4",
     "enzyme": "^2.9.1",
     "eventsource-polyfill": "^0.9.6",
     "express": "^4.15.3",
     "extract-text-webpack-plugin": "^2.1.2",
+    "faker": "^4.1.0",
     "file-loader": "^0.11.2",
     "hammerjs": "^2.0.8",
     "history": "^4.6.3",
@@ -107,6 +111,7 @@
     "lodash": "^4.17.4",
     "materialize-css": "^0.99.0",
     "mocha": "^3.4.2",
+    "moxios": "^0.4.0",
     "node-sass": "^4.5.3",
     "pg": "^6.2.4",
     "pg-hstore": "^2.3.2",
@@ -126,10 +131,12 @@
     "redux-thunk": "^2.2.0",
     "sass-loader": "^6.0.6",
     "save-dev": "^2.0.0",
+    "selenium-standalone": "^6.5.0",
     "sequelize": "^4.0.0",
     "style-loader": "^0.18.2",
     "supertest": "^3.0.0",
     "sweetalert2": "^6.6.5",
+    "timeago.js": "^3.0.2",
     "tinymce": "^4.6.4",
     "url-loader": "^0.5.9",
     "validator": "^7.0.0",

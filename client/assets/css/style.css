@@ -6757,7 +6757,7 @@ nav {
     padding-left: 10px; }
 
 .body-cont {
-  min-height: 570px; }
+  min-height: 580px; }
 
 .parallax-container {
   height: 650px; }
@@ -6809,7 +6809,7 @@ nav {
   position: relative;
   display: flex; }
   .home-div .home-inner {
-    min-height: 75vh;
+    min-height: 70vh;
     box-sizing: border-box;
     padding: 40px; }
     .home-div .home-inner .inner-content {
@@ -6834,6 +6834,9 @@ nav {
 
 .pr-20 {
   padding-right: 20px; }
+
+.side-nav .divider {
+  margin: 0px !important; }
 
 #sidenav-overlay {
   z-index: 99 !important; }
@@ -6973,6 +6976,9 @@ nav {
       background-color: #fff;
       padding: 10px; }
 
+.modal-footer span {
+  min-width: 100px !important; }
+
 .button-collapse i {
   color: #000; }
 
@@ -6980,8 +6986,10 @@ nav {
   min-height: 500px;
   max-width: 400px;
   margin: 0 auto;
-  padding: 20px 5px;
-  text-align: left; }
+  text-align: left;
+  background-color: #fff;
+  border-radius: 5px 5px 0px 0px;
+  padding-bottom: 10px; }
   .login-page-wrapper .content form {
     padding: 0px; }
   .login-page-wrapper .content .input-field {
@@ -7066,6 +7074,26 @@ input:-webkit-autofill {
 
 .mt-20 {
   margin-top: 20px; }
+
+.pt-10 {
+  padding-top: 10px; }
+
+#nav-mobile li {
+  padding-left: 5px !important;
+  padding-right: 5px !important; }
+
+#notfound {
+  text-align: center;
+  display: block;
+  position: relative;
+  max-width: 480px;
+  margin: auto; }
+
+#errorImg {
+  max-height: 300px !important; }
+
+button.swal2-confirm {
+  margin-right: 10px; }
 
 @media only screen and (max-width: 600px) {
   .flex-box {

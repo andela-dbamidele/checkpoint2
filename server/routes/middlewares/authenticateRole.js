@@ -8,6 +8,7 @@ const User = require('../../models').User;
 export default (req, res, next) => {
   const authToken = req.headers.authorization;
   let token;
+  // split the token and separate `Bearer` from the token
   if (authToken) {
     token = authToken.split(' ')[1];
   }

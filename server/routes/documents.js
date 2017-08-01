@@ -1,6 +1,6 @@
 import express from 'express';
-import validateDocumentData from '../shared/validators/documentPostData';
-import { isDigit, validateAccess } from '../../server/shared/helpers';
+import dataValidators from '../utils/dataValidators';
+import { isDigit, validateAccess } from '../../server/utils/helpers';
 import authenticateUser from './middlewares/authenticateUsers';
 
 const Document = require('../models').Document;
@@ -13,7 +13,7 @@ const router = express.Router();
 // creates a new document and returns the document
 router.post('/', authenticateUser, (req, res) => {
   // validates the request body
-  const { errors, isValid } = validateDocumentData(req.body);
+  const { errors, isValid } = dataValidators.documentsPostData(req.body);
   if (!isValid) {
     // returns error on invalid request
     return res.status(400).send({
@@ -33,6 +33,7 @@ router.post('/', authenticateUser, (req, res) => {
   })
   .then((doc) => {
     if (doc) {
+      // returns error for duplicate title
       return res.status(400).send({
         status: 400,
         message: 'Document with the same title already exist',
@@ -67,9 +68,12 @@ router.get('/', authenticateUser, (req, res) => {
   const userRoleId = req.authenticatedUser.roleId;
   const userId = req.authenticatedUser.id;
 
+  // get the query from the parameter
   let limit = req.query.limit;
   let offset = req.query.offset;
+  let access = req.query.access;
 
+  // calculates the current pagenumber from the offset and limit
   const pageNumber = Math.ceil(((req.query.offset) /
     (req.query.limit)) + 1) || 1;
 
@@ -77,44 +81,61 @@ router.get('/', authenticateUser, (req, res) => {
   if ((limit && offset) &&
     (isNaN(limit) || isNaN(offset))) {
     return res.status(400).send({
-      message: 'Search param must be a number'
+      message: 'Limit and offset must be an integer'
     });
   }
 
   limit = limit || 16;
   offset = offset || 0;
 
+  // returns error if access is not a number
+  if (access &&
+    (isNaN(parseInt(access, 10)))) {
+    return res.status(400).send({
+      message: 'Document access type must be an integer'
+    });
+  }
+
+  // prepares the query
+  let buildQuery = {
+    access: 0
+  };
+
+  access = parseInt(access, 10);
+
+  if (access === 1) {
+    buildQuery = {
+      access: 1,
+      userId
+    };
+  } else if (access === 2) {
+    buildQuery = {
+      access: 2,
+      roleId: userRoleId
+    };
+  }
 
   // prepare a databse query param if query is present in the request
   const queryParams = {
     offset,
     limit,
+    where: buildQuery,
     attributes: { exclude: ['updatedAt'] },
-    where: {
-      $or: [
-        {
-          access: 0,
-        },
-        {
-          access: 1,
-          userId
-        },
-        {
-          access: 2,
-          roleId: userRoleId
-        }
-      ]
-    },
     order: [['createdAt', 'DESC']]
   };
   // query the database for documents
   Document.findAndCountAll(queryParams)
   .then((doc) => {
-    // reutns error if no document is found
+    // returns error if no document is found
     if (doc.rows.length === 0) {
-      return res.status(400).send({
-        status: 400,
-        message: 'No document found!'
+      return res.status(200).send({
+        pageNumber: 0,
+        pageCount: 0,
+        pageSize: 0,
+        totalCount: 0,
+        status: 200,
+        message: 'No document found!',
+        documents: []
       });
     }
 
@@ -134,19 +155,22 @@ router.get('/', authenticateUser, (req, res) => {
   .catch((error) => {
     res.status(400).send({
       status: 400,
+      message: 'Server Error',
       error
     });
   });
 });
 
+/**
+ * GET DOCUMENT ROUTE
+ */
 router.get('/:id', authenticateUser, (req, res) => {
   if (!isDigit(req.params.id)) {
     return res.status(400).send({
       message: 'Input must be digit'
     });
   }
-  const userId = req.authenticatedUser.id;
-  const userRoleId = req.authenticatedUser.roleId;
+  const userData = req.authenticatedUser;
 
   // check the database for the required document
   Document.findById(req.params.id)
@@ -159,13 +183,7 @@ router.get('/:id', authenticateUser, (req, res) => {
     }
 
     // validates the access right of the current user
-    const { validatedUser, errorMsg } = validateAccess(
-      doc.userId,
-      doc.access,
-      doc.roleId,
-      userId,
-      userRoleId
-    );
+    const { validatedUser, errorMsg } = validateAccess(doc, userData);
 
     // returns error if the user does not have access to the document
     if (!validatedUser) {
@@ -178,14 +196,17 @@ router.get('/:id', authenticateUser, (req, res) => {
   .catch(error => res.status(400).send(error));
 });
 
+/**
+ * EDIT DOCUMENT ROUTE
+ */
 router.put('/:id', authenticateUser, (req, res) => {
+  // check if document id is a digit
   if (!isDigit(req.params.id)) {
     return res.status(400).send({
       message: 'Document id must be digit'
     });
   }
-  const userId = req.authenticatedUser.id;
-  const userRoleId = req.authenticatedUser.roleId;
+  const userData = req.authenticatedUser;
   Document.findById(req.params.id)
   .then((doc) => {
     if (!doc) {
@@ -194,32 +215,33 @@ router.put('/:id', authenticateUser, (req, res) => {
           message: 'Document not found'
         });
     }
-    const { validatedUser, errorMsg } = validateAccess(
-      doc.userId,
-      doc.access,
-      doc.roleId,
-      userId,
-      userRoleId
-    );
+    // validates the user's access
+    const { validatedUser, errorMsg } = validateAccess(doc, userData);
     if (!validatedUser) {
       return res.status(400).send(errorMsg);
     }
+
+    // query the database to check if the new title exists
     Document.findAll({
       where: {
         title: req.body.title
       }
     })
     .then((originalDoc) => {
+      // returns error if the title exists and the title does not belong
+      // to the same document
       if (originalDoc.length !== 0 && (originalDoc[0].dataValues.id !==
       parseInt(req.params.id, 10))) {
         return res.status(400).send({
           message: 'Title already exists'
         });
       }
+
+      // updates the document if everything is ok
       return doc.update({
         title: req.body.title || doc.title,
         author: req.body.author || doc.author,
-        roleId: userRoleId,
+        roleId: userData.roleId,
         content: req.body.content || doc.content,
         category: req.body.category || doc.category,
         access: req.body.access || doc.access
@@ -232,14 +254,22 @@ router.put('/:id', authenticateUser, (req, res) => {
   .catch(error => res.status(400).send(error));
 });
 
+/**
+ * DELETE DOCUMENT ROUTE
+ */
 router.delete('/:id/', authenticateUser, (req, res) => {
+  // cehck if id is an integer
   if (!isDigit(req.params.id)) {
     return res.status(400).send({
       message: 'Document ID must be a number'
     });
   }
-  const userId = req.authenticatedUser.id;
-  const userRoleId = req.authenticatedUser.roleId;
+
+  // gets the user's data from the middleware
+  const userData = req.authenticatedUser;
+
+  // check the database for the document and returns error
+  // if the document does not exists
   Document.findById(req.params.id)
   .then((doc) => {
     if (!doc) {
@@ -248,16 +278,15 @@ router.delete('/:id/', authenticateUser, (req, res) => {
           message: 'Document not found'
         });
     }
-    const { validatedUser, errorMsg } = validateAccess(
-      doc.userId,
-      doc.access,
-      doc.roleId,
-      userId,
-      userRoleId
-    );
+    // validates the user's access
+    const { validatedUser, errorMsg } = validateAccess(doc, userData);
+
+    // returns error for unathorized access
     if (!validatedUser) {
       return res.status(400).send(errorMsg);
     }
+
+    // deletes the user
     return doc.destroy()
       .then(() => res.status(200).send({
         message: 'Document deleted successfully'
