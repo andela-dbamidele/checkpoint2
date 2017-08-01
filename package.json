@@ -6,12 +6,14 @@
   "scripts": {
     "start": "babel-node -- server/server.js",
     "dev": "nodemon --watch server --exec babel-node -- server/server.js",
-    "jest": "jest --coverage client/",
     "pretest": "DATABASE_URL=postgres://pjbfflvb:RmtQNOQCPa20E2cyu4D5LvtEosF2XpOn@pellefant.db.elephantsql.com:5432/pjbfflvb NODE_ENV=test sequelize db:migrate",
-    "test": "DATABASE_URL=postgres://pjbfflvb:RmtQNOQCPa20E2cyu4D5LvtEosF2XpOn@pellefant.db.elephantsql.com:5432/pjbfflvb NODE_ENV=test PORT=3000 nyc --reporter=html --reporter=text mocha --timeout 90000 --compilers js:babel-register -- ./server/__tests__/**/*.spec.js",
+    "client:test": "jest client/ && npm run client:coverage",
+    "test": "npm run client:test && npm run server:test",
+    "server:test": "DATABASE_URL=postgres://pjbfflvb:RmtQNOQCPa20E2cyu4D5LvtEosF2XpOn@pellefant.db.elephantsql.com:5432/pjbfflvb NODE_ENV=test PORT=3000 nyc --reporter=html --reporter=lcov mocha --timeout 90000 --compilers js:babel-register -- ./server/__tests__/**/*.spec.js && npm run server:coverage",
     "prelocalTest": "NODE_ENV=localTest sequelize db:migrate",
-    "localTest": "NODE_ENV=localTest PORT=3000 nyc --reporter=html --reporter=text mocha --timeout 90000 --compilers js:babel-register -- ./server/__tests__/**/*.spec.js && npm run jest && npm run coverage",
-    "coverage": "codecov --token=a2b092fc-494a-4700-90eb-51092453b1c6"
+    "localTest": "NODE_ENV=localTest PORT=3000 nyc --reporter=html --reporter=text mocha --timeout 90000 --compilers js:babel-register -- ./server/__tests__/**/*.spec.js && npm run jest && npm run server:coverage",
+    "client:coverage": "codecov --token=a2b092fc-494a-4700-90eb-51092453b1c6",
+    "server:coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "jest": {
     "unmockedModulePathPatterns": [
@@ -65,7 +67,6 @@
   "homepage": "https://github.com/andela-dbamidele/checkpoint2#readme",
   "devDependencies": {
     "chromedriver": "^2.30.1",
-    "codecov": "^2.2.0",
     "identity-obj-proxy": "^3.0.0",
     "jest-environment-jsdom": "^20.0.3",
     "jest-localstorage-mock": "^1.2.0",
@@ -91,6 +92,8 @@
     "chai": "^4.0.2",
     "chai-http": "^3.0.0",
     "ckeditor": "^4.7.1",
+    "codecov": "^2.2.0",
+    "coveralls": "^2.13.1",
     "css-loader": "^0.28.4",
     "enzyme": "^2.9.1",
     "eventsource-polyfill": "^0.9.6",

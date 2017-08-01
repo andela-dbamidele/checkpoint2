@@ -6976,6 +6976,9 @@ nav {
       background-color: #fff;
       padding: 10px; }
 
+.modal-footer span {
+  min-width: 100px !important; }
+
 .button-collapse i {
   color: #000; }
 
@@ -7072,6 +7075,9 @@ input:-webkit-autofill {
 .mt-20 {
   margin-top: 20px; }
 
+.pt-10 {
+  padding-top: 10px; }
+
 #nav-mobile li {
   padding-left: 5px !important;
   padding-right: 5px !important; }
@@ -7085,6 +7091,9 @@ input:-webkit-autofill {
 
 #errorImg {
   max-height: 300px !important; }
+
+button.swal2-confirm {
+  margin-right: 10px; }
 
 @media only screen and (max-width: 600px) {
   .flex-box {

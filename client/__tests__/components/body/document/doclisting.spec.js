@@ -1,10 +1,9 @@
 import React from 'react';
-import { mount, /** shallow */ } from 'enzyme';
+import { mount } from 'enzyme';
 import sinon from 'sinon';
 import authMockProps from '../../../../__mocks__/authMockProps.json';
 import historyMock from '../../../../__mocks__/historyMock';
 import { DocListing } from '../../../../components/body/document/DocListing';
-// import DocumentCard from '../../../../components/body/cards/DocumentCard';
 
 describe('Document Listing Component', () => {
   const createDocument = jest.fn()

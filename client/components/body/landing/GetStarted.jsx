@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const HomeColumn3 = () => (
+const GetStarted = () => (
   <div id="home3" className="column">
     <div className="row">
       <div className="col s12 m6 l6 xl6 m-auto">
@@ -32,4 +32,4 @@ const HomeColumn3 = () => (
   </div>
 );
 
-export default HomeColumn3;
+export default GetStarted;

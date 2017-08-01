@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {
   ADD_TO_DOCUMENTS,
   SET_DOCUMENTS_TO_STATE,
@@ -19,9 +20,9 @@ let oldState;
 export default (state = initialState, action = {}) => {
   switch (action.type) {
     case ADD_TO_DOCUMENTS:
-      oldState = state.documents;
-      if ((oldState).length > 15) {
-        oldState.pop();
+      oldState = state;
+      if ((oldState.documents).length > 15) {
+        oldState = _.dropRight(oldState.documents);
       }
       return {
         pageNumber: state.pageNumber,
@@ -29,15 +30,16 @@ export default (state = initialState, action = {}) => {
         pageSize: state.pageSize,
         documents: [
           action.document,
-          ...oldState
+          ...oldState.documents
         ],
-        totalCount: state.totalCount + 1,
+        totalCount: oldState.totalCount + 1,
         search: false,
         searchString: '',
         currentDocuments: action.currentDocuments
       };
     case SET_DOCUMENTS_TO_STATE:
       return {
+        ...state,
         pageNumber: action.data.pageNumber,
         pageCount: action.data.pageCount,
         pageSize: action.data.pageSize,

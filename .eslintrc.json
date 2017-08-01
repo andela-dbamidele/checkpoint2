@@ -16,9 +16,11 @@
     "class-methods-use-this": ["error", { "exceptMethods": 
       ["openModal",
       "componentWillUnmount",
-      "componentDidMount"
+      "componentDidMount",
+      "render"
       ] }],
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "import/no-named-as-default": 0,
     "react/jsx-boolean-value": "off",
     "react/no-array-index-key": "off",
     "jsx-a11y/img-redundant-alt": "off",

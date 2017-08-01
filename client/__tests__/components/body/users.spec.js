@@ -190,39 +190,5 @@ describe('Admin Page', () => {
         .toHaveBeenCalled();
       });
     });
-
-    // describe('handlePageClick Method', () => {
-    //   it('gets the next set of documents based on limit', () => {
-    //     const spy2 = sinon.spy(Users.prototype, 'handlePageClick');
-    //     const wrapper2 = mount(
-    //       <Users
-    //         history={historyMock}
-    //         {...props}
-    //         editUserRole={editUserRole}
-    //         getUsers={getUsers}
-    //         deleteUser={deleteUser}
-    //       />
-    //     );
-    //     wrapper2.setState({
-    //       users: [
-    //         {
-    //           id: 5,
-    //           fullname: 'imanued',
-    //           username: 'ncsifncedn',
-    //           email: 'hsdjd@erev.com',
-    //           roleId: 1
-    //         }
-    //       ],
-    //       pageCount: 2,
-    //       loading: false
-    //     });
-    //     const data = {
-    //       selected: 1
-    //     };
-    //     wrapper2.find('li.active')
-    //     .simulate('click', data);
-    //     expect(spy2.called).toBeTruthy();
-    //   });
-    // });
   });
 });

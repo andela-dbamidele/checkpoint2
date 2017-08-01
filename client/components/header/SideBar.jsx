@@ -8,6 +8,11 @@ const SideBar = ({ user, logUserOut }) => (
     {
       !isEmpty(user) ? (
         <ul id="slide-out" className="side-nav">
+          <li>
+            <a>
+              <h5 className="center pt-10"><strong>Site Actions</strong></h5>
+            </a>
+          </li>
           <li><div className="divider" /></li>
           <li>
             <a href="/users">

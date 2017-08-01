@@ -2,6 +2,7 @@ import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import supertest from 'supertest';
 import app from '../server';
+import token from './helpers/token.json';
 
 const Document = require('../models').Document;
 const User = require('../models').User;
@@ -9,10 +10,6 @@ const Role = require('../models').Role;
 
 const request = supertest.agent(app);
 chai.use(chaiHttp);
-const Auth = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6' +
-              'MSwidXNlcm5hbWUiOiJib2x1d2F0aWZlbWkiLCJpYXQiO' +
-              'jE0OTgyODgyNDl9.PtsWTssgKdF5vtqJl6rNG4S9-4XxD7rBK3n3sgwEhUQ';
-
 process.env.NODE_ENV = 'test';
 
 describe('API Routes', () => {
@@ -83,7 +80,7 @@ describe('API Routes', () => {
         request
         .get('/api/documents')
         .set('Accept', 'application/json')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (err) {
             expect(res.status).to.equal(200);
@@ -107,7 +104,7 @@ describe('API Routes', () => {
         request
         .get('/api/documents')
         .set('Accept', 'application/json')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(200);
@@ -121,7 +118,7 @@ describe('API Routes', () => {
       it('returns error for invalid offset and limit', (done) => {
         request
         .get('/api/documents/?limit=15&offset=fgdgfgff')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(400);
@@ -136,7 +133,7 @@ describe('API Routes', () => {
         request
         .get('/api/documents')
         .set('Accept', 'application/json')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(200);
@@ -170,7 +167,7 @@ describe('API Routes', () => {
         };
         request
         .post('/api/documents')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .send(doc)
         .end((err, res) => {
           if (!err) {
@@ -193,7 +190,7 @@ describe('API Routes', () => {
         };
         request
         .post('/api/documents')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .send(doc)
         .end((err, res) => {
           if (!err) {
@@ -217,7 +214,7 @@ describe('API Routes', () => {
         });
         request
         .post('/api/documents')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .send(doc)
         .end((err, res) => {
           if (!err) {
@@ -228,25 +225,6 @@ describe('API Routes', () => {
           done();
         });
       });
-
-      // it('should return database error for wrongly formated title',
-      // (done) => {
-      //   const doc = {
-      //     title: '345678987653456787',
-      //     content: 345678987653456787,
-      //     author: 1234567,
-      //   };
-      //   request
-      //   .post('/api/documents')
-      //   .set('Authorization', Auth)
-      //   .send(doc)
-      //   .end((err, res) => {
-      //     if (!err) {
-      //       expect(res.status).to.equal(400);
-      //     }
-      //     done();
-      //   });
-      // });
     });
 
     /**
@@ -276,7 +254,7 @@ describe('API Routes', () => {
       it('should throw error for invalid id', (done) => {
         request
         .get('/api/documents/sdfsfd/')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(400);
@@ -290,7 +268,7 @@ describe('API Routes', () => {
       it('should return error if document is not found', (done) => {
         request
         .get('/api/documents/1/')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(400);
@@ -314,13 +292,9 @@ describe('API Routes', () => {
         .then(() => {
           //
         });
-        const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXV' +
-        'CJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJiaW50aTQiLCJmdWxsbmF' +
-        'tZSI6IkVtbWFudWVsbGEiLCJyb2xlSWQiOjIsImlhdCI6MTQ5OTk3MTQwOH0.7F0Y' +
-        'TUWb4JJwhbWyNE-Mfaax4D_5124i1OLxFg-8OYc';
         request
         .get('/api/documents/1/')
-        .set('Authorization', token)
+        .set('Authorization', token.regular)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(400);
@@ -348,7 +322,7 @@ describe('API Routes', () => {
 
         request
         .get('/api/documents/1/')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(200);
@@ -360,7 +334,7 @@ describe('API Routes', () => {
       it('should return database error for out of range values', (done) => {
         request
         .get('/api/documents/1949494994949494949494949494949449949494949/')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(400);
@@ -407,7 +381,7 @@ describe('API Routes', () => {
 
         request
         .put('/api/documents/adb/')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .send(doc)
         .end((err, res) => {
           if (!err) {
@@ -421,7 +395,7 @@ describe('API Routes', () => {
       it('returns errors if document is not found', (done) => {
         request
         .put('/api/documents/1/')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(400);
@@ -444,13 +418,9 @@ describe('API Routes', () => {
         .then(() => {
           //
         });
-        const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXV' +
-        'CJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJiaW50aTQiLCJmdWxsbmF' +
-        'tZSI6IkVtbWFudWVsbGEiLCJyb2xlSWQiOjIsImlhdCI6MTQ5OTk3MTQwOH0.7F0Y' +
-        'TUWb4JJwhbWyNE-Mfaax4D_5124i1OLxFg-8OYc';
         request
         .put('/api/documents/1/')
-        .set('Authorization', token)
+        .set('Authorization', token.regular)
         .send({
           content: 'Whats up buddy'
         })
@@ -475,7 +445,7 @@ describe('API Routes', () => {
         .then(() => {
           request
           .put('/api/documents/1/')
-          .set('Authorization', Auth)
+          .set('Authorization', token.admin)
           .send({})
           .end((err, res) => {
             if (!err) {
@@ -502,7 +472,7 @@ describe('API Routes', () => {
         .then(() => {
           request
           .put('/api/documents/1/')
-          .set('Authorization', Auth)
+          .set('Authorization', token.admin)
           .send({
             title: 'Hey Yo!',
           })
@@ -545,7 +515,7 @@ describe('API Routes', () => {
       it('returns error for invalid parameter', (done) => {
         request
         .delete('/api/documents/ad/')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(400);
@@ -558,7 +528,7 @@ describe('API Routes', () => {
       it('returns error for invalid document', (done) => {
         request
         .delete('/api/documents/1')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(400);
@@ -581,13 +551,9 @@ describe('API Routes', () => {
         .then(() => {
           //
         });
-        const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXV' +
-        'CJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJiaW50aTQiLCJmdWxsbmF' +
-        'tZSI6IkVtbWFudWVsbGEiLCJyb2xlSWQiOjIsImlhdCI6MTQ5OTk3MTQwOH0.7F0Y' +
-        'TUWb4JJwhbWyNE-Mfaax4D_5124i1OLxFg-8OYc';
         request
         .delete('/api/documents/1/')
-        .set('Authorization', token)
+        .set('Authorization', token.regular)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(400);
@@ -611,7 +577,7 @@ describe('API Routes', () => {
         .then(() => {
           request
           .delete('/api/documents/1/')
-          .set('Authorization', Auth)
+          .set('Authorization', token.admin)
           .end((err, res) => {
             if (!err) {
               expect(res.status).to.equal(200);
