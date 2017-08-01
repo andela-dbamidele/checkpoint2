@@ -3,8 +3,8 @@ import { mount, shallow } from 'enzyme';
 // import configureStore from 'redux-mock-store';
 // import thunk from 'redux-thunk';
 import sinon from 'sinon';
-import { SingleDocumentPage } from
-  '../../../components/body/SingleDocumentPage';
+import { SingleDocumentComponent } from
+  '../../../components/body/SingleDocumentComponent';
 import mockProps from '../../../__mocks__/mockProps.json';
 import authMockProps from '../../../__mocks__/authMockProps.json';
 import historyMock from '../../../__mocks__/historyMock';
@@ -23,7 +23,7 @@ describe('Single Document Page', () => {
     deleteSingleDocument = jest.fn(() => Promise.resolve(true));
     updateDocument = jest.fn(() => Promise.resolve(true));
     wrapper = mount(
-      <SingleDocumentPage
+      <SingleDocumentComponent
         history={historyMock}
         {...props}
         setSingleDocument={setSingleDocument}
@@ -50,11 +50,11 @@ describe('Single Document Page', () => {
 
     it('displays error message if document is not found', () => {
       const shallowWrapper = shallow(
-        <SingleDocumentPage
+        <SingleDocumentComponent
           history={historyMock}
           {...props}
-          setSingleDocument={setSingleDocument}
-          deleteSingleDocument={deleteSingleDocument}
+          setDocumentCardument={setSingleDocument}
+          deleteDocumentCardument={deleteSingleDocument}
           updateDocument={updateDocument}
         />
       );
@@ -78,11 +78,11 @@ describe('Single Document Page', () => {
   describe('React Lifecycles', () => {
     it('redirects unauthenticated user on component Mount', () => {
       const wrapper2 = mount(
-        <SingleDocumentPage
+        <SingleDocumentComponent
           history={historyMock}
           {...mockProps}
-          setSingleDocument={setSingleDocument}
-          deleteSingleDocument={deleteSingleDocument}
+          setDocumentCardument={setSingleDocument}
+          deleteDocumentCardument={deleteSingleDocument}
           updateDocument={updateDocument}
         />
       );
@@ -108,7 +108,7 @@ describe('Single Document Page', () => {
     });
 
     it('unmount', () => {
-      const spy = sinon.spy(SingleDocumentPage.prototype,
+      const spy = sinon.spy(SingleDocumentComponent.prototype,
           'componentWillUnmount');
       wrapper.instance().componentWillUnmount();
       expect(spy.called).toBeTruthy();
@@ -154,14 +154,14 @@ describe('Single Document Page', () => {
       };
 
       it('saves edited documents when called', () => {
-        const spy = sinon.spy(SingleDocumentPage.prototype,
+        const spy = sinon.spy(SingleDocumentComponent.prototype,
           'saveChanges');
         const shallowWrapper = shallow(
-          <SingleDocumentPage
+          <SingleDocumentComponent
             history={historyMock}
             {...props}
-            setSingleDocument={setSingleDocument}
-            deleteSingleDocument={deleteSingleDocument}
+            setDocumentCardument={setSingleDocument}
+            deleteDocumentCardument={deleteSingleDocument}
             updateDocument={updateDocument}
           />
         );
@@ -173,11 +173,11 @@ describe('Single Document Page', () => {
       it('displays a modal for successful update', () => {
         const updateDocumentSuccess = jest.fn(() => Promise.resolve(false));
         const shallowWrapper = shallow(
-          <SingleDocumentPage
+          <SingleDocumentComponent
             history={historyMock}
             {...props}
-            setSingleDocument={setSingleDocument}
-            deleteSingleDocument={deleteSingleDocument}
+            setDocumentCardument={setSingleDocument}
+            deleteDocumentCardument={deleteSingleDocument}
             updateDocument={updateDocumentSuccess}
           />
         );
@@ -199,14 +199,14 @@ describe('Single Document Page', () => {
         loading: false
       };
       it('deletes a single documents when called', () => {
-        const spy = sinon.spy(SingleDocumentPage.prototype,
+        const spy = sinon.spy(SingleDocumentComponent.prototype,
           'deleteDocument');
         const shallowWrapper = shallow(
-          <SingleDocumentPage
+          <SingleDocumentComponent
             history={historyMock}
             {...props}
-            setSingleDocument={setSingleDocument}
-            deleteSingleDocument={deleteSingleDocument}
+            setDocumentCardument={setSingleDocument}
+            deleteDocumentCardument={deleteSingleDocument}
             updateDocument={updateDocument}
           />
         );

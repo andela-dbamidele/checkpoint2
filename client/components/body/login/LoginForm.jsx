@@ -49,8 +49,7 @@ export class LoginForm extends React.Component {
     this.setState({
       errors: {}
     });
-    const { loginAction } = this.props;
-    loginAction(this.state).then(() => {
+    this.props.loginAction(this.state).then(() => {
       const requestedLocation = queryString.parse(this.props.location.search);
       this.props.history.push(requestedLocation.redirect || '/documents');
     })
@@ -130,5 +129,5 @@ LoginForm.propTypes = {
   }).isRequired,
 };
 
-
-export default withRouter(LoginForm);
+const LoginFormComponent = withRouter(LoginForm);
+export { LoginFormComponent };

@@ -1,6 +1,6 @@
 import express from 'express';
-import validateRolePostData from '../shared/validators/rolePostData';
-import { isDigit } from '../../server/shared/helpers';
+import dataValidators from '../utils/dataValidators';
+import { isDigit } from '../../server/utils/helpers';
 import authenticateRole from './middlewares/authenticateRole';
 
 const Role = require('../models').Role;
@@ -8,7 +8,7 @@ const Role = require('../models').Role;
 const router = express.Router();
 
 router.post('/', authenticateRole, (req, res) => {
-  const { errors, isValid } = validateRolePostData(req.body);
+  const { errors, isValid } = dataValidators.validateRolePostData(req.body);
   if (!isValid) {
     return res.status(400).send(errors);
   }

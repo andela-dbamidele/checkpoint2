@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import App from '../../../components/App';
-import Homepage from '../../../components/body/Homepage';
+import Landing from '../../../components/body/Landing';
 import Header from '../../../components/header/Index';
 import Footer from '../../../components/footer/Footer';
 
@@ -13,7 +13,7 @@ describe('App component', () => {
   });
   it('renders', () => {
     expect(wrapper.find('.main-div').exists()).toBeTruthy();
-    expect(wrapper.find(Homepage).exists).toBeTruthy();
+    expect(wrapper.find(Landing).exists).toBeTruthy();
     expect(wrapper.find(Switch)).toHaveLength(1);
     expect(wrapper.find(Router)).toHaveLength(1);
     expect(wrapper.find(Route)).toHaveLength(6);

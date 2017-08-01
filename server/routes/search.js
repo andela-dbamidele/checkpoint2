@@ -8,7 +8,10 @@ const router = express.Router();
 
 router.get('/users', authenticateUser, (req, res) => {
   if (req.query.q === undefined) {
-    return res.send([]);
+    return res.status(400).send({
+      status: 400,
+      message: 'Query must be present in your request'
+    });
   }
   const queryString = (req.query.q).toString();
   let limit = req.query.limit;
@@ -57,26 +60,27 @@ router.get('/documents', authenticateUser, (req, res) => {
       pageCount: 0,
       pageSize: 0,
       totalCount: 0,
-      documents: []
+      documents: [],
+      message: 'Search query is undefined'
     });
   }
-  let limit = req.query.limit;
-  let offset = req.query.offset;
-  let access = req.query.access;
+  let limit = parseInt(req.query.limit, 10);
+  let offset = parseInt(req.query.offset, 10);
+  let access = parseInt(req.query.access, 10);
 
   const userRoleId = req.authenticatedUser.roleId;
   const userId = req.authenticatedUser.id;
 
   const queryString = (req.query.q).toString();
 
-  const pageNumber = Math.ceil(((req.query.offset) /
-    (req.query.limit)) + 1) || 1;
+  const pageNumber = Math.ceil(((offset) /
+    (limit)) + 1) || 1;
 
   // returns error if the limit and offset is not a number
   if ((limit && offset) &&
     (isNaN(limit) || isNaN(offset))) {
     return res.status(400).send({
-      message: 'Search param must be a number'
+      message: 'Limit and offset must be an integer'
     });
   }
 
@@ -87,7 +91,7 @@ router.get('/documents', authenticateUser, (req, res) => {
   if (access &&
     (isNaN(parseInt(access, 10)))) {
     return res.status(400).send({
-      message: 'Document type must be an integer'
+      message: 'Document access type must be an integer'
     });
   }
 
@@ -116,6 +120,11 @@ router.get('/documents', authenticateUser, (req, res) => {
       access: 2,
       roleId: userRoleId
     };
+  } else if (access > 2) {
+    return res.status(400).send({
+      status: 400,
+      message: 'Document access type is invalid'
+    });
   }
 
   Document.findAndCountAll({

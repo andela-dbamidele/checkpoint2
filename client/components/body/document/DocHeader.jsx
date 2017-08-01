@@ -52,9 +52,9 @@ export class DocHeader extends React.Component {
    */
   onChange(e) {
     this.setState({
-      [e.target.name]: e.target.value
+      [e.target.name]: parseInt(e.target.value, 0)
     }, () => {
-      this.props.getDocuments(0, 16, this.state.access);
+      this.props.getDocuments(this.state.access);
     });
   }
 
@@ -67,7 +67,11 @@ export class DocHeader extends React.Component {
    * @memberOf DocHeader
    */
   searchDoc(e) {
-    this.props.searchDocuments(e.target.value, 0, 16, this.state.access);
+    if (e.target.value !== '') {
+      this.props.searchDocuments(e.target.value, this.state.access);
+    } else {
+      this.props.getDocuments(this.state.access);
+    }
   }
 
   /**
@@ -141,7 +145,9 @@ const mapPropsToState = state => (
   }
 );
 
-export default connect(mapPropsToState, {
+const Header = connect(mapPropsToState, {
   searchDocuments,
   getDocuments
 })(withRouter(DocHeader));
+
+export { Header as DocumentHeader };

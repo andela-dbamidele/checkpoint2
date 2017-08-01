@@ -1,12 +1,12 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import { MemoryRouter as Router } from 'react-router-dom';
-import Slider from '../../../../components/body/home/Slider';
+import Parallax from '../../../../components/body/landing/Parallax';
 
-describe('Slider Component', () => {
+describe('Parallax Component', () => {
   const wrapper = mount(
     <Router >
-      <Slider />
+      <Parallax />
     </Router>
   );
 

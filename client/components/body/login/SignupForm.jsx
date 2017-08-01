@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-import validateInput from '../../../../server/shared/validators/usersData';
+import dataValidators from '../../../../server/utils/dataValidators';
 
 /**
  * Creates sign up form component
@@ -50,7 +50,7 @@ export class SignupForm extends React.Component {
    * @memberOf SignupForm
    */
   validateData() {
-    const { errors, isValid } = validateInput(this.state);
+    const { errors, isValid } = dataValidators.validateInput(this.state);
     if (!isValid) {
       this.setState({ errors, });
     }
@@ -190,5 +190,5 @@ SignupForm.propTypes = {
   }).isRequired,
 };
 
-
-export default withRouter(SignupForm);
+const SignupFormComponent = withRouter(SignupForm);
+export { SignupFormComponent };

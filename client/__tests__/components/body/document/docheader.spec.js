@@ -1,25 +1,21 @@
 import React from 'react';
 import { mount, shallow } from 'enzyme';
+import sinon from 'sinon';
 import mockProps from '../../../../__mocks__/mockProps.json';
 import historyMock from '../../../../__mocks__/historyMock';
 import { DocHeader } from '../../../../components/body/document/DocHeader';
 
 describe('Document page header', () => {
-  let wrapper;
-  let searchDocuments;
-  beforeAll(() => {
-    searchDocuments = jest.fn(() => null);
-    wrapper = mount(
-      <DocHeader
-        {...mockProps}
-        searchDocuments={searchDocuments}
-        history={historyMock}
-      />
-    );
-  });
-
   describe('Rendering', () => {
     it('Renders', () => {
+      const searchDocuments = jest.fn(() => null);
+      const wrapper = mount(
+        <DocHeader
+          {...mockProps}
+          searchDocuments={searchDocuments}
+          history={historyMock}
+        />
+      );
       expect(wrapper.find('.doc-header'))
       .toHaveLength(1);
     });
@@ -27,6 +23,8 @@ describe('Document page header', () => {
 
   describe('Class Methods', () => {
     it('search for matching documents when a user starts typing', () => {
+      const searchSpy = sinon.spy(DocHeader.prototype, 'searchDoc');
+      const searchDocuments = jest.fn(() => Promise.resolve());
       const shallowWrapper = shallow(
         <DocHeader
           {...mockProps}
@@ -34,13 +32,10 @@ describe('Document page header', () => {
           history={historyMock}
         />
       );
-      const spy = jest.spyOn(shallowWrapper.instance(), 'searchDoc');
       shallowWrapper.find('#searchDocs')
       .simulate('change', { target: { value: 'hello' } });
-      expect(spy)
-      .toHaveBeenCalled();
-      spy.mockReset();
-      spy.mockRestore();
+      expect(searchSpy.called)
+      .toBeTruthy();
     });
   });
 });

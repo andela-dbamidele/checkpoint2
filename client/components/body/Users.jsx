@@ -8,7 +8,7 @@ import { getUsers,
   editUserRole,
   deleteUser
 } from '../../actions/usersAction';
-import SingleUser from './users/SingleUser';
+import UserCard from './cards/UsersCard';
 
 /**
  * @class Users
@@ -36,7 +36,7 @@ export class Users extends Component {
     this.handlePageClick = this.handlePageClick.bind(this);
     this.onChange = this.onChange.bind(this);
     this.editUser = this.editUser.bind(this);
-    this.deleteSingleUser = this.deleteSingleUser.bind(this);
+    this.deleteUserCard = this.deleteUserCard.bind(this);
   }
 
   /**
@@ -86,12 +86,12 @@ export class Users extends Component {
 
   /**
    * calls the action that deletes user from db
-   * @method deleteSingleUser
+   * @method deleteUserCard
    * @param {number} id - user's id
    * @return {void}
    * @memberOf Users
    */
-  deleteSingleUser(id) {
+  deleteUserCard(id) {
     this.props.deleteUser(id)
     .then((res) => {
       if (!res) {
@@ -144,12 +144,12 @@ export class Users extends Component {
     /**
    * Handles pagination
    * @method handlePageClick
-   * @param {any} data
+   * @param {any} page
    * @return {void}
    * @memberOf Users
    */
-  handlePageClick(data) {
-    const selected = data.selected;
+  handlePageClick(page) {
+    const selected = page.selected;
     const offset = Math.ceil(selected * this.usersPerPage);
 
     this.setState({ offset }, () => {
@@ -175,12 +175,12 @@ export class Users extends Component {
           <div className="row bg-white p-5 mt-10">
             {
               users.map(user => (
-                <SingleUser
+                <UserCard
                   key={user.id}
                   user={user}
                   onChange={this.onChange}
                   editUser={this.editUser}
-                  deleteSingleUser={this.deleteSingleUser}
+                  deleteUserCard={this.deleteUserCard}
                 />
               ))
             }

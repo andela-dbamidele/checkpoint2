@@ -1,13 +1,10 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import DocHeader from '../../../components/body/document/DocHeader';
-import DocListing from '../../../components/body/document/DocListing';
-import DocumentsPage from '../../../components/body/DocumentsPage';
+import DocumentsComponent from '../../../components/body/DocumentsComponent';
 
-describe('DocumentsPage', () => {
+describe('DocumentsComponent', () => {
   it('should render', () => {
-    const wrapper = shallow(<DocumentsPage />);
-    expect(wrapper.find(DocHeader)).toHaveLength(1);
-    expect(wrapper.find(DocListing)).toHaveLength(1);
+    const wrapper = shallow(<DocumentsComponent />);
+    expect(wrapper.find('.documents-wrapper')).toHaveLength(1);
   });
 });
