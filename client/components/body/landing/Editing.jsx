@@ -1,6 +1,6 @@
 import React from 'react';
 
-const HomeColumn1 = () => (
+const Editing = () => (
   <div id="home1" className="column">
     <div className="row">
       <div className="col s12 m6 l6 xl6 m-auto">
@@ -32,4 +32,4 @@ const HomeColumn1 = () => (
   </div>
 );
 
-export default HomeColumn1;
+export default Editing;

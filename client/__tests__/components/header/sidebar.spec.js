@@ -22,13 +22,5 @@ describe('Sidebar component', () => {
       expect(wrapper.find('.side-nav'))
       .toHaveLength(1);
     });
-
-    // it('calls logout function on button click', () => {
-    //   const spy = jest.spyOn(wrapper.instance().props.logUserOut);
-    //   wrapper.find('.side-nav')
-    //   .simulate('click', { preventDefault: () => null });
-    //   expect(spy)
-    //     .toHaveBeenCalled();
-    // });
   });
 });

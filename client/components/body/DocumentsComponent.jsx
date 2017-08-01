@@ -2,7 +2,7 @@ import React from 'react';
 import { DocumentHeader } from './document/DocHeader';
 import { DocBody } from './document/DocListing';
 
-const DocumentPage = () => (
+const DocumentsComponent = () => (
   <div className="documents-wrapper">
     <div className="doc-body">
       <DocumentHeader />
@@ -12,4 +12,4 @@ const DocumentPage = () => (
   </div>
 );
 
-export default DocumentPage;
+export default DocumentsComponent;

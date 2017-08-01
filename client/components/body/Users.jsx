@@ -92,26 +92,47 @@ export class Users extends Component {
    * @memberOf Users
    */
   deleteUserCard(id) {
-    this.props.deleteUser(id)
-    .then((res) => {
-      if (!res) {
-        swal(
-          'Success',
-          'User deleted successfully!',
-          'success'
-        ).then(() => {
-          this.props.getUsers();
-        });
-      } else {
-        this.setState({
-          cantSave: true
-        });
-        swal(
-          'Error',
-          'You do not have enough privilege to perform this action',
-          'error'
-        );
-      }
+    swal({
+      title: 'Are you sure?',
+      text: 'The user will be delete from the database',
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No',
+      confirmButtonClass: 'btn btn-success',
+      cancelButtonClass: 'btn btn-danger',
+      buttonsStyling: false,
+      allowOutsideClick: false
+    }).then(() => {
+      this.props.deleteUser(id)
+      .then((res) => {
+        if (!res) {
+          swal(
+            {
+              type: 'success',
+              html: 'User deleted Successfully!',
+              title: 'Success',
+              allowOutsideClick: false,
+              showCloseButton: true,
+              confirmButtonText:
+                'Ok',
+            }
+          ).then(() => {
+            this.props.getUsers();
+          });
+        } else {
+          this.setState({
+            cantSave: true
+          });
+          swal(
+            'Error',
+            'You do not have enough privilege to perform this action',
+            'error'
+          );
+        }
+      });
     });
   }
 

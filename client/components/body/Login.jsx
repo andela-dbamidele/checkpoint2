@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-// import 'materialize-css/dist/js/materialize.min';
 import { LoginFormComponent } from './login/LoginForm';
 import { SignupFormComponent } from './login/SignupForm';
 import signUpAction from '../../actions/signUpAction';

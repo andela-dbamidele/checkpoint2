@@ -288,7 +288,7 @@ router.delete('/:id/', authenticateUser, (req, res) => {
   const roleId = userDetails.roleId;
   if (userId !== req.params.id && roleId !== 1) {
     return res.status(401).send({
-      message: 'Ops! An error occured while processing your request'
+      message: 'You are not authorize to perform this action'
     });
   }
   User.findById(req.params.id)
@@ -305,7 +305,7 @@ router.delete('/:id/', authenticateUser, (req, res) => {
       }))
       .catch(error => res.status(400).send({
         status: 400,
-        message: 'You are not authorize to perform this action',
+        message: 'A fatal error was encountered, Please try again.',
         error
       }));
   })

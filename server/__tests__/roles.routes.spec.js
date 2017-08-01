@@ -2,16 +2,13 @@ import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import supertest from 'supertest';
 import app from '../server';
+import token from './helpers/token.json';
 
 const Role = require('../models').Role;
 const User = require('../models').User;
 
 const request = supertest.agent(app);
 chai.use(chaiHttp);
-
-const Auth = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6' +
-              'MSwidXNlcm5hbWUiOiJib2x1d2F0aWZlbWkiLCJpYXQiO' +
-              'jE0OTgyODgyNDl9.PtsWTssgKdF5vtqJl6rNG4S9-4XxD7rBK3n3sgwEhUQ';
 
 process.env.NODE_ENV = 'test';
 
@@ -60,7 +57,7 @@ describe('API Routes', () => {
       it('connects to the API endpoint', (done) => {
         request
         .get('/api/roles')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(200);
@@ -72,7 +69,7 @@ describe('API Routes', () => {
       it('returns data', (done) => {
         request
         .get('/api/roles')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.body).to.be.an('array');
@@ -84,7 +81,7 @@ describe('API Routes', () => {
       it('returns an array of object', (done) => {
         request
         .get('/api/roles')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(200);
@@ -104,7 +101,7 @@ describe('API Routes', () => {
       it('should not post a request with missing fields', (done) => {
         request
         .post('/api/roles')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .send({
           description: 'This is the Regular role'
         })
@@ -126,7 +123,7 @@ describe('API Routes', () => {
         });
         request
         .post('/api/roles/')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .send({
           name: 'Regular',
           description: 'This is the Regular role'
@@ -144,7 +141,7 @@ describe('API Routes', () => {
       it('should add a new role', (done) => {
         request
         .post('/api/roles')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .send({
           name: 'Regular',
           description: 'This is the Regular role'
@@ -168,7 +165,7 @@ describe('API Routes', () => {
       it('should return details of a role', (done) => {
         request
         .get('/api/roles/1/')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(200);
@@ -182,7 +179,7 @@ describe('API Routes', () => {
       it('should throw error for invalid id', (done) => {
         request
         .get('/api/roles/as/')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(400);
@@ -195,7 +192,7 @@ describe('API Routes', () => {
       it('should throw error for invalid role', (done) => {
         request
         .get('/api/roles/2/')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(400);
@@ -213,7 +210,7 @@ describe('API Routes', () => {
       it('should update a single role', (done) => {
         request
         .put('/api/roles/1')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .send({
           name: 'Adminet',
           description: 'Now I control you'
@@ -231,7 +228,7 @@ describe('API Routes', () => {
       it('should return error for non-digit role id', (done) => {
         request
         .put('/api/roles/as')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(400);
@@ -244,7 +241,7 @@ describe('API Routes', () => {
       it('should return error for a non existing role', (done) => {
         request
         .put('/api/roles/10/')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(400);
@@ -262,7 +259,7 @@ describe('API Routes', () => {
       it('should return error for invalid role id', (done) => {
         request
         .delete('/api/roles/djd/')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(400);
@@ -275,7 +272,7 @@ describe('API Routes', () => {
       it('should delete a role', (done) => {
         request
         .delete('/api/roles/1/')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(200);
@@ -288,7 +285,7 @@ describe('API Routes', () => {
       it('should return error if role does not exist', (done) => {
         request
         .delete('/api/roles/10/')
-        .set('Authorization', Auth)
+        .set('Authorization', token.admin)
         .end((err, res) => {
           if (!err) {
             expect(res.status).to.equal(400);
