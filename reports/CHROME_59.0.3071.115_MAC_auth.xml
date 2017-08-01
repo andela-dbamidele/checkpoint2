@@ -5,9 +5,9 @@
 
   <testsuite name="auth"
     errors="0" failures="0" hostname="" id="" package="auth" skipped="0"
-    tests="4" time="25.74" timestamp="Tue, 25 Jul 2017 12:17:37 GMT">
+    tests="4" time="74.25" timestamp="Sat, 29 Jul 2017 06:51:13 GMT">
   
-    <testcase name="Registers a new user" classname="auth" time="7.812" assertions="5">
+    <testcase name="Registers a new user" classname="auth" time="25.11" assertions="5">
 
     
 
@@ -20,7 +20,7 @@
     
     </testcase>
   
-    <testcase name="Returns error for incomplete fields" classname="auth" time="5.450" assertions="4">
+    <testcase name="Returns error for incomplete fields" classname="auth" time="13.60" assertions="4">
 
     
 
@@ -31,7 +31,7 @@
     
     </testcase>
   
-    <testcase name="Logs a user in" classname="auth" time="7.633" assertions="5">
+    <testcase name="Logs a user in" classname="auth" time="25.53" assertions="5">
 
     
 
@@ -44,7 +44,7 @@
     
     </testcase>
   
-    <testcase name="Returns error for invalid credentials" classname="auth" time="4.849" assertions="4">
+    <testcase name="Returns error for invalid credentials" classname="auth" time="10.02" assertions="4">
 
     
 
