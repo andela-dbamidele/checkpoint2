@@ -7,6 +7,8 @@ engines:
       - javascript
   eslint:
     enabled: true
+    config:
+      config: .eslintrc
   fixme:
     enabled: true
 ratings:
@@ -15,3 +17,5 @@ ratings:
 exclude_paths:
 - "node_modules/"
 - "client/assets/"
+- ".nyc_output"
+- "coverage"
