@@ -97,7 +97,7 @@
 To contribute, fork this repo to your private repository and follow the wiki conventions on branch naming, commit messages and pull request.
 
 ## Limitations
-This app and its functions are limited by the time constraint.
+N/A
 
 ### Troubleshooting & FAQ
 Not available at the moment
