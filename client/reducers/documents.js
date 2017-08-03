@@ -15,24 +15,19 @@ const initialState = {
   currentDocuments: 0
 };
 
-let oldState;
 
 export default (state = initialState, action = {}) => {
   switch (action.type) {
     case ADD_TO_DOCUMENTS:
-      oldState = state;
-      if ((oldState.documents).length > 15) {
-        oldState = _.dropRight(oldState.documents);
-      }
       return {
         pageNumber: state.pageNumber,
         pageCount: state.pageCount,
         pageSize: state.pageSize,
         documents: [
           action.document,
-          ...oldState.documents
+          ...state.documents
         ],
-        totalCount: oldState.totalCount + 1,
+        totalCount: state.totalCount + 1,
         search: false,
         searchString: '',
         currentDocuments: action.currentDocuments

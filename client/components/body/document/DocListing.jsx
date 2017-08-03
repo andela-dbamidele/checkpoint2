@@ -239,7 +239,13 @@ export class DocListing extends React.Component {
    */
   render() {
     const { errors, documents, search, loading } = this.state;
-    const Display = documents.map(doc => (
+    let documentsToBeDisplay;
+    if (documents.length > 15) {
+      documentsToBeDisplay = _.slice(documents, 0, 16);
+    } else {
+      documentsToBeDisplay = documents;
+    }
+    const Display = documentsToBeDisplay.map(doc => (
       <DocumentCard
         id={doc.id}
         title={doc.title}
